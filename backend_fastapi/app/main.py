@@ -14,4 +14,4 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return "hello world! The Ambient Speech Recognition Server is working"
+    return "Hello World! The Ambient Speech Recognition Server is working"
