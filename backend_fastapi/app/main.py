@@ -1,12 +1,15 @@
+import datetime
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from starlette.middleware.cors import CORSMiddleware
-from app.utils.MongoUtil import MongoDB
+
+from app.routers.logging import loggingRouter
+from app.utils.mongo import MongoDB, LogEntry, Service, LLMLogEntry, Model
 from dotenv import load_dotenv
 
+# start app and configure CORS
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,18 +18,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# dependencies
+# load dependencies
 load_dotenv()
-mongo = MongoDB(uri=os.getenv("MONGO_DB_URL"), db_name="main")
+mongo = MongoDB()
+
+# load other routes
+app.include_router(loggingRouter)
+
+
+@app.on_event('shutdown')
+def shutdown_event():
+    print("Shutting down the server. Closing the database connections....")
+    mongo.client.close()
 
 
 @app.get("/")
-def root():
+async def root():
     return "Hello World! The Ambient Speech Recognition Server is working"
-
-
-@app.get("/db/test")
-async def test():
-    document = await mongo.db.logs.find_one({'tokens': {'$gt': 1}}, {'_id': 0})
-    print(document)
-    return document
