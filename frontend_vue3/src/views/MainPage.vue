@@ -11,7 +11,7 @@ const { isFetching, error, data } = useFetch('http://127.0.0.1:8000')
     <p v-if="isFetching">...Loading :]</p>
     <p v-else-if="error">ERROR: {{ error }}</p>
     <p v-else>{{ data }}</p>
-    <Button icon="pi pi-check"></Button>
+    <Button label="TestButton" icon="pi pi-check" loadingIcon="pi pi-spin pi-spinner" :loading="isFetching"/>
   </main>
 </template>
 
