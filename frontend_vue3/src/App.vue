@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import MainPage from './views/MainPage.vue';
-
-
+import MainPage from './views/MainPage.vue'
 </script>
 
 <template>
@@ -10,5 +8,4 @@ import MainPage from './views/MainPage.vue';
   </Suspense>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
