@@ -24,9 +24,13 @@ class LLMUtil:
             openai.api_key = os.getenv("OPENAI_KEY")
             self.openai_model = OpenaiModel.GPT_3_TURBO
 
-    async def create_hello_chat_completion(self):
+    async def hello_chat_completion(self):
         chat_completion_resp = await openai.ChatCompletion.acreate(model=self.openai_model.value, messages=[
             {"role": "user", "content": "Hello world"}])
+        return chat_completion_resp.choices[0].message.content
+
+    async def chat_completion(self, messages):
+        chat_completion_resp = await openai.ChatCompletion.acreate(model=self.openai_model.value, messages=messages)
         return chat_completion_resp.choices[0].message.content
 
 
