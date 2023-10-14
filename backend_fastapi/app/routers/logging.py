@@ -1,16 +1,14 @@
 import datetime
-import os
 
-from dotenv import load_dotenv
 from fastapi import APIRouter
 
-from app.utils.mongo import LLMLogEntry, Service, Model, MongoDB
+from app.utils.mongo_util import Service, MongoUtil, LogEntry
 
 loggingRouter = APIRouter(
-    prefix="/db",
+    prefix="/api/db",
     tags=["db"],
 )
-mongo = MongoDB()
+mongo = MongoUtil()
 
 
 @loggingRouter.get("/read")
@@ -21,11 +19,10 @@ async def test_log_read():
 
 @loggingRouter.get("/write")
 async def test_log_write():
-    log = LLMLogEntry(
-        Service.DEEPINFRA,
+    log = LogEntry(
+        Service.TEST,
         datetime.datetime.now(),
-        tokens=23487,
-        model=Model.GPT_4
+        endpoint="/api/db/write"
     )
-    await mongo.db['logs'].insert_one(log.get_json())
+    await mongo.saveLog(log)
     return log
