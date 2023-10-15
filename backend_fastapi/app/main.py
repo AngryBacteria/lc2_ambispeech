@@ -1,14 +1,15 @@
-import asyncio
 import time
 
+import azure.cognitiveservices.speech as speechsdk
 from fastapi import FastAPI, UploadFile
+from fastapi.responses import StreamingResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.llm_router import llmRouter
 from app.routers.logging_router import loggingRouter
+from app.utils.llm_util import LLMUtil
 from app.utils.mongo_util import MongoUtil
-from dotenv import load_dotenv
-from fastapi.responses import StreamingResponse
+from app.utils.speech_util import SpeechUtil
 
 # start app and configure CORS
 app = FastAPI()
@@ -21,8 +22,9 @@ app.add_middleware(
 )
 
 # load dependencies
-load_dotenv()
+speech = SpeechUtil()
 mongo = MongoUtil()
+llm = LLMUtil()
 
 # load other routes
 app.include_router(loggingRouter)
@@ -58,3 +60,12 @@ async def post_file(file: UploadFile):
         "name": file.filename,
         "content_type": file.content_type
     }
+
+@app.post("/azure/test")
+async def azure_test():
+    speech_config = speechsdk.SpeechConfig(subscription="d1f5b3506b3446ef9dd033b2046daae2", region="switzerlandnorth")
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+
+    print("Speak into your microphone.")
+    result = speech_recognizer.recognize_once_async().get()
+    print(result.text)

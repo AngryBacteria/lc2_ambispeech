@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import datetime
 import os
-
-import motor.motor_asyncio
 from enum import Enum
 
+import motor.motor_asyncio
 from dotenv import load_dotenv
 
 
