@@ -2,6 +2,29 @@
 import { useFetch } from '@vueuse/core'
 
 const { isFetching, error, data } = useFetch('http://127.0.0.1:8000')
+
+async function fetchAndPrintStream(url: string) {
+  try {
+    const response = await fetch(url)
+    const reader = response?.body?.getReader()
+    const decoder = new TextDecoder()
+
+    while (response.ok && reader && true) {
+      const { value, done } = await reader.read()
+
+      if (done) {
+        console.log('server event stream is done')
+        break
+      }
+
+      // Convert chunk from Uint8Array to string and print it out.
+      const text = decoder.decode(value)
+      console.log(text)
+    }
+  } catch (err) {
+    console.error('Error:', err)
+  }
+}
 </script>
 
 <template>
@@ -11,7 +34,13 @@ const { isFetching, error, data } = useFetch('http://127.0.0.1:8000')
     <p v-if="isFetching">...Loading :]</p>
     <p v-else-if="error">ERROR: {{ error }}</p>
     <p v-else>{{ data }}</p>
-    <Button label="TestButton" icon="pi pi-check" loadingIcon="pi pi-spin pi-spinner" :loading="isFetching"/>
+    <Button
+      @click="fetchAndPrintStream('http://127.0.0.1:8000/stream')"
+      label="GetStream"
+      icon="pi pi-check"
+      loadingIcon="pi pi-spin pi-spinner"
+      :loading="isFetching"
+    />
   </main>
 </template>
 

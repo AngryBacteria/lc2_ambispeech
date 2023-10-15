@@ -25,12 +25,21 @@ class LLMUtil:
             self.openai_model = OpenaiModel.GPT_3_TURBO
 
     async def hello_chat_completion(self):
-        chat_completion_resp = await openai.ChatCompletion.acreate(model=self.openai_model.value, messages=[
-            {"role": "user", "content": "Hello world"}])
+        chat_completion_resp = await openai.ChatCompletion.acreate(
+            model=self.openai_model.value,
+            messages=[{"role": "user", "content": "Hello world"}]
+        )
         return chat_completion_resp.choices[0].message.content
 
-    async def chat_completion(self, messages):
-        chat_completion_resp = await openai.ChatCompletion.acreate(model=self.openai_model.value, messages=messages)
+    async def chat_completion(self, messages, config):
+        chat_completion_resp = await openai.ChatCompletion.acreate(
+            model=self.openai_model.value,
+            messages=messages,
+            max_tokens=config.max_tokens,
+            temperature=config.temperature,
+            top_p=config.top_p,
+            presence_penalty=config.presence_penalty
+        )
         return chat_completion_resp.choices[0].message.content
 
 
