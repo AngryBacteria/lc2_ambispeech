@@ -1,8 +1,19 @@
+from __future__ import annotations
+
 import os
+from enum import Enum
 
 from azure.cognitiveservices.speech import SpeechConfig
 import azure.cognitiveservices.speech as speechsdk
 from dotenv import load_dotenv
+
+
+class LanguageCode(str, Enum):
+    DE_CH = "de-CH"
+    DE_DE = "de-DE"
+    DE_AT = "de-AT"
+    EN_GB = "en-GB"
+    EN_US = "en-US"
 
 
 class SpeechUtil(object):
@@ -10,14 +21,14 @@ class SpeechUtil(object):
     speech_config: SpeechConfig
     azure_region: str
     azure_speech_Key: str
-    language_code: str
+    language_code: LanguageCode
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(SpeechUtil, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, language_code: str = "de-DE"):
+    def __init__(self, language_code: LanguageCode = LanguageCode.DE_CH):
         load_dotenv()
         if os.getenv("AZURE_REGION") is None or os.getenv("AZURE_SPEECH_RESOURCE_KEY") is None:
             raise EnvironmentError(".env file is missing the AZURE_SPEECH_RESOURCE_KEY or AZURE_REGION")

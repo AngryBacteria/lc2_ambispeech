@@ -1,6 +1,5 @@
 import time
 
-import azure.cognitiveservices.speech as speechsdk
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
 from starlette.middleware.cors import CORSMiddleware
@@ -60,12 +59,3 @@ async def post_file(file: UploadFile):
         "name": file.filename,
         "content_type": file.content_type
     }
-
-@app.post("/azure/test")
-async def azure_test():
-    speech_config = speechsdk.SpeechConfig(subscription="d1f5b3506b3446ef9dd033b2046daae2", region="switzerlandnorth")
-    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
-
-    print("Speak into your microphone.")
-    result = speech_recognizer.recognize_once_async().get()
-    print(result.text)
