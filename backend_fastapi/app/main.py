@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.llm_router import llmRouter
@@ -49,3 +49,12 @@ def fake_data_streamer():
 @app.get("/stream")
 async def main():
     return StreamingResponse(fake_data_streamer(), media_type='text/event-stream')
+
+
+@app.post("/file")
+async def post_file(file: UploadFile):
+    return {
+        "size": file.size,
+        "name": file.filename,
+        "content_type": file.content_type
+    }
