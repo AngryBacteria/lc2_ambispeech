@@ -3,6 +3,7 @@ from typing import Literal
 from fastapi import APIRouter
 
 from pydantic import BaseModel
+from starlette.responses import StreamingResponse
 
 from app.utils.llm_util import LLMUtil, OpenaiModel
 
@@ -32,14 +33,20 @@ class OpenaiCompletionBody(BaseModel):
 
 
 @llmRouter.post("/hello/{model}")
-async def hello(model: OpenaiModel):
+async def hello(model: OpenaiModel, config: OpenaiCompletionConfig):
     llmUtil.openai_model = model
-    return await llmUtil.hello_chat_completion()
+    return await llmUtil.hello_chat_completion(config)
 
 
 @llmRouter.post("/openai/{model}")
 async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
     llmUtil.openai_model = model
-    print(body.config)
     messages_list = [message.model_dump() for message in body.messages]
     return await llmUtil.chat_completion(messages_list, body.config)
+
+
+@llmRouter.post("/openaistream/{model}")
+async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
+    llmUtil.openai_model = model
+    messages_list = [message.model_dump() for message in body.messages]
+    return StreamingResponse(llmUtil.stream_chat_completion(messages_list, body.config), media_type='text/event-stream')

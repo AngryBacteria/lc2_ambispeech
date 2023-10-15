@@ -3,9 +3,28 @@ import { useFetch } from '@vueuse/core'
 
 const { isFetching, error, data } = useFetch('http://127.0.0.1:8000')
 
-async function fetchAndPrintStream(url: string) {
+const postExample: RequestInit = {
+  method: 'POST',
+  headers: {'content-type': 'application/json'},
+  body: JSON.stringify({
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello world! I am so happy :]"
+    }
+  ],
+  "config": {
+    "max_tokens": 10,
+    "temperature": 1,
+    "presence_penalty": 0,
+    "top_p": 1
+  }
+})
+}
+
+async function fetchAndPrintStream(url: string, fetchConfig: RequestInit) {
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, fetchConfig)
     const reader = response?.body?.getReader()
     const decoder = new TextDecoder()
 
@@ -35,8 +54,15 @@ async function fetchAndPrintStream(url: string) {
     <p v-else-if="error">ERROR: {{ error }}</p>
     <p v-else>{{ data }}</p>
     <Button
-      @click="fetchAndPrintStream('http://127.0.0.1:8000/stream')"
+      @click="fetchAndPrintStream('http://127.0.0.1:8000/stream', {})"
       label="GetStream"
+      icon="pi pi-check"
+      loadingIcon="pi pi-spin pi-spinner"
+      :loading="isFetching"
+    />
+    <Button
+      @click="fetchAndPrintStream('http://127.0.0.1:8000/api/llm/openaistream/gpt-3.5-turbo', postExample)"
+      label="Get Openai Stream"
       icon="pi pi-check"
       loadingIcon="pi pi-spin pi-spinner"
       :loading="isFetching"

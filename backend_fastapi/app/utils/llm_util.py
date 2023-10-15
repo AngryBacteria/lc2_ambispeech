@@ -24,10 +24,14 @@ class LLMUtil:
             openai.api_key = os.getenv("OPENAI_KEY")
             self.openai_model = OpenaiModel.GPT_3_TURBO
 
-    async def hello_chat_completion(self):
+    async def hello_chat_completion(self, config):
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
-            messages=[{"role": "user", "content": "Hello world"}]
+            messages=[{"role": "user", "content": "Hello world"}],
+            max_tokens=config.max_tokens,
+            temperature=config.temperature,
+            top_p=config.top_p,
+            presence_penalty=config.presence_penalty
         )
         return chat_completion_resp.choices[0].message.content
 
@@ -41,6 +45,21 @@ class LLMUtil:
             presence_penalty=config.presence_penalty
         )
         return chat_completion_resp.choices[0].message.content
+
+    async def stream_chat_completion(self, messages, config):
+        chat_completion_resp = await openai.ChatCompletion.acreate(
+            model=self.openai_model.value,
+            messages=messages,
+            max_tokens=config.max_tokens,
+            temperature=config.temperature,
+            top_p=config.top_p,
+            presence_penalty=config.presence_penalty,
+            stream=True
+        )
+        async for chunk in chat_completion_resp:
+            text = chunk['choices'][0].get('delta').get('content')
+            if text is not None:
+                yield chunk['choices'][0]['delta'].get('content')
 
 
 class OpenaiModel(str, Enum):
