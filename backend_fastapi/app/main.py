@@ -61,3 +61,11 @@ async def post_file(file: UploadFile):
         "name": file.filename,
         "content_type": file.content_type
     }
+
+
+@app.get("/transcribe")
+async def transcribe_test():
+    return StreamingResponse(
+        azure_util.azure_long_s2t("X:\\Programming\\Web\\lc2_ambispeech\\backend_fastapi\\test.wav"),
+        media_type='text/event-stream'
+    )

@@ -10,3 +10,55 @@ GET http://127.0.0.1:8000/stream
 ###
 
 GET http://127.0.0.1:8000/transcribe
+
+###
+
+POST http://127.0.0.1:8000/api/llm/hello/gpt-3.5-turbo
+Content-Type: application/json
+
+{
+  "max_tokens": 10,
+  "temperature": 1,
+  "presence_penalty": 0,
+  "top_p": 1
+}
+
+###
+
+POST http://127.0.0.1:8000/api/llm/openai/gpt-3.5-turbo
+Content-Type: application/json
+
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "how are you today?"
+    }
+  ],
+  "config": {
+    "max_tokens": 10,
+    "temperature": 1,
+    "presence_penalty": 0,
+    "top_p": 1
+  }
+}
+
+###
+
+POST http://127.0.0.1:8000/api/llm/openaistream/gpt-3.5-turbo
+Content-Type: application/json
+
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "how are you today?"
+    }
+  ],
+  "config": {
+    "max_tokens": 10,
+    "temperature": 1,
+    "presence_penalty": 0,
+    "top_p": 1
+  }
+}

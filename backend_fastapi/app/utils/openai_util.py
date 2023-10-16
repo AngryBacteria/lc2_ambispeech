@@ -35,7 +35,7 @@ class OpenAIUtil:
             top_p=config.top_p,
             presence_penalty=config.presence_penalty
         )
-        return chat_completion_resp.choices[0].message.content
+        return chat_completion_resp.choices[0].get('message').get('content')
 
     async def chat_completion(self, messages, config):
         """Async Non-Streaming OpenAI chat completion function"""
@@ -47,7 +47,7 @@ class OpenAIUtil:
             top_p=config.top_p,
             presence_penalty=config.presence_penalty
         )
-        return chat_completion_resp.choices[0].message.content
+        return chat_completion_resp.choices[0].get('message').get('content')
 
     async def stream_chat_completion(self, messages, config):
         """Async Streaming OpenAI chat completion function"""
@@ -63,7 +63,7 @@ class OpenAIUtil:
         async for chunk in chat_completion_resp:
             text = chunk['choices'][0].get('delta').get('content')
             if text is not None:
-                yield chunk['choices'][0]['delta'].get('content')
+                yield text
 
 
 class OpenaiModel(str, Enum):

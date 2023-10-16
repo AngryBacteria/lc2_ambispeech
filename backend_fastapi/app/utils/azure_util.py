@@ -56,6 +56,7 @@ class AzureUtil(object):
     async def azure_long_s2t(self, file_path: str):
         """Azure continuous recognition for an existing audio file"""
         done = False
+        queue = asyncio.Queue()
         audio_config = speechsdk.AudioConfig(filename=file_path)
         speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
 
@@ -69,9 +70,10 @@ class AzureUtil(object):
         def on_recognized(event):
             """Sentence got recognized event"""
             print(f"RECOGNIZED: {event}")
+            queue.put_nowait(event)
 
         speech_recognizer.recognizing.connect(lambda event: print(f'RECOGNIZING: {event}'))
-        speech_recognizer.recognized.connect(lambda event: on_recognized)
+        speech_recognizer.recognized.connect(on_recognized)
         speech_recognizer.session_started.connect(lambda event: print(f'SESSION STARTED: {event}'))
         speech_recognizer.session_stopped.connect(lambda event: print(f'SESSION STOPPED: {event}'))
         speech_recognizer.canceled.connect(lambda evt: print(f'CANCELED: {evt}'))
@@ -80,5 +82,10 @@ class AzureUtil(object):
         speech_recognizer.canceled.connect(stop_recognition)
 
         speech_recognizer.start_continuous_recognition()
-        while not done:
-            await asyncio.sleep(1)
+
+        while not done or not queue.empty():
+            if not queue.empty():
+                item = await queue.get()
+                yield f"{item.result.text}"
+            else:
+                await asyncio.sleep(1)
