@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 from enum import Enum
 
@@ -17,8 +18,8 @@ class LanguageCode(str, Enum):
     EN_US = "en-US"
 
 
-class SpeechUtil(object):
-    """Singleton util class to handle various speech to text related operations"""
+class AzureUtil(object):
+    """Singleton util class to handle various speech to text related operations with azure"""
     _instance = None
     speech_config: SpeechConfig
     azure_region: str
@@ -27,7 +28,7 @@ class SpeechUtil(object):
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(SpeechUtil, cls).__new__(cls)
+            cls._instance = super(AzureUtil, cls).__new__(cls)
         return cls._instance
 
     def __init__(self, language_code: LanguageCode = LanguageCode.DE_CH):
@@ -45,9 +46,39 @@ class SpeechUtil(object):
                 speech_recognition_language=self.language_code
             )
 
-    def azure_file_path_s2t(self, file_path):
+    def azure_short_s2t(self, file_path: str):
         """Azure single-shot recognition for an existing audio file. Max length is 15 seconds"""
         audio_config = speechsdk.AudioConfig(filename=file_path)
         speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
         result = speech_recognizer.recognize_once_async().get()
         return result
+
+    async def azure_long_s2t(self, file_path: str):
+        """Azure continuous recognition for an existing audio file"""
+        done = False
+        audio_config = speechsdk.AudioConfig(filename=file_path)
+        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
+
+        def stop_recognition(event):
+            """Stop recognition event"""
+            print(f"CLOSING on: {event}")
+            speech_recognizer.stop_continuous_recognition()
+            nonlocal done
+            done = True
+
+        def on_recognized(event):
+            """Sentence got recognized event"""
+            print(f"RECOGNIZED: {event}")
+
+        speech_recognizer.recognizing.connect(lambda event: print(f'RECOGNIZING: {event}'))
+        speech_recognizer.recognized.connect(lambda event: on_recognized)
+        speech_recognizer.session_started.connect(lambda event: print(f'SESSION STARTED: {event}'))
+        speech_recognizer.session_stopped.connect(lambda event: print(f'SESSION STOPPED: {event}'))
+        speech_recognizer.canceled.connect(lambda evt: print(f'CANCELED: {evt}'))
+
+        speech_recognizer.session_stopped.connect(stop_recognition)
+        speech_recognizer.canceled.connect(stop_recognition)
+
+        speech_recognizer.start_continuous_recognition()
+        while not done:
+            await asyncio.sleep(1)

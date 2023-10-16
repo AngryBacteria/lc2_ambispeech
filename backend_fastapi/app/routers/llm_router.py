@@ -5,14 +5,14 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
 
-from app.utils.llm_util import LLMUtil, OpenaiModel
+from app.utils.openai_util import OpenAIUtil, OpenaiModel
 
 llmRouter = APIRouter(
     prefix="/api/llm",
     tags=["llm"],
 )
 
-llmUtil = LLMUtil()
+llmUtil = OpenAIUtil()
 
 
 class OpenaiCompletionMessage(BaseModel):

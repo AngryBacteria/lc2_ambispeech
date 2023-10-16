@@ -1,14 +1,15 @@
 import time
 
+import uvicorn
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.llm_router import llmRouter
 from app.routers.logging_router import loggingRouter
-from app.utils.llm_util import LLMUtil
+from app.utils.openai_util import OpenAIUtil
 from app.utils.mongo_util import MongoUtil
-from app.utils.speech_util import SpeechUtil
+from app.utils.azure_util import AzureUtil
 
 # start app and configure CORS
 app = FastAPI()
@@ -21,9 +22,9 @@ app.add_middleware(
 )
 
 # load dependencies
-speech = SpeechUtil()
+azure_util = AzureUtil()
 mongo = MongoUtil()
-llm = LLMUtil()
+openai_util = OpenAIUtil()
 
 # load other routers
 app.include_router(loggingRouter)
@@ -41,6 +42,7 @@ async def root():
     return "Hello World! The Ambient Speech Recognition Server is working"
 
 
+# testing endpoints
 def fake_data_streamer():
     for i in range(10):
         yield f"some fake data [{i}]"

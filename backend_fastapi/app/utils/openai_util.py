@@ -7,14 +7,14 @@ import openai
 from dotenv import load_dotenv
 
 
-class LLMUtil:
-    """Singleton util class to handle various llm related operations"""
+class OpenAIUtil:
+    """Singleton util class to handle various llm related operations with openai"""
     _instance = None
     openai_model: OpenaiModel = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(LLMUtil, cls).__new__(cls)
+            cls._instance = super(OpenAIUtil, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
