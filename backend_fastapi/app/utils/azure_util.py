@@ -63,7 +63,7 @@ class AzureUtil(object):
         def stop_recognition(event):
             """Stop recognition event"""
             print(f"CLOSING on: {event}")
-            speech_recognizer.stop_continuous_recognition()
+            speech_recognizer.stop_continuous_recognition_async()
             nonlocal done
             done = True
 
