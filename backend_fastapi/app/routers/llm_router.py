@@ -34,12 +34,14 @@ class OpenaiCompletionBody(BaseModel):
 
 @llmRouter.post("/hello/{model}")
 async def hello(model: OpenaiModel, config: OpenaiCompletionConfig):
+    """Hello World example for large language models"""
     llmUtil.openai_model = model
     return await llmUtil.hello_chat_completion(config)
 
 
 @llmRouter.post("/openai/{model}")
 async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
+    """Non-Streaming OpenAI chat completion"""
     llmUtil.openai_model = model
     messages_list = [message.model_dump() for message in body.messages]
     return await llmUtil.chat_completion(messages_list, body.config)
@@ -47,6 +49,7 @@ async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
 
 @llmRouter.post("/openaistream/{model}")
 async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
+    """Streaming OpenAI chat completion"""
     llmUtil.openai_model = model
     messages_list = [message.model_dump() for message in body.messages]
     return StreamingResponse(llmUtil.stream_chat_completion(messages_list, body.config), media_type='text/event-stream')

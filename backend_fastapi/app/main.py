@@ -25,7 +25,7 @@ speech = SpeechUtil()
 mongo = MongoUtil()
 llm = LLMUtil()
 
-# load other routes
+# load other routers
 app.include_router(loggingRouter)
 app.include_router(llmRouter)
 

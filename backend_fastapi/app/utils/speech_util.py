@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 
 class LanguageCode(str, Enum):
+    """Enum for all supported Azure languages"""
     DE_CH = "de-CH"
     DE_DE = "de-DE"
     DE_AT = "de-AT"
@@ -17,6 +18,7 @@ class LanguageCode(str, Enum):
 
 
 class SpeechUtil(object):
+    """Singleton util class to handle various speech to text related operations"""
     _instance = None
     speech_config: SpeechConfig
     azure_region: str
@@ -43,7 +45,8 @@ class SpeechUtil(object):
                 speech_recognition_language=self.language_code
             )
 
-    def file_s2t(self, file_path):
+    def azure_file_path_s2t(self, file_path):
+        """Azure single-shot recognition for an existing audio file. Max length is 15 seconds"""
         audio_config = speechsdk.AudioConfig(filename=file_path)
         speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
         result = speech_recognizer.recognize_once_async().get()

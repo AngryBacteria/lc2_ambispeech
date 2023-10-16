@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 
 class LLMUtil:
+    """Singleton util class to handle various llm related operations"""
     _instance = None
     openai_model: OpenaiModel = None
 
@@ -25,6 +26,7 @@ class LLMUtil:
             self.openai_model = OpenaiModel.GPT_3_TURBO
 
     async def hello_chat_completion(self, config):
+        """Async Hello World chat completion example for openai"""
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
             messages=[{"role": "user", "content": "Hello world"}],
@@ -36,6 +38,7 @@ class LLMUtil:
         return chat_completion_resp.choices[0].message.content
 
     async def chat_completion(self, messages, config):
+        """Async Non-Streaming OpenAI chat completion function"""
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
             messages=messages,
@@ -47,6 +50,7 @@ class LLMUtil:
         return chat_completion_resp.choices[0].message.content
 
     async def stream_chat_completion(self, messages, config):
+        """Async Streaming OpenAI chat completion function"""
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
             messages=messages,
@@ -63,6 +67,7 @@ class LLMUtil:
 
 
 class OpenaiModel(str, Enum):
+    """Enum for all supported OpenAI models"""
     GPT_4 = "gpt-4"
     GPT_4_32k = "gpt-4-32k"
     GPT_3_TURBO = "gpt-3.5-turbo"
