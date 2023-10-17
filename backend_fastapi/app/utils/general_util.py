@@ -6,10 +6,10 @@ def print_attributes(obj, indent=0):
         return
 
     # List of built-in attributes that we don't want to print
-    builtin_attrs = set(dir(type('dummy string')))
+    builtin_attrs = set(dir(type("dummy string")))
 
     for attr in dir(obj):
-        if attr.startswith('__') and attr.endswith('__'):
+        if attr.startswith("__") and attr.endswith("__"):
             continue  # Skip dunder attributes
         if attr in builtin_attrs:
             continue  # Skip built-in attributes

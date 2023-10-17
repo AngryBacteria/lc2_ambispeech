@@ -16,7 +16,7 @@ llmUtil = OpenAIUtil()
 
 
 class OpenaiCompletionMessage(BaseModel):
-    role: Literal['system', 'user']
+    role: Literal["system", "user"]
     content: str
 
 
@@ -52,4 +52,7 @@ async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
     """Streaming OpenAI chat completion"""
     llmUtil.openai_model = model
     messages_list = [message.model_dump() for message in body.messages]
-    return StreamingResponse(llmUtil.stream_chat_completion(messages_list, body.config), media_type='text/event-stream')
+    return StreamingResponse(
+        llmUtil.stream_chat_completion(messages_list, body.config),
+        media_type="text/event-stream",
+    )

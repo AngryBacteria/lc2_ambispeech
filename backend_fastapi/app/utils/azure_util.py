@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 class LanguageCode(str, Enum):
     """Enum for all supported Azure languages"""
+
     DE_CH = "de-CH"
     DE_DE = "de-DE"
     DE_AT = "de-AT"
@@ -20,6 +21,7 @@ class LanguageCode(str, Enum):
 
 class AzureUtil(object):
     """Singleton util class to handle various speech to text related operations with azure"""
+
     _instance = None
     speech_config: SpeechConfig
     azure_region: str
@@ -33,8 +35,13 @@ class AzureUtil(object):
 
     def __init__(self, language_code: LanguageCode = LanguageCode.DE_CH):
         load_dotenv()
-        if os.getenv("AZURE_REGION") is None or os.getenv("AZURE_SPEECH_RESOURCE_KEY") is None:
-            raise EnvironmentError(".env file is missing the AZURE_SPEECH_RESOURCE_KEY or AZURE_REGION")
+        if (
+            os.getenv("AZURE_REGION") is None
+            or os.getenv("AZURE_SPEECH_RESOURCE_KEY") is None
+        ):
+            raise EnvironmentError(
+                ".env file is missing the AZURE_SPEECH_RESOURCE_KEY or AZURE_REGION"
+            )
         else:
             self.azure_region = os.getenv("AZURE_REGION")
             self.azure_speech_Key = os.getenv("AZURE_SPEECH_RESOURCE_KEY")
@@ -43,13 +50,15 @@ class AzureUtil(object):
             self.speech_config = speechsdk.SpeechConfig(
                 subscription=self.azure_speech_Key,
                 region=self.azure_region,
-                speech_recognition_language=self.language_code
+                speech_recognition_language=self.language_code,
             )
 
     def azure_short_s2t(self, file_path: str):
         """Azure single-shot recognition for an existing audio file. Max length is 15 seconds"""
         audio_config = speechsdk.AudioConfig(filename=file_path)
-        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
+        speech_recognizer = speechsdk.SpeechRecognizer(
+            speech_config=self.speech_config, audio_config=audio_config
+        )
         result = speech_recognizer.recognize_once_async().get()
         return result
 
@@ -58,7 +67,9 @@ class AzureUtil(object):
         done = False
         queue = asyncio.Queue()
         audio_config = speechsdk.AudioConfig(filename=file_path)
-        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
+        speech_recognizer = speechsdk.SpeechRecognizer(
+            speech_config=self.speech_config, audio_config=audio_config
+        )
 
         def stop_recognition(event):
             """Stop recognition event"""
@@ -72,11 +83,17 @@ class AzureUtil(object):
             print(f"RECOGNIZED: {event}")
             queue.put_nowait(event)
 
-        speech_recognizer.recognizing.connect(lambda event: print(f'RECOGNIZING: {event}'))
+        speech_recognizer.recognizing.connect(
+            lambda event: print(f"RECOGNIZING: {event}")
+        )
         speech_recognizer.recognized.connect(on_recognized)
-        speech_recognizer.session_started.connect(lambda event: print(f'SESSION STARTED: {event}'))
-        speech_recognizer.session_stopped.connect(lambda event: print(f'SESSION STOPPED: {event}'))
-        speech_recognizer.canceled.connect(lambda evt: print(f'CANCELED: {evt}'))
+        speech_recognizer.session_started.connect(
+            lambda event: print(f"SESSION STARTED: {event}")
+        )
+        speech_recognizer.session_stopped.connect(
+            lambda event: print(f"SESSION STOPPED: {event}")
+        )
+        speech_recognizer.canceled.connect(lambda evt: print(f"CANCELED: {evt}"))
 
         speech_recognizer.session_stopped.connect(stop_recognition)
         speech_recognizer.canceled.connect(stop_recognition)

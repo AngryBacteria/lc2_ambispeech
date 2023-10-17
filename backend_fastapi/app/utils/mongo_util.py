@@ -24,7 +24,9 @@ class MongoUtil:
             raise EnvironmentError(".env file is missing the MONGO_DB_URL")
 
         if MongoUtil._client is None:
-            MongoUtil._client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGO_DB_URL"))
+            MongoUtil._client = motor.motor_asyncio.AsyncIOMotorClient(
+                os.getenv("MONGO_DB_URL")
+            )
         if MongoUtil._db is None:
             MongoUtil._db = MongoUtil._client["main"]
 
@@ -72,7 +74,7 @@ class LogEntry:
         return {
             "date": self.date,
             "service": self.service.name,
-            "endpoint": self.endpoint
+            "endpoint": self.endpoint,
         }
 
 
@@ -80,7 +82,14 @@ class LLMLogEntry(LogEntry):
     model: LLMModel
     tokens: int
 
-    def __init__(self, service: Service, date: datetime, endpoint: str, model: LLMModel, tokens: int):
+    def __init__(
+        self,
+        service: Service,
+        date: datetime,
+        endpoint: str,
+        model: LLMModel,
+        tokens: int,
+    ):
         super().__init__(service, date, endpoint)
         self.model = model
         self.tokens = tokens
@@ -91,7 +100,7 @@ class LLMLogEntry(LogEntry):
             "service": self.service.value,
             "endpoint": self.endpoint,
             "length": self.model.value,
-            "tokens": self.tokens
+            "tokens": self.tokens,
         }
 
 
@@ -107,5 +116,5 @@ class S2TLogEntry(LogEntry):
             "date": self.date,
             "service": self.service.value,
             "endpoint": self.endpoint,
-            "length": self.length
+            "length": self.length,
         }

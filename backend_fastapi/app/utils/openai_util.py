@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 class OpenAIUtil:
     """Singleton util class to handle various llm related operations with openai"""
+
     _instance = None
     openai_model: OpenaiModel = None
 
@@ -33,9 +34,9 @@ class OpenAIUtil:
             max_tokens=config.max_tokens,
             temperature=config.temperature,
             top_p=config.top_p,
-            presence_penalty=config.presence_penalty
+            presence_penalty=config.presence_penalty,
         )
-        return chat_completion_resp.choices[0].get('message').get('content')
+        return chat_completion_resp.choices[0].get("message").get("content")
 
     async def chat_completion(self, messages, config):
         """Async Non-Streaming OpenAI chat completion function"""
@@ -45,9 +46,9 @@ class OpenAIUtil:
             max_tokens=config.max_tokens,
             temperature=config.temperature,
             top_p=config.top_p,
-            presence_penalty=config.presence_penalty
+            presence_penalty=config.presence_penalty,
         )
-        return chat_completion_resp.choices[0].get('message').get('content')
+        return chat_completion_resp.choices[0].get("message").get("content")
 
     async def stream_chat_completion(self, messages, config):
         """Async Streaming OpenAI chat completion function"""
@@ -58,16 +59,17 @@ class OpenAIUtil:
             temperature=config.temperature,
             top_p=config.top_p,
             presence_penalty=config.presence_penalty,
-            stream=True
+            stream=True,
         )
         async for chunk in chat_completion_resp:
-            text = chunk['choices'][0].get('delta').get('content')
+            text = chunk["choices"][0].get("delta").get("content")
             if text is not None:
                 yield text
 
 
 class OpenaiModel(str, Enum):
     """Enum for all supported OpenAI models"""
+
     GPT_4 = "gpt-4"
     GPT_4_32k = "gpt-4-32k"
     GPT_3_TURBO = "gpt-3.5-turbo"
