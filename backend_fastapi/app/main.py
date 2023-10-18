@@ -8,6 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.routers.llm_router import llmRouter
 from app.routers.logging_router import loggingRouter
 from app.routers.transcribe_router import transcribeRouter
+from app.utils.logging_util import logger
 from app.utils.openai_util import OpenAIUtil
 from app.utils.mongo_util import MongoUtil
 from app.utils.azure_util import AzureUtil
@@ -35,7 +36,7 @@ app.include_router(transcribeRouter)
 
 @app.on_event("shutdown")
 def shutdown_event():
-    print("Shutting down the server. Closing the database connections....")
+    logger.info("Shutting down the server. Closing the database connections....")
     mongo.client.close()
 
 

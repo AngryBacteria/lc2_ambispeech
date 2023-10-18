@@ -7,6 +7,8 @@ from enum import Enum
 import motor.motor_asyncio
 from dotenv import load_dotenv
 
+from app.utils.logging_util import logger
+
 
 class MongoUtil:
     _instance = None
@@ -42,7 +44,7 @@ class MongoUtil:
         try:
             await self.db.logs.insert_one(log.get_json())
         except IOError as error:
-            print(f"Error while saving log: {error}")
+            logger.error(f"Error while saving log: {error}")
 
 
 # database objects
