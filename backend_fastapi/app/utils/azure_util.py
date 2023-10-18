@@ -69,7 +69,7 @@ class AzureUtil(object):
         return result
 
     def speech_recognition_with_push_stream(self, file: UploadFile, params):
-        """Azure continuous recognition for a SpooledFile"""
+        """Azure continuous recognition for a Spooled File"""
         # get the correct audio format
         audio_format = AudioStreamFormat(
             channels=params.nchannels,
@@ -85,7 +85,7 @@ class AzureUtil(object):
             speech_config=self.speech_config, audio_config=audio_config
         )
 
-        # recognize callback
+        # register callbacks
         recognized_queue = queue.Queue()
         done = False
 
@@ -93,11 +93,10 @@ class AzureUtil(object):
             logger.info(f"RECOGNIZED: {evt}")
             recognized_queue.put_nowait(evt)
 
-        # connect callbacks
+        speech_recognizer.recognized.connect(recognized_callback)
         speech_recognizer.recognizing.connect(
             lambda evt: logger.debug(f"RECOGNIZING: {evt}")
         )
-        speech_recognizer.recognized.connect(recognized_callback)
         speech_recognizer.session_started.connect(
             lambda evt: logger.info(f"SESSION STARTED: {evt}")
         )
@@ -106,13 +105,11 @@ class AzureUtil(object):
         )
         speech_recognizer.canceled.connect(lambda evt: logger.info(f"CANCELED {evt}"))
 
-        # The buffer size
-        n_bytes = 4096
-
         # start continuous speech recognition
+        n_bytes = 4096
         speech_recognizer.start_continuous_recognition()
 
-        # start pushing data until all data has been read from the file and the queue is empty
+        # process data
         try:
             while not done or not recognized_queue.empty():
                 # check if there are still bytes left
@@ -137,3 +134,46 @@ class AzureUtil(object):
             if not recognized_queue.empty():
                 item = recognized_queue.get()
                 yield f"{item.result.text}"
+
+    def azure_long_s2t_file(self, file_path: str):
+        """Azure continuous recognition for an existing audio file on the disk"""
+        # setup azure
+        audio_config = speechsdk.AudioConfig(filename=file_path)
+        speech_recognizer = speechsdk.SpeechRecognizer(
+            speech_config=self.speech_config, audio_config=audio_config
+        )
+
+        # register callbacks
+        done = False
+        chunks = queue.Queue()
+
+        def stop_recognition(event):
+            """Stop recognition event"""
+            logger.debug(f"CLOSING on: {event}")
+            speech_recognizer.stop_continuous_recognition_async()
+            nonlocal done
+            done = True
+
+        def on_recognized(event):
+            """Sentence got recognized event"""
+            logger.info(f"RECOGNIZED: {event}")
+            chunks.put_nowait(event)
+
+        speech_recognizer.recognized.connect(on_recognized)
+        speech_recognizer.recognizing.connect(
+            lambda event: logger.debug(f"RECOGNIZING: {event}")
+        )
+        speech_recognizer.session_started.connect(
+            lambda event: logger.debug(f"SESSION STARTED: {event}")
+        )
+        speech_recognizer.session_stopped.connect(stop_recognition)
+        speech_recognizer.canceled.connect(stop_recognition)
+        speech_recognizer.start_continuous_recognition()
+
+        # process data
+        while not done or not chunks.empty():
+            if not chunks.empty():
+                item = chunks.get()
+                yield f"{item.result.text}"
+            else:
+                sleep(0.5)

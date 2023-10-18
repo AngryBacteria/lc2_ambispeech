@@ -14,6 +14,7 @@ azure_util = AzureUtil()
 
 @transcribeRouter.post("/file")
 def post_file(file: UploadFile):
+    # validate if the file is a valid wav
     try:
         file.file.seek(0)
         with wave.open(file.file, "rb") as audio_file:
@@ -24,10 +25,16 @@ def post_file(file: UploadFile):
             detail="Audio file was not in the correct format. Please provide an uncompressed WAV file.",
         )
 
-    # TODO return all recognizing events not only recognized
-    file.file.seek(0)
-    return StreamingResponse(
-        azure_util.speech_recognition_with_push_stream(file, audio_params),
-        media_type="text/event-stream",
-    )
-    # return {"size": file.size, "name": file.filename, "content_type": file.content_type, "wav": audio_params}
+    # try to transcribe the wav
+    try:
+        # TODO return all recognizing events not only recognized
+        file.file.seek(0)
+        return StreamingResponse(
+            azure_util.speech_recognition_with_push_stream(file, audio_params),
+            media_type="text/event-stream",
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="The processing of the audio file failed",
+        )
