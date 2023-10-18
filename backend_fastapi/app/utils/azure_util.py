@@ -3,10 +3,16 @@ from __future__ import annotations
 import asyncio
 import os
 from enum import Enum
+import queue
+from time import sleep
+from typing import IO
+from wave import _wave_params
 
 from azure.cognitiveservices.speech import SpeechConfig
 import azure.cognitiveservices.speech as speechsdk
+from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
+from fastapi import UploadFile
 
 
 class LanguageCode(str, Enum):
@@ -62,10 +68,10 @@ class AzureUtil(object):
         result = speech_recognizer.recognize_once_async().get()
         return result
 
-    async def azure_long_s2t(self, file_path: str):
+    def azure_long_s2t(self, file_path: str):
         """Azure continuous recognition for an existing audio file"""
         done = False
-        queue = asyncio.Queue()
+        chunks = queue.Queue()
         audio_config = speechsdk.AudioConfig(filename=file_path)
         speech_recognizer = speechsdk.SpeechRecognizer(
             speech_config=self.speech_config, audio_config=audio_config
@@ -81,11 +87,11 @@ class AzureUtil(object):
         def on_recognized(event):
             """Sentence got recognized event"""
             print(f"RECOGNIZED: {event}")
-            queue.put_nowait(event)
+            chunks.put_nowait(event)
 
-        speech_recognizer.recognizing.connect(
-            lambda event: print(f"RECOGNIZING: {event}")
-        )
+        #speech_recognizer.recognizing.connect(
+        #    lambda event: print(f"RECOGNIZING: {event}")
+        #)
         speech_recognizer.recognized.connect(on_recognized)
         speech_recognizer.session_started.connect(
             lambda event: print(f"SESSION STARTED: {event}")
@@ -100,9 +106,58 @@ class AzureUtil(object):
 
         speech_recognizer.start_continuous_recognition()
 
-        while not done or not queue.empty():
-            if not queue.empty():
-                item = await queue.get()
+        while not done or not chunks.empty():
+            if not chunks.empty():
+                item = chunks.get()
                 yield f"{item.result.text}"
             else:
-                await asyncio.sleep(1)
+                sleep(1)
+
+        print("DONE WITH SPEECH RECOGNITION")
+
+    def speech_recognition_with_push_stream(self, file: UploadFile, params):
+        # get the correct audio format
+        audio_format = AudioStreamFormat(
+            channels=params.nchannels,
+            samples_per_second=params.framerate,
+            bits_per_sample=params.sampwidth * 8
+        )
+        # get the push stream
+        stream = speechsdk.audio.PushAudioInputStream(audio_format)
+        audio_config = speechsdk.audio.AudioConfig(stream=stream)
+
+        # instantiate the speech recognizer with push stream input
+        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
+
+        #recognize callback
+        def recognized_callback(evt):
+            print(f'RECOGNIZED: {evt}')
+
+        # connect callbacks
+        speech_recognizer.recognizing.connect(lambda evt: print(f'RECOGNIZING: {evt}'))
+        speech_recognizer.recognized.connect(recognized_callback)
+        speech_recognizer.session_started.connect(lambda evt: print(f'SESSION STARTED: {evt}'))
+        speech_recognizer.session_stopped.connect(lambda evt: print(f'SESSION STOPPED {evt}'))
+        speech_recognizer.canceled.connect(lambda evt: print(f'CANCELED {evt}'))
+
+        # The buffer size
+        n_bytes = 4096
+
+        # start continuous speech recognition
+        speech_recognizer.start_continuous_recognition()
+
+        # start pushing data until all data has been read from the file
+        try:
+            while True:
+                chunk = file.file.read(n_bytes)
+                print('read {} bytes'.format(len(chunk)))
+                if not chunk:
+                    break
+
+                stream.write(chunk)
+                sleep(.1)
+        finally:
+            # stop recognition and clean up
+            file.file.close()
+            stream.close()
+            speech_recognizer.stop_continuous_recognition()
