@@ -89,21 +89,23 @@ class AzureUtil(object):
         recognized_queue = queue.Queue()
         done = False
 
-        def recognized_callback(evt):
-            logger.info(f"RECOGNIZED: {evt}")
-            recognized_queue.put_nowait(evt)
+        def recognized_callback(event):
+            logger.info(f"RECOGNIZED: {event}")
+            recognized_queue.put_nowait(event)
 
         speech_recognizer.recognized.connect(recognized_callback)
         speech_recognizer.recognizing.connect(
-            lambda evt: logger.debug(f"RECOGNIZING: {evt}")
+            lambda event: logger.debug(f"RECOGNIZING: {event}")
         )
         speech_recognizer.session_started.connect(
-            lambda evt: logger.info(f"SESSION STARTED: {evt}")
+            lambda event: logger.info(f"SESSION STARTED: {event}")
         )
         speech_recognizer.session_stopped.connect(
-            lambda evt: logger.info(f"SESSION STOPPED {evt}")
+            lambda event: logger.info(f"SESSION STOPPED {event}")
         )
-        speech_recognizer.canceled.connect(lambda evt: logger.info(f"CANCELED {evt}"))
+        speech_recognizer.canceled.connect(
+            lambda event: logger.info(f"CANCELED {event}")
+        )
 
         # start continuous speech recognition
         n_bytes = 4096
