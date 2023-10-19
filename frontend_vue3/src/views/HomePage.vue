@@ -1,25 +1,26 @@
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core'
+import AudioRecorder from '@/components/AudioRecorder.vue'
 
 const { isFetching, error, data } = useFetch('http://127.0.0.1:8000')
 
 const postExample: RequestInit = {
   method: 'POST',
-  headers: {'content-type': 'application/json'},
+  headers: { 'content-type': 'application/json' },
   body: JSON.stringify({
-  "messages": [
-    {
-      "role": "user",
-      "content": "hello world! I am so happy :]"
+    messages: [
+      {
+        role: 'user',
+        content: 'hello world! I am so happy :]'
+      }
+    ],
+    config: {
+      max_tokens: 10,
+      temperature: 1,
+      presence_penalty: 0,
+      top_p: 1
     }
-  ],
-  "config": {
-    "max_tokens": 10,
-    "temperature": 1,
-    "presence_penalty": 0,
-    "top_p": 1
-  }
-})
+  })
 }
 
 async function fetchAndPrintStream(url: string, fetchConfig: RequestInit) {
@@ -49,7 +50,10 @@ async function fetchAndPrintStream(url: string, fetchConfig: RequestInit) {
 <template>
   <main>
     <h1>Ambient Speech Recognition</h1>
-    <h3>Data from Server:</h3>
+
+    <AudioRecorder></AudioRecorder>
+
+    <h3>This is some Test Data from Server:</h3>
     <p v-if="isFetching">...Loading :]</p>
     <p v-else-if="error">ERROR: {{ error }}</p>
     <p v-else>{{ data }}</p>
@@ -61,7 +65,9 @@ async function fetchAndPrintStream(url: string, fetchConfig: RequestInit) {
       :loading="isFetching"
     />
     <Button
-      @click="fetchAndPrintStream('http://127.0.0.1:8000/api/llm/openaistream/gpt-3.5-turbo', postExample)"
+      @click="
+        fetchAndPrintStream('http://127.0.0.1:8000/api/llm/openaistream/gpt-3.5-turbo', postExample)
+      "
       label="Get Openai Stream"
       icon="pi pi-check"
       loadingIcon="pi pi-spin pi-spinner"

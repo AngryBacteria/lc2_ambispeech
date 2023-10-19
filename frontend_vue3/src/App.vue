@@ -1,10 +1,8 @@
-<script setup lang="ts">
-import MainPage from './views/MainPage.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <Suspense>
-    <MainPage></MainPage>
+    <router-view></router-view>
   </Suspense>
 </template>
 
