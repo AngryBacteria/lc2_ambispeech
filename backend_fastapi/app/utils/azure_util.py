@@ -199,7 +199,7 @@ class AzureUtil(object):
             speech_config=self.speech_config, audio_config=audio_config
         )
 
-        recognized_queue = queue.Queue()
+        recognized_queue = asyncio.Queue()
 
         def recognized_callback(event):
             logger.info(f"RECOGNIZED: {event}")
@@ -229,7 +229,7 @@ class AzureUtil(object):
                 stream.write(data)
 
                 if not recognized_queue.empty():
-                    item = recognized_queue.get()
+                    item = await recognized_queue.get()
                     await websocket.send_text(item)
         except WebSocketDisconnect:
             print(f"connection closed:")
