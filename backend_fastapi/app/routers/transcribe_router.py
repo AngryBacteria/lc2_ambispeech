@@ -1,8 +1,9 @@
-from fastapi import APIRouter, UploadFile, HTTPException
+import wave
+
+from fastapi import APIRouter, UploadFile, HTTPException, WebSocket
 from starlette.responses import StreamingResponse
 
 from app.utils.azure_util import AzureUtil
-import wave
 
 transcribeRouter = APIRouter(
     prefix="/api/transcribe",
@@ -27,12 +28,24 @@ def post_file(file: UploadFile):
 
     # try to transcribe the wav
     try:
-        # TODO return all recognizing events not only recognized
+        # TODO: return all recognizing events not only recognized
         file.file.seek(0)
         return StreamingResponse(
             azure_util.speech_recognition_with_push_stream(file, audio_params),
             media_type="text/event-stream",
         )
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="The processing of the audio file failed",
+        )
+
+
+# TODO: WORK IN PROGRESS
+@transcribeRouter.websocket("/stream")
+async def stream(websocket: WebSocket):
+    try:
+        await azure_util.test_websocket(websocket)
     except Exception:
         raise HTTPException(
             status_code=500,

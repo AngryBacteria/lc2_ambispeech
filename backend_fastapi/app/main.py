@@ -1,17 +1,17 @@
+import asyncio
 import time
 
-import uvicorn
-from fastapi import FastAPI, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI
+from fastapi.concurrency import run_in_threadpool
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.llm_router import llmRouter
 from app.routers.logging_router import loggingRouter
 from app.routers.transcribe_router import transcribeRouter
-from app.utils.logging_util import logger
-from app.utils.openai_util import OpenAIUtil
-from app.utils.mongo_util import MongoUtil
 from app.utils.azure_util import AzureUtil
+from app.utils.logging_util import logger
+from app.utils.mongo_util import MongoUtil
+from app.utils.openai_util import OpenAIUtil
 
 # start app and configure CORS
 app = FastAPI()
@@ -43,3 +43,20 @@ def shutdown_event():
 @app.get("/")
 async def root():
     return "Hello World! The Ambient Speech Recognition Server is working"
+
+
+# TODO: remove. Only for testing purpose to show that sync in async can block whole app
+@app.get("/test")
+async def test():
+    print("start")
+    print("sleeping 10 seconds async")
+    await asyncio.sleep(5)
+    print("sleeping 10 second sync")
+    await run_in_threadpool(sync_function)
+    return "cooooooooooool"
+
+
+# TODO: remove. Only for testing purpose to show that sync in async can block whole app
+def sync_function():
+    time.sleep(10)
+    return "asdada"

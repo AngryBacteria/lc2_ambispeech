@@ -3,8 +3,16 @@ import { RecordRTCPromisesHandler, StereoAudioRecorder, invokeSaveAsDialog } fro
 
 let stream: MediaStream
 let recorder: RecordRTCPromisesHandler
+let socket: WebSocket
 
 async function initRecorder() {
+  
+  socket = new WebSocket("ws://localhost:8000/api/transcribe/stream");
+
+  socket.addEventListener("message", (event) => {
+  console.log("Message from server: ", event.data);
+});
+  
   stream = await navigator.mediaDevices.getUserMedia({ audio: true })
   recorder = new RecordRTCPromisesHandler(stream, {
     recorderType: StereoAudioRecorder,
@@ -20,6 +28,7 @@ async function initRecorder() {
     timeSlice: 1500,
     ondataavailable: function (blob) {
       console.log('SOME NEW DATA', blob)
+      socket.send(blob)
     }
   })
 }
@@ -34,6 +43,7 @@ async function stopRecording() {
   let blob = await recorder.getBlob()
   invokeSaveAsDialog(blob)
   await recorder.destroy()
+  socket.close()
 }
 </script>
 
