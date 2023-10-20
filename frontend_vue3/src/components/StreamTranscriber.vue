@@ -6,13 +6,12 @@ let recorder: RecordRTCPromisesHandler
 let socket: WebSocket
 
 async function initRecorder() {
-  
-  socket = new WebSocket("ws://localhost:8000/api/transcribe/stream");
+  socket = new WebSocket('ws://localhost:8000/api/transcribe/stream')
 
-  socket.addEventListener("message", (event) => {
-  console.log("Message from server: ", event.data);
-});
-  
+  socket.addEventListener('message', (event) => {
+    console.log('Message from server: ', event.data)
+  })
+
   stream = await navigator.mediaDevices.getUserMedia({ audio: true })
   recorder = new RecordRTCPromisesHandler(stream, {
     recorderType: StereoAudioRecorder,

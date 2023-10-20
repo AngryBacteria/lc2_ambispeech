@@ -1,9 +1,10 @@
 import asyncio
 import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from fastapi.concurrency import run_in_threadpool
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import StreamingResponse
 
 from app.routers.llm_router import llmRouter
 from app.routers.logging_router import loggingRouter
@@ -45,18 +46,18 @@ async def root():
     return "Hello World! The Ambient Speech Recognition Server is working"
 
 
-# TODO: remove. Only for testing purpose to show that sync in async can block whole app
-@app.get("/test")
-async def test():
-    print("start")
-    print("sleeping 10 seconds async")
-    await asyncio.sleep(5)
-    print("sleeping 10 second sync")
-    await run_in_threadpool(sync_function)
-    return "cooooooooooool"
+def fakeStream():
+    for i in range(10):
+        yield f"Data {i}"
+        time.sleep(1)
 
-
-# TODO: remove. Only for testing purpose to show that sync in async can block whole app
-def sync_function():
-    time.sleep(10)
-    return "asdada"
+@app.post("/uploadfile")
+async def create_upload_file(file: UploadFile):
+    print({
+        "filename": file.filename,
+        "bytea": file.size
+    })
+    return StreamingResponse(
+        fakeStream(),
+        media_type="text/event-stream",
+    )
