@@ -87,7 +87,7 @@ class AzureUtil(object):
         )
 
         # register callbacks
-        recognized_queue = queue.Queue()
+        recognized_queue = asyncio.Queue()
         done = False
 
         def recognized_callback(event):
@@ -125,17 +125,19 @@ class AzureUtil(object):
 
                 # read from queue if not empty
                 if not recognized_queue.empty():
-                    item = recognized_queue.get()
+                    item = recognized_queue.get_nowait()
                     yield f"{item.result.text}"
                 sleep(0.1)
         finally:
             # stop recognition and clean up
+            logger.debug("Closing stream and stop recognition")
             file.file.close()
             stream.close()
             speech_recognizer.stop_continuous_recognition()
+            logger.debug("Closed stream and stop recognition")
             # get latest data
             if not recognized_queue.empty():
-                item = recognized_queue.get()
+                item = recognized_queue.get_nowait()
                 yield f"{item.result.text}"
 
     def azure_long_s2t_file(self, file_path: str):
@@ -232,5 +234,7 @@ class AzureUtil(object):
                     item = await recognized_queue.get()
                     await websocket.send_text(item)
         except WebSocketDisconnect:
-            print(f"connection closed:")
+            logger.debug("Closing stream and stop recognition")
+            stream.close()
             speech_recognizer.stop_continuous_recognition()
+            logger.debug("Closed stream and stop recognition")

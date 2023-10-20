@@ -2,4 +2,11 @@
 
 html {
   font-size: 14px;
+  background-color: var(--surface-ground);
+
+  --success: #86efac;
+  --info: #93c5fd;
+  --warning: #fcd34d;
+  --help: #d8b4fe;
+  --danger: #fca5a5;
 }

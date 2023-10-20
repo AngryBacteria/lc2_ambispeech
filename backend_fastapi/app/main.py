@@ -47,7 +47,7 @@ async def root():
 
 
 def fakeStream():
-    for i in range(10):
+    for i in range(4):
         yield f"Data {i}"
         time.sleep(1)
 

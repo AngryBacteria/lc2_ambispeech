@@ -35,6 +35,10 @@ async function initRecorder() {
 async function startRecording() {
   await initRecorder()
   await recorder.startRecording()
+
+  socket.onmessage = (event) => {
+    console.log('Recieved from server: ', event.data)
+  }
 }
 
 async function stopRecording() {
