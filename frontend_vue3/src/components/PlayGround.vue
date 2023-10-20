@@ -23,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { useFetch } from '@vueuse/core'
+import { useFetch } from '@vueuse/core';
 
-const { isFetching, error, data } = useFetch('http://127.0.0.1:8000')
+const { isFetching, error, data } = useFetch('http://127.0.0.1:8000');
 
 const postExample: RequestInit = {
   method: 'POST',
@@ -44,28 +44,28 @@ const postExample: RequestInit = {
       top_p: 1
     }
   })
-}
+};
 
 async function fetchAndPrintStream(url: string, fetchConfig: RequestInit) {
   try {
-    const response = await fetch(url, fetchConfig)
-    const reader = response?.body?.getReader()
-    const decoder = new TextDecoder()
+    const response = await fetch(url, fetchConfig);
+    const reader = response?.body?.getReader();
+    const decoder = new TextDecoder();
 
     while (response.ok && reader && true) {
-      const { value, done } = await reader.read()
+      const { value, done } = await reader.read();
 
       if (done) {
-        console.log('server event stream is done')
-        break
+        console.log('server event stream is done');
+        break;
       }
 
       // Convert chunk from Uint8Array to string and print it out.
-      const text = decoder.decode(value)
-      console.log(text)
+      const text = decoder.decode(value);
+      console.log(text);
     }
   } catch (err) {
-    console.error('Error:', err)
+    console.error('Error:', err);
   }
 }
 </script>

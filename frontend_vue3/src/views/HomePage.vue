@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FileTranscriber from '@/components/FileTranscriber.vue'
+import FileTranscriber from '@/components/FileTranscriber.vue';
 </script>
 
 <template>
