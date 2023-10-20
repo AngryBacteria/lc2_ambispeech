@@ -7,7 +7,7 @@ from enum import Enum
 from time import sleep
 
 import azure.cognitiveservices.speech as speechsdk
-from azure.cognitiveservices.speech import SpeechConfig
+from azure.cognitiveservices.speech import SpeechConfig, SpeechRecognizer
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
 from fastapi import UploadFile
@@ -117,7 +117,7 @@ class AzureUtil(object):
             while not done or not recognized_queue.empty():
                 # check if there are still bytes left
                 chunk = file.file.read(n_bytes)
-                logger.debug("read {} bytes".format(len(chunk)))
+                # logger.debug(f"read {len(chunk)} bytes")
                 if not chunk:
                     done = True
                 else:
@@ -134,11 +134,11 @@ class AzureUtil(object):
             file.file.close()
             stream.close()
             speech_recognizer.stop_continuous_recognition()
-            logger.debug("Closed stream and stop recognition")
             # get latest data
             if not recognized_queue.empty():
                 item = recognized_queue.get_nowait()
                 yield f"{item.result.text}"
+            logger.debug("Closed stream and stop recognition")
 
     def azure_long_s2t_file(self, file_path: str):
         """Azure continuous recognition for an existing audio file on the disk"""
@@ -154,6 +154,7 @@ class AzureUtil(object):
 
         def stop_recognition(event):
             """Stop recognition event"""
+            logger.debug("Closing stream and stop recognition")
             logger.debug(f"CLOSING on: {event}")
             speech_recognizer.stop_continuous_recognition()
             nonlocal done
@@ -182,6 +183,7 @@ class AzureUtil(object):
                 yield f"{item.result.text}"
             else:
                 sleep(0.5)
+        logger.debug("Closed stream and stop recognition")
 
     # work in progress. Main problem right now: cannot send data directly in websocket
     # because callback functions cannot be async :(

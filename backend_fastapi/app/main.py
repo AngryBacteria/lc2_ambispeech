@@ -51,7 +51,7 @@ def fakeStream():
         yield f"Data {i}"
         time.sleep(1)
 
-@app.post("/uploadfile")
+@app.post("/fakefilestream")
 async def create_upload_file(file: UploadFile):
     print({
         "filename": file.filename,

@@ -1,27 +1,17 @@
 <template>
   <section class="component-wrapper">
-    <section class="upload-wrapper">
-      <ProgressBar v-if="!error" :value="uploadProgress"></ProgressBar>
-      <ProgressBar v-else style="background-color: var(--danger)"></ProgressBar>
-      <div class="file-wrapper">
-        <FileUpload
-          mode="basic"
-          name="file"
-          url="http://localhost:8000/uploadfile"
-          :auto="true"
-          accept="audio/wav"
-          chooseLabel="Hochladen"
-          customUpload
-          @uploader="customUploaderXHR($event)"
-        />
-        <p v-if="error" style="color: var(--danger)">{{ error }}</p>
-        <p v-else-if="fileSize && fileName">{{ fileName }} ({{ fileSize }})</p>
-      </div>
-    </section>
+    <FileUploader
+      :transcription-is-loading="transcriptionIsLoading"
+      :transcription-error="transcriptionError"
+      :upload-progress="uploadProgress"
+      :error-message="errorMessage"
+      @start-upload="customUploaderXHR"
+    ></FileUploader>
+
     <Accordion :activeIndex="0">
       <AccordionTab header="Transkribierter Text">
         <Textarea
-          :disabled="requestIsLoading || transcription.length < 1"
+          :disabled="transcriptionIsLoading || transcription.length < 1 || transcriptionError"
           v-model="transcription"
           autoResize
           rows="1"
@@ -32,27 +22,32 @@
 </template>
 
 <script setup lang="ts">
-import type { FileUploadUploaderEvent } from 'primevue/fileupload';
+import { getHumanFileSize } from '@/composables/util';
 import { ref } from 'vue';
+import FileUploader from './FileUploader.vue';
 
+const transcriptionError = ref(false);
+const transcriptionIsLoading = ref(false);
+
+// set state
 const fileName = ref('');
 const fileSize = ref();
 const uploadProgress = ref(0);
-const requestIsLoading = ref(false);
-const error = ref<string | boolean>(false);
 const transcription = ref('');
+const errorMessage = ref('');
+const apiUrl = 'http://localhost:8000/api/transcribe/file';
 
-function customUploaderXHR(event: FileUploadUploaderEvent) {
+function customUploaderXHR(files: File[]) {
   // Set file state
-  const file = (event.files as File[])[0];
+  const file = files[0];
   if (!file) {
     throw new Error('No file provided for upload.');
   }
-  requestIsLoading.value = true;
-  error.value = false;
+  transcriptionIsLoading.value = true;
+  transcriptionError.value = false;
   fileName.value = file.name;
   uploadProgress.value = 0;
-  fileSize.value = humanFileSize(file.size);
+  fileSize.value = getHumanFileSize(file.size);
   transcription.value = '';
 
   // Create form data and open xhr request
@@ -80,50 +75,20 @@ function customUploaderXHR(event: FileUploadUploaderEvent) {
     }
     if (xhr.readyState === XMLHttpRequest.DONE) {
       console.log('Request finished');
-      requestIsLoading.value = false;
+      transcriptionIsLoading.value = false;
     }
   };
 
   // Event listener for errors during the request
   xhr.onerror = function () {
     console.error('XHR error.');
-    requestIsLoading.value = false;
-    error.value = `XHR error. Status: ${this.status} Status text: ${this.statusText}`;
+    transcriptionIsLoading.value = false;
+    transcriptionError.value = true;
+    errorMessage.value = `Bei der Anfrage ist ein Fehler aufgetreten. HTTP-Code ${this.status}: ${this.statusText}`;
   };
 
-  xhr.open('POST', 'http://localhost:8000/uploadfile', true);
+  xhr.open('POST', apiUrl, true);
   xhr.send(data);
-}
-
-/**
- * Format bytes as human-readable text.
- *
- * @param bytes Number of bytes.
- * @param si True to use metric (SI) units, aka powers of 1000. False to use
- *           binary (IEC), aka powers of 1024.
- * @param dp Number of decimal places to display.
- *
- * @return Formatted string.
- */
-function humanFileSize(bytes: number, si = false, dp = 1) {
-  const thresh = si ? 1000 : 1024;
-
-  if (Math.abs(bytes) < thresh) {
-    return bytes + ' B';
-  }
-
-  const units = si
-    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-  let u = -1;
-  const r = 10 ** dp;
-
-  do {
-    bytes /= thresh;
-    ++u;
-  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
-
-  return bytes.toFixed(dp) + ' ' + units[u];
 }
 </script>
 
