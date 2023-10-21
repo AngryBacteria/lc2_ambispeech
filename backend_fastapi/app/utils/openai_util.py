@@ -35,7 +35,7 @@ class OpenAIUtil:
             max_tokens=config.max_tokens,
             presence_penalty=config.presence_penalty,
             temperature=config.temperature,
-            top_p=config.top_p
+            top_p=config.top_p,
         )
         return chat_completion_resp.choices[0].get("message").get("content")
 
@@ -48,7 +48,7 @@ class OpenAIUtil:
             max_tokens=config.max_tokens,
             presence_penalty=config.presence_penalty,
             temperature=config.temperature,
-            top_p=config.top_p
+            top_p=config.top_p,
         )
         return chat_completion_resp.choices[0].get("message").get("content")
 

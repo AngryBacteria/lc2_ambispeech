@@ -18,6 +18,8 @@
         />
       </AccordionTab>
     </Accordion>
+
+    <button @click="abortUpload()">Abort</button>
   </section>
 </template>
 
@@ -36,12 +38,24 @@ const uploadProgress = ref(0);
 const transcription = ref('');
 const errorMessage = ref('');
 const apiUrl = 'http://localhost:8000/api/transcribe/file';
+let activeXHR: XMLHttpRequest | null = null;
+
+function abortUpload() {
+  if (activeXHR) {
+    activeXHR.abort();
+    console.log('Upload aborted');
+    activeXHR = null;
+  }
+}
 
 function customUploaderXHR(files: File[]) {
+  console.log('Starting file upload');
   // Set file state
   const file = files[0];
   if (!file) {
-    throw new Error('No file provided for upload.');
+    //TODO: handle correctly
+    console.log('No file provided for upload.');
+    return;
   }
   transcriptionIsLoading.value = true;
   transcriptionError.value = false;
@@ -53,10 +67,10 @@ function customUploaderXHR(files: File[]) {
   // Create form data and open xhr request
   const data = new FormData();
   data.append('file', file);
-  const xhr = new XMLHttpRequest();
+  activeXHR = new XMLHttpRequest();
 
   // Event listener for progress
-  xhr.upload.onprogress = function (e) {
+  activeXHR.upload.onprogress = function (e) {
     if (e.lengthComputable) {
       const percentComplete = (e.loaded / e.total) * 100;
       uploadProgress.value = Math.round(percentComplete);
@@ -64,31 +78,46 @@ function customUploaderXHR(files: File[]) {
     }
   };
 
+  //TODO: handle if response from server is an error
   // Event listener for the server side streaming response
   let lastReadPosition = 0;
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === XMLHttpRequest.LOADING) {
-      const newText = xhr.responseText.substring(lastReadPosition);
-      console.log('New chunk received:', newText);
-      transcription.value = transcription.value + ' ' + newText;
-      lastReadPosition = xhr.responseText.length;
+  activeXHR.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.LOADING) {
+      const newText = this.responseText.substring(lastReadPosition);
+      if (this.status !== 200) {
+        // Response not good, set error state
+        transcriptionIsLoading.value = false;
+        transcriptionError.value = true;
+        const detail = JSON.parse(newText).detail;
+        if (detail) {
+          errorMessage.value = `${detail}`;
+        } else {
+          errorMessage.value = `Bei der Anfrage ist ein Fehler aufgetreten. HTTP-Code ${this.status}: ${this.statusText}`;
+        }
+      }
+      // Response good, get data chunk by chunk
+      else {
+        console.log(`New stream chunk received [${this.status}]: ${newText}`);
+        transcription.value = transcription.value + ' ' + newText;
+        lastReadPosition = this.responseText.length;
+      }
     }
-    if (xhr.readyState === XMLHttpRequest.DONE) {
+    if (this.readyState === XMLHttpRequest.DONE) {
       console.log('Request finished');
       transcriptionIsLoading.value = false;
     }
   };
 
   // Event listener for errors during the request
-  xhr.onerror = function () {
+  activeXHR.onerror = function () {
     console.error('XHR error.');
     transcriptionIsLoading.value = false;
     transcriptionError.value = true;
     errorMessage.value = `Bei der Anfrage ist ein Fehler aufgetreten. HTTP-Code ${this.status}: ${this.statusText}`;
   };
 
-  xhr.open('POST', apiUrl, true);
-  xhr.send(data);
+  activeXHR.open('POST', apiUrl, true);
+  activeXHR.send(data);
 }
 </script>
 

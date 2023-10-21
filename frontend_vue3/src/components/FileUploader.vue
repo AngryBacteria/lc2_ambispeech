@@ -8,7 +8,7 @@
         name="file"
         url="http://localhost:8000/uploadfile"
         :auto="true"
-        accept="audio/wav"
+        accept="audio/*"
         chooseLabel="Hochladen"
         customUpload
         @uploader="handleUpload($event.files as File[])"
@@ -20,24 +20,25 @@
 </template>
 
 <script setup lang="ts">
+import { type FileTranscriptionProps } from '@/model/interfaces';
 import { ref } from 'vue';
 
 const emit = defineEmits(['startUpload']);
-defineProps<{
-  transcriptionError: boolean;
-  transcriptionIsLoading: boolean;
-  uploadProgress: number;
-  errorMessage: string;
-}>();
+defineProps<FileTranscriptionProps>();
 
 const fileName = ref('');
-const fileSize = ref();
+const fileSize = ref(0);
 
 function handleUpload(files: File[]) {
+  // Reset state
+  fileName.value = '';
+  fileSize.value = 0;
+
   const file = files[0];
+  console.log('Got File from user: ', file);
   if (!file) {
     //TODO: handle this
-    console.log('handle this');
+    console.log('no file error');
   }
   fileName.value = file.name;
   fileSize.value = file.size;

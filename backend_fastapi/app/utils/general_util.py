@@ -18,3 +18,24 @@ def print_attributes(obj, indent=0):
             print("  " * indent + f"{attr}: {value}")
         except Exception as e:
             print("  " * indent + f"{attr}: <Error: {e}>")
+
+
+def format_time(milliseconds):
+    """Convert milliseconds into a human-readable string."""
+
+    seconds, milliseconds = divmod(milliseconds, 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+
+    parts = []
+
+    if hours:
+        parts.append(f"{hours}h")
+    if minutes:
+        parts.append(f"{minutes}m")
+    if seconds:
+        parts.append(f"{seconds}s")
+    if milliseconds:
+        parts.append(f"{milliseconds}ms")
+
+    return " ".join(parts) or "0ms"

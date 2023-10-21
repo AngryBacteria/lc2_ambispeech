@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import os
-import queue
 from enum import Enum
-from time import sleep
 
 import azure.cognitiveservices.speech as speechsdk
-from azure.cognitiveservices.speech import SpeechConfig, SpeechRecognizer
+from azure.cognitiveservices.speech import SpeechConfig
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
 from fastapi import UploadFile
@@ -69,7 +67,7 @@ class AzureUtil(object):
         result = speech_recognizer.recognize_once_async().get()
         return result
 
-    def speech_recognition_with_push_stream(self, file: UploadFile, params):
+    async def speech_recognition_with_push_stream(self, file: UploadFile, params):
         """Azure continuous recognition for a Spooled File with a push stream"""
         # get the correct audio format
         audio_format = AudioStreamFormat(
@@ -116,7 +114,7 @@ class AzureUtil(object):
         try:
             while not done or not recognized_queue.empty():
                 # check if there are still bytes left
-                chunk = file.file.read(n_bytes)
+                chunk = await file.read(n_bytes)
                 # logger.debug(f"read {len(chunk)} bytes")
                 if not chunk:
                     done = True
@@ -125,65 +123,20 @@ class AzureUtil(object):
 
                 # read from queue if not empty
                 if not recognized_queue.empty():
-                    item = recognized_queue.get_nowait()
+                    item = await recognized_queue.get()
                     yield f"{item.result.text}"
-                sleep(0.1)
+                await asyncio.sleep(0.1)
         finally:
             # stop recognition and clean up
             logger.debug("Closing stream and stop recognition")
-            file.file.close()
+            await file.close()
             stream.close()
             speech_recognizer.stop_continuous_recognition()
             # get latest data
             if not recognized_queue.empty():
-                item = recognized_queue.get_nowait()
+                item = await recognized_queue.get()
                 yield f"{item.result.text}"
             logger.debug("Closed stream and stop recognition")
-
-    def azure_long_s2t_file(self, file_path: str):
-        """Azure continuous recognition for an existing audio file on the disk"""
-        # setup azure
-        audio_config = speechsdk.AudioConfig(filename=file_path)
-        speech_recognizer = speechsdk.SpeechRecognizer(
-            speech_config=self.speech_config, audio_config=audio_config
-        )
-
-        # register callbacks
-        done = False
-        chunks = queue.Queue()
-
-        def stop_recognition(event):
-            """Stop recognition event"""
-            logger.debug("Closing stream and stop recognition")
-            logger.debug(f"CLOSING on: {event}")
-            speech_recognizer.stop_continuous_recognition()
-            nonlocal done
-            done = True
-
-        def on_recognized(event):
-            """Sentence got recognized event"""
-            logger.info(f"RECOGNIZED: {event}")
-            chunks.put_nowait(event)
-
-        speech_recognizer.recognized.connect(on_recognized)
-        speech_recognizer.recognizing.connect(
-            lambda event: logger.debug(f"RECOGNIZING: {event}")
-        )
-        speech_recognizer.session_started.connect(
-            lambda event: logger.debug(f"SESSION STARTED: {event}")
-        )
-        speech_recognizer.session_stopped.connect(stop_recognition)
-        speech_recognizer.canceled.connect(stop_recognition)
-        speech_recognizer.start_continuous_recognition()
-
-        # process data
-        while not done or not chunks.empty():
-            if not chunks.empty():
-                item = chunks.get()
-                yield f"{item.result.text}"
-            else:
-                sleep(0.5)
-        logger.debug("Closed stream and stop recognition")
 
     # work in progress. Main problem right now: cannot send data directly in websocket
     # because callback functions cannot be async :(

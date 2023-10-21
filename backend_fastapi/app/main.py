@@ -51,12 +51,10 @@ def fakeStream():
         yield f"Data {i}"
         time.sleep(1)
 
+
 @app.post("/fakefilestream")
 async def create_upload_file(file: UploadFile):
-    print({
-        "filename": file.filename,
-        "bytea": file.size
-    })
+    print({"filename": file.filename, "bytea": file.size})
     return StreamingResponse(
         fakeStream(),
         media_type="text/event-stream",
