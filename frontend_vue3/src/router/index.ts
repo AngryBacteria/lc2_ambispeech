@@ -1,4 +1,5 @@
 import HomePageVue from '@/views/HomePage.vue';
+import SettingsPageVue from '@/views/SettingsPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -7,6 +8,10 @@ const router = createRouter({
     {
       path: '/',
       component: HomePageVue
+    },
+    {
+      path: '/einstellungen',
+      component: SettingsPageVue
     }
   ]
 });

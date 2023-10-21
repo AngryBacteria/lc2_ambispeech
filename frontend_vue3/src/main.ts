@@ -20,13 +20,17 @@ import '@/assets/main.css';
 import 'primevue/resources/themes/soho-dark/theme.css';
 //import 'primevue/resources/themes/viva-dark/theme.css'
 
-import Button from 'primevue/button';
 import PrimeVue from 'primevue/config';
+import Button from 'primevue/button';
 import FileUpload from 'primevue/fileupload';
 import ProgressBar from 'primevue/progressbar';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Textarea from 'primevue/textarea';
+import Toolbar from 'primevue/toolbar';
+import Dropdown from 'primevue/dropdown';
+import Slider from 'primevue/slider';
+import InputNumber from 'primevue/inputnumber';
 
 const app = createApp(App);
 
@@ -40,5 +44,9 @@ app.component('ProgressBar', ProgressBar);
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);
 app.component('Textarea', Textarea);
+app.component('Toolbar', Toolbar);
+app.component('Dropdown', Dropdown);
+app.component('Slider', Slider);
+app.component('InputNumber', InputNumber);
 
 app.mount('#app');

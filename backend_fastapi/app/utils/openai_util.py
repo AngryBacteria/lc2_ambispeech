@@ -31,10 +31,11 @@ class OpenAIUtil:
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
             messages=[{"role": "user", "content": "Hello world"}],
+            frequency_penalty=config.frequency_penalty,
             max_tokens=config.max_tokens,
-            temperature=config.temperature,
-            top_p=config.top_p,
             presence_penalty=config.presence_penalty,
+            temperature=config.temperature,
+            top_p=config.top_p
         )
         return chat_completion_resp.choices[0].get("message").get("content")
 
@@ -43,10 +44,11 @@ class OpenAIUtil:
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
             messages=messages,
+            frequency_penalty=config.frequency_penalty,
             max_tokens=config.max_tokens,
-            temperature=config.temperature,
-            top_p=config.top_p,
             presence_penalty=config.presence_penalty,
+            temperature=config.temperature,
+            top_p=config.top_p
         )
         return chat_completion_resp.choices[0].get("message").get("content")
 
@@ -55,10 +57,11 @@ class OpenAIUtil:
         chat_completion_resp = await openai.ChatCompletion.acreate(
             model=self.openai_model.value,
             messages=messages,
+            frequency_penalty=config.frequency_penalty,
             max_tokens=config.max_tokens,
+            presence_penalty=config.presence_penalty,
             temperature=config.temperature,
             top_p=config.top_p,
-            presence_penalty=config.presence_penalty,
             stream=True,
         )
         async for chunk in chat_completion_resp:

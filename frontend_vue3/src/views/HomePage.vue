@@ -4,12 +4,11 @@ import FileTranscriber from '@/components/FileTranscriber.vue';
 
 <template>
   <main>
-    <h1>Ambient Speech Recognition</h1>
     <FileTranscriber></FileTranscriber>
   </main>
 </template>
 
-<style>
+<style scoped>
 main {
   display: flex;
   flex-direction: column;

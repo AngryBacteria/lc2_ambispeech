@@ -10,3 +10,7 @@ html {
   --help: #d8b4fe;
   --danger: #fca5a5;
 }
+
+body {
+  margin: 0;
+}

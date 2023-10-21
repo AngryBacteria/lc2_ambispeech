@@ -21,9 +21,10 @@ class OpenaiCompletionMessage(BaseModel):
 
 
 class OpenaiCompletionConfig(BaseModel):
+    frequency_penalty: float = 0
     max_tokens: int = 10
-    temperature: float = 1
     presence_penalty: float = 0
+    temperature: float = 1
     top_p: float = 1
 
 
