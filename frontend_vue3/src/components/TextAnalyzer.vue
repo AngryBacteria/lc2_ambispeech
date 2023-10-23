@@ -20,9 +20,9 @@
 <script setup lang="ts">
     import { ref } from 'vue';
 
-    let transcription = ref('');
-    let extractedInfo = ref('');
-    let analysisIsLoading = ref(false);
+    const transcription = ref('');
+    const extractedInfo = ref('');
+    const analysisIsLoading = ref(false);
     let llmApiUrl = 'http://127.0.0.1:8000/api/llm/openai/gpt-3.5-turbo';
 
     async function analyzeText() {
