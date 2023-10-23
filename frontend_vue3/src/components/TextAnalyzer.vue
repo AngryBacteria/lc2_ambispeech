@@ -56,10 +56,10 @@
             body: JSON.stringify(requestBody),
         });
 
-        const data = await response.json();
-        console.log(data)
-        if (data.length > 1) {
-            extractedInfo.value = data;
+        const answer = await response.json();
+        console.log(answer)
+        if (answer.length > 1) {
+            extractedInfo.value = answer;
         }
         } catch (error) {
             console.error('Error:', error);

@@ -26,6 +26,19 @@ export const useUserStore = defineStore('user', () => {
     bufferSize.value = 4096;
   }
 
+  const openAiPrompt = useLocalStorage('openAiPrompt', `
+  Gegeben ist das folgende Transkript eines Dialogs zwischen Ärzten und Patienten. Bitte extrahiere spezifische Informationen über Symptome und Medikamente und gib diese im JSON-Format zurück:
+
+  <transcript>
+
+  Bitte geben Sie das Ergebnis im folgenden Format:
+
+  {
+  "Symptome": ["Symptom1", "Symptom2", ...],
+  "Medikamente": ["Medikament1", "Medikament2", ...]
+  }
+  `);
+
   //Maybe interesting
   //https://vueuse.org/core/useWebNotification/
   //https://vueuse.org/core/useDevicesList/
@@ -33,5 +46,5 @@ export const useUserStore = defineStore('user', () => {
   //https://vueuse.org/core/useWebSocket/
   //https://vueuse.org/core/useConfirmDialog/
 
-  return { width, height, isDark, toggleDark, bufferSize, openAiConfig, resetSettings };
+  return { width, height, isDark, toggleDark, bufferSize, openAiConfig, resetSettings, openAiPrompt };
 });
