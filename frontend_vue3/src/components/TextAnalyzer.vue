@@ -32,12 +32,15 @@
 
         analysisIsLoading.value = true;
 
+        //Load prompt and insert transcript
+        let prompt = userStore.openAiPrompt.replace('<PLACEHOLDER>', transcription.value)
+
         //TODO relocate max tokens into backend
         let requestBody = {
             messages: [
                 {
                 role: 'user',
-                content: transcription.value
+                content: prompt
                 }
             ],
             config: {

@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', () => {
   const openAiPrompt = useLocalStorage('openAiPrompt', `
   Gegeben ist das folgende Transkript eines Dialogs zwischen Ärzten und Patienten. Bitte extrahiere spezifische Informationen über Symptome und Medikamente und gib diese im JSON-Format zurück:
 
-  <transcript>
+  <PLACEHOLDER>
 
   Bitte geben Sie das Ergebnis im folgenden Format:
 
