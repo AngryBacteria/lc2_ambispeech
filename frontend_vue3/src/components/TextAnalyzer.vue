@@ -18,11 +18,13 @@
 </template>
   
 <script setup lang="ts">
+    import { useUserStore } from '@/stores/user';
     import { ref } from 'vue';
 
     const transcription = ref('');
     const extractedInfo = ref('');
     const analysisIsLoading = ref(false);
+    const userStore = useUserStore();
     let llmApiUrl = 'http://127.0.0.1:8000/api/llm/openai/gpt-3.5-turbo';
 
     async function analyzeText() {
@@ -30,7 +32,7 @@
 
         analysisIsLoading.value = true;
 
-        //TODO relocate max tokens into backend and other settings to settings page
+        //TODO relocate max tokens into backend
         let requestBody = {
             messages: [
                 {
@@ -40,9 +42,10 @@
             ],
             config: {
                 max_tokens: 50,
-                temperature: 1,
-                presence_penalty: 0,
-                top_p: 1
+                temperature: userStore.openAiConfig.temperature,
+                presence_penalty: userStore.openAiConfig.presence_penalty,
+                top_p: userStore.openAiConfig.top_p,
+                frequency_penalty: userStore.openAiConfig.frequency_penalty
             }
         };
 
