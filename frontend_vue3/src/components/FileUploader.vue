@@ -39,6 +39,7 @@ function handleUpload(files: File[]) {
   if (!file) {
     //TODO: handle this
     console.log('no file error');
+    return;
   }
   fileName.value = file.name;
   fileSize.value = file.size;
@@ -46,3 +47,38 @@ function handleUpload(files: File[]) {
   emit('startUpload', files);
 }
 </script>
+
+<style scoped>
+.upload-wrapper {
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-card);
+}
+
+.file-wrapper {
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+.file-wrapper p {
+  word-break: break-all;
+}
+
+.p-progressbar-determinate .p-progressbar-value-animate {
+  transition: width 0.1s ease-in-out;
+}
+
+.p-progressbar {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  height: 8px;
+}
+
+:deep(.p-progressbar-label) {
+  display: none;
+}
+</style>

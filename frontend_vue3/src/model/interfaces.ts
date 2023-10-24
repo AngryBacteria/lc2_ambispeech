@@ -4,3 +4,9 @@ export type FileTranscriptionProps = {
   uploadProgress: number;
   errorMessage: string;
 };
+
+export enum StateFlag {
+  INITIAL,
+  ERROR,
+  SUCCESS
+}
