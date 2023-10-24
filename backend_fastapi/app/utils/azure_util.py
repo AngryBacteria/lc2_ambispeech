@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import time
 from enum import Enum
 
 import azure.cognitiveservices.speech as speechsdk
@@ -11,6 +12,7 @@ from dotenv import load_dotenv
 from fastapi import UploadFile
 from fastapi import WebSocket, WebSocketDisconnect
 
+from app.utils.general_util import format_time
 from app.utils.logging_util import logger
 
 

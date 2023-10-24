@@ -78,7 +78,6 @@ function customUploaderXHR(files: File[]) {
     }
   };
 
-  //TODO: handle if response from server is an error
   // Event listener for the server side streaming response
   let lastReadPosition = 0;
   activeXHR.onreadystatechange = function () {
