@@ -22,6 +22,10 @@
 <script setup lang="ts">
 import { type FileTranscriptionProps } from '@/model/interfaces';
 import { ref } from 'vue';
+/**
+ * With this component a user can upload a file to the web-application.
+ * This file can then be passed to the transcriber component, that uploads it to the backend
+ */
 
 const emit = defineEmits(['startUpload']);
 defineProps<FileTranscriptionProps>();

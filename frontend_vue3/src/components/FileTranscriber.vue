@@ -1,7 +1,13 @@
 <template>
   <section class="component-wrapper">
     transcriptionIsLoading: {{ transcriptionIsLoading }}
-    <FileRecorder></FileRecorder>
+    <FileRecorder
+      :transcription-is-loading="transcriptionIsLoading"
+      :transcription-error="transcriptionError"
+      :upload-progress="uploadProgress"
+      :error-message="errorMessage"
+      @start-upload="customUploaderXHR"
+    ></FileRecorder>
     <FileUploader
       :transcription-is-loading="transcriptionIsLoading"
       :transcription-error="transcriptionError"
@@ -31,6 +37,12 @@ import { ref } from 'vue';
 import FileUploader from './FileUploader.vue';
 import { StateFlag } from '@/model/interfaces';
 import FileRecorder from './FileRecorder.vue';
+/**
+ * This component transcribes the contents of an audio file with the backend.
+ * It receives audio data, uploads it to the backend and retrieves the transcribed text
+ */
+
+//TODO: make two-way data binding for transcriptionError and transcriptionIsLoading and errorMessage
 
 // state
 const transcriptionError = ref(false);
@@ -53,6 +65,10 @@ function abortUpload() {
   }
 }
 
+/**
+ * Uploads files to the backend and tracks various state
+ * @param files One or more files
+ */
 function customUploaderXHR(files: File[]) {
   console.log('Starting file upload');
   // Set file state
@@ -126,6 +142,11 @@ function customUploaderXHR(files: File[]) {
   activeXHR.send(data);
 }
 
+/**
+ * Helper function to better manage state
+ * @param state The state to switch to
+ * @param error The optional error message to set
+ */
 function setState(state: StateFlag, error: string = '') {
   switch (state) {
     case StateFlag.ERROR:

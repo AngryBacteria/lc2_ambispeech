@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { useDark, useLocalStorage, useToggle, useWindowSize } from '@vueuse/core';
+import type { BufferSize } from '@/model/interfaces';
 
 export const useUserStore = defineStore('user', () => {
   const { width, height } = useWindowSize();
@@ -8,7 +9,7 @@ export const useUserStore = defineStore('user', () => {
 
   const toggleDark = useToggle(isDark);
 
-  const bufferSize = useLocalStorage('bufferSize', 4096);
+  const bufferSize = useLocalStorage<BufferSize>('bufferSize', 4096);
 
   const openAiConfig = useLocalStorage('openAiConfig', {
     frequency_penalty: 0,
