@@ -2,24 +2,24 @@
   <section class="component-wrapper">
     transcriptionIsLoading: {{ transcriptionIsLoading }}
     <FileRecorder
+      v-model:transcriptionError="transcriptionError"
       :transcription-is-loading="transcriptionIsLoading"
-      :transcription-error="transcriptionError"
       :upload-progress="uploadProgress"
-      :error-message="errorMessage"
       @start-upload="customUploaderXHR"
     ></FileRecorder>
     <FileUploader
+      v-model:transcriptionError="transcriptionError"
       :transcription-is-loading="transcriptionIsLoading"
-      :transcription-error="transcriptionError"
       :upload-progress="uploadProgress"
-      :error-message="errorMessage"
       @start-upload="customUploaderXHR"
     ></FileUploader>
 
     <Accordion :activeIndex="0">
       <AccordionTab header="Transkribierter Text">
         <Textarea
-          :disabled="transcriptionIsLoading || transcription.length < 1 || transcriptionError"
+          :disabled="
+            transcriptionIsLoading || transcription.length < 1 || transcriptionError.length > 0
+          "
           v-model="transcription"
           autoResize
           rows="1"
@@ -45,9 +45,8 @@ import FileRecorder from './FileRecorder.vue';
 //TODO: make two-way data binding for transcriptionError and transcriptionIsLoading and errorMessage
 
 // state
-const transcriptionError = ref(false);
+const transcriptionError = ref('');
 const transcriptionIsLoading = ref(false);
-const errorMessage = ref('');
 
 // data
 const fileName = ref('');
@@ -151,8 +150,7 @@ function setState(state: StateFlag, error: string = '') {
   switch (state) {
     case StateFlag.ERROR:
       transcriptionIsLoading.value = false;
-      transcriptionError.value = true;
-      errorMessage.value = error;
+      transcriptionError.value = error;
 
       fileName.value = '';
       fileSize.value = 0;
@@ -161,8 +159,7 @@ function setState(state: StateFlag, error: string = '') {
       break;
     case StateFlag.INITIAL:
       transcriptionIsLoading.value = true;
-      transcriptionError.value = false;
-      errorMessage.value = '';
+      transcriptionError.value = '';
 
       fileName.value = '';
       fileSize.value = 0;
@@ -171,8 +168,7 @@ function setState(state: StateFlag, error: string = '') {
       break;
     case StateFlag.SUCCESS:
       transcriptionIsLoading.value = false;
-      transcriptionError.value = false;
-      errorMessage.value = '';
+      transcriptionError.value = '';
       break;
   }
 }

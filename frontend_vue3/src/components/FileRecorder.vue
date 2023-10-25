@@ -32,21 +32,33 @@
         icon="pi pi-trash"
         size="small"
       />
+      <p v-if="estimatedSize > 0" class="centered-p">Aufnahmegrösse: {{ estimatedSizeString }}</p>
     </section>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { RecordRTCPromisesHandler, StereoAudioRecorder, invokeSaveAsDialog } from 'recordrtc';
 import { useUserStore } from '@/stores/user';
 import { type FileTranscriptionProps } from '@/model/interfaces';
+import { getHumanFileSize } from '@/composables/util';
 
 const emit = defineEmits(['startUpload']);
 defineProps<FileTranscriptionProps>();
 
+const transcriptionError = defineModel<string>('transcriptionError', {
+  required: true
+});
+
 const isRecording = ref(false);
 const dataAvailable = ref(false);
+const estimatedSize = ref(0);
+
+const estimatedSizeString = computed(() => {
+  return getHumanFileSize(estimatedSize.value);
+});
+
 const store = useUserStore();
 
 let stream: MediaStream;
@@ -80,12 +92,19 @@ async function startRecording() {
       timeSlice: 1500,
       ondataavailable: function (blob) {
         console.log('SOME NEW DATA', blob);
+        if (blob?.size) {
+          estimatedSize.value = estimatedSize.value + blob.size;
+        }
       }
     });
+    estimatedSize.value = 0;
+    transcriptionError.value = '';
     await recorder.startRecording();
     return;
   }
   if ((await recorder?.getState()) === 'inactive' || (await recorder?.getState()) === 'stopped') {
+    estimatedSize.value = 0;
+    transcriptionError.value = '';
     await recorder.startRecording();
     return;
   }
@@ -121,6 +140,7 @@ async function upload() {
 async function deleteData() {
   isRecording.value = false;
   dataAvailable.value = false;
+  estimatedSize.value = 0;
   await recorder.stopRecording();
   await recorder.reset();
 }
@@ -150,5 +170,10 @@ async function deleteData() {
 
 :deep(.p-progressbar-label) {
   display: none;
+}
+
+.centered-p {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 </style>

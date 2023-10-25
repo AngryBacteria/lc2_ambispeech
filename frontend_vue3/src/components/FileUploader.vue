@@ -13,7 +13,7 @@
         customUpload
         @uploader="handleUpload($event.files as File[])"
       />
-      <p v-if="transcriptionError" style="color: var(--danger)">{{ errorMessage }}</p>
+      <p v-if="transcriptionError" style="color: var(--danger)">{{ transcriptionError }}</p>
       <p v-else-if="fileSize && fileName">{{ fileName }} ({{ fileSize }})</p>
     </div>
   </section>
@@ -29,6 +29,9 @@ import { ref } from 'vue';
 
 const emit = defineEmits(['startUpload']);
 defineProps<FileTranscriptionProps>();
+const transcriptionError = defineModel<string>('transcriptionError', {
+  required: true
+});
 
 const fileName = ref('');
 const fileSize = ref(0);
