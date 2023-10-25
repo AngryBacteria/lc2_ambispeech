@@ -1,5 +1,4 @@
 <template>
-  <h1>Recorder</h1>
   <section class="recorder-wrapper">
     <ProgressBar v-if="!transcriptionError" :value="uploadProgress"></ProgressBar>
     <ProgressBar v-else style="background-color: var(--danger)"></ProgressBar>
@@ -9,28 +8,19 @@
         :disabled="isRecording || transcriptionIsLoading"
         label="Start"
         icon="pi pi-play"
-        size="small"
       />
-      <Button
-        @click="pauseRecording()"
-        :disabled="!isRecording"
-        label="Pause"
-        icon="pi pi-pause"
-        size="small"
-      />
+      <Button @click="pauseRecording()" :disabled="!isRecording" label="Pause" icon="pi pi-pause" />
       <Button
         @click="upload()"
         :disabled="!dataAvailable || isRecording"
         label="Upload"
         icon="pi pi-upload"
-        size="small"
       />
       <Button
         @click="deleteData()"
         :disabled="!dataAvailable || isRecording"
         label="Delete recorded data"
         icon="pi pi-trash"
-        size="small"
       />
       <p v-if="estimatedSize > 0" class="centered-p">Aufnahmegrösse: {{ estimatedSizeString }}</p>
     </section>
@@ -176,6 +166,7 @@ function setState(state: RecordingStateFlag) {
 .recorder-wrapper {
   border-radius: 6px;
   background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
 }
 .action-row {
   padding: 1rem;

@@ -62,6 +62,7 @@ function handleUpload(files: File[]) {
   display: flex;
   flex-direction: column;
   background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
 }
 
 .file-wrapper {

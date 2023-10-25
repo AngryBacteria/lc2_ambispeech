@@ -1,18 +1,11 @@
 <template>
   <section class="component-wrapper">
-    transcriptionIsLoading: {{ transcriptionIsLoading }}
-    <FileRecorder
+    <router-view
       v-model:transcriptionError="transcriptionError"
       :transcription-is-loading="transcriptionIsLoading"
       :upload-progress="uploadProgress"
       @start-upload="customUploaderXHR"
-    ></FileRecorder>
-    <FileUploader
-      v-model:transcriptionError="transcriptionError"
-      :transcription-is-loading="transcriptionIsLoading"
-      :upload-progress="uploadProgress"
-      @start-upload="customUploaderXHR"
-    ></FileUploader>
+    ></router-view>
 
     <Accordion :activeIndex="0">
       <AccordionTab header="Transkribierter Text">
@@ -34,9 +27,7 @@
 <script setup lang="ts">
 import { getHumanFileSize } from '@/composables/util';
 import { ref } from 'vue';
-import FileUploader from './FileUploader.vue';
 import { StateFlag } from '@/model/interfaces';
-import FileRecorder from './FileRecorder.vue';
 /**
  * This component transcribes the contents of an audio file with the backend.
  * It receives audio data, uploads it to the backend and retrieves the transcribed text

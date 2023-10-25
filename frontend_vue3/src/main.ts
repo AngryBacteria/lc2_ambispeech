@@ -27,10 +27,10 @@ import ProgressBar from 'primevue/progressbar';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Textarea from 'primevue/textarea';
-import Toolbar from 'primevue/toolbar';
 import Dropdown from 'primevue/dropdown';
 import Slider from 'primevue/slider';
 import InputNumber from 'primevue/inputnumber';
+import Menubar from 'primevue/menubar';
 
 const app = createApp(App);
 
@@ -44,9 +44,9 @@ app.component('ProgressBar', ProgressBar);
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);
 app.component('Textarea', Textarea);
-app.component('Toolbar', Toolbar);
 app.component('Dropdown', Dropdown);
 app.component('Slider', Slider);
 app.component('InputNumber', InputNumber);
+app.component('Menubar', Menubar);
 
 app.mount('#app');

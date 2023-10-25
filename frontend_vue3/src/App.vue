@@ -1,41 +1,75 @@
-<script setup lang="ts"></script>
-
 <template>
-  <Toolbar>
-    <template #start>
-      <Button
-        icon="pi pi-home"
-        rounded
-        aria-label="home"
-        link
-        size="large"
-        @click="$router.push('/')"
-      />
-    </template>
-    <template #center>
-      <h1 style="margin: 0">Ambient Speech Recognition</h1>
-    </template>
+  <Menubar :model="items">
     <template #end>
-      <Button
-        icon="pi pi-cog"
-        rounded
-        aria-label="settings"
-        link
-        size="large"
-        @click="$router.push('/einstellungen')"
-      />
+      <div class="branding">
+        <img
+          alt="logo"
+          src="./assets/ambispeech_logo_v1.png"
+          height="40"
+          style="margin-right: 1rem; cursor: pointer"
+          @click="$router.push('/upload')"
+        />
+        <p>Ambient Speech Recognition</p>
+      </div>
     </template>
-  </Toolbar>
+    <template #item="{ label, item, props }">
+      <router-link v-slot="routerProps" :to="item.route" custom>
+        <a :href="routerProps.href" v-bind="props.action" @click="routerProps.navigate">
+          <span v-bind="props.icon" :class="{ 'router-link-active': routerProps.isActive }" />
+          <span v-bind="props.label" :class="{ 'router-link-active': routerProps.isActive }">{{
+            label
+          }}</span>
+        </a>
+      </router-link>
+    </template>
+  </Menubar>
   <Suspense>
     <router-view></router-view>
   </Suspense>
 </template>
 
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const items = ref([
+  {
+    label: 'Datei analysieren',
+    icon: 'pi pi-fw pi-upload',
+    route: '/upload'
+  },
+  {
+    label: 'Echtzeit Aufnahme',
+    icon: 'pi pi-microphone',
+    route: '/record'
+  },
+  {
+    label: 'Analysieren',
+    icon: 'pi pi-eye',
+    route: '/analyze'
+  },
+  {
+    label: 'Einstellungen',
+    icon: 'pi pi-cog',
+    route: '/einstellungen'
+  }
+]);
+</script>
+
 <style scoped>
-.p-toolbar {
+.p-menubar {
   padding: 0.5rem;
   margin-bottom: 2rem;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.router-link-active {
+  color: var(--primary-color);
+}
+
+.branding {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
