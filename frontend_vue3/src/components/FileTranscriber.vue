@@ -42,8 +42,6 @@ import FileRecorder from './FileRecorder.vue';
  * It receives audio data, uploads it to the backend and retrieves the transcribed text
  */
 
-//TODO: make two-way data binding for transcriptionError and transcriptionIsLoading and errorMessage
-
 // state
 const transcriptionError = ref('');
 const transcriptionIsLoading = ref(false);
@@ -61,6 +59,7 @@ function abortUpload() {
     activeXHR.abort();
     console.log('Upload aborted');
     activeXHR = null;
+    setState(StateFlag.INITIAL);
   }
 }
 

@@ -4,6 +4,7 @@
     <ProgressBar v-else style="background-color: var(--danger)"></ProgressBar>
     <div class="file-wrapper">
       <FileUpload
+        :disabled="transcriptionIsLoading"
         mode="basic"
         name="file"
         url="http://localhost:8000/uploadfile"
@@ -44,7 +45,7 @@ function handleUpload(files: File[]) {
   const file = files[0];
   console.log('Got File from user: ', file);
   if (!file) {
-    //TODO: handle this
+    transcriptionError.value = 'Die Datei konnte nicht gefunden werden';
     console.log('no file error');
     return;
   }

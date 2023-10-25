@@ -6,7 +6,7 @@
     <section class="action-row">
       <Button
         @click="startRecording()"
-        :disabled="isRecording"
+        :disabled="isRecording || transcriptionIsLoading"
         label="Start"
         icon="pi pi-play"
         size="small"
@@ -44,9 +44,16 @@ import { useUserStore } from '@/stores/user';
 import { type FileTranscriptionProps } from '@/model/interfaces';
 import { getHumanFileSize } from '@/composables/util';
 
+enum RecordingStateFlag {
+  START,
+  PAUSE,
+  RESUME,
+  UPLOAD,
+  DELETE
+}
+
 const emit = defineEmits(['startUpload']);
 defineProps<FileTranscriptionProps>();
-
 const transcriptionError = defineModel<string>('transcriptionError', {
   required: true
 });
@@ -70,9 +77,6 @@ let recorder: RecordRTCPromisesHandler;
  * If the recorder was previously paused, it resumes
  */
 async function startRecording() {
-  isRecording.value = true;
-  dataAvailable.value = true;
-
   if (!stream) {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   }
@@ -97,18 +101,17 @@ async function startRecording() {
         }
       }
     });
-    estimatedSize.value = 0;
-    transcriptionError.value = '';
+    setState(RecordingStateFlag.START);
     await recorder.startRecording();
     return;
   }
   if ((await recorder?.getState()) === 'inactive' || (await recorder?.getState()) === 'stopped') {
-    estimatedSize.value = 0;
-    transcriptionError.value = '';
+    setState(RecordingStateFlag.START);
     await recorder.startRecording();
     return;
   }
   if ((await recorder.getState()) === 'paused') {
+    setState(RecordingStateFlag.RESUME);
     await recorder.resumeRecording();
   }
 }
@@ -117,7 +120,7 @@ async function startRecording() {
  * Pauses the recording
  */
 async function pauseRecording() {
-  isRecording.value = false;
+  setState(RecordingStateFlag.PAUSE);
   await recorder.pauseRecording();
 }
 
@@ -125,8 +128,7 @@ async function pauseRecording() {
  * Stops the recording, downloads the files and clears the data from the recorder with recorder.reset()
  */
 async function upload() {
-  isRecording.value = false;
-  dataAvailable.value = false;
+  setState(RecordingStateFlag.UPLOAD);
   await recorder.stopRecording();
   let blob = await recorder.getBlob();
   emit('startUpload', [new File([blob], 'recording.wav')]);
@@ -138,11 +140,35 @@ async function upload() {
  * Stops the recording and clears the data from the recorder with recorder.reset()
  */
 async function deleteData() {
-  isRecording.value = false;
-  dataAvailable.value = false;
-  estimatedSize.value = 0;
+  setState(RecordingStateFlag.DELETE);
   await recorder.stopRecording();
   await recorder.reset();
+}
+
+function setState(state: RecordingStateFlag) {
+  switch (state) {
+    case RecordingStateFlag.START:
+      isRecording.value = true;
+      dataAvailable.value = true;
+      estimatedSize.value = 0;
+      transcriptionError.value = '';
+      break;
+    case RecordingStateFlag.PAUSE:
+      isRecording.value = false;
+      break;
+    case RecordingStateFlag.RESUME:
+      isRecording.value = true;
+      break;
+    case RecordingStateFlag.UPLOAD:
+      isRecording.value = false;
+      dataAvailable.value = false;
+      break;
+    case RecordingStateFlag.DELETE:
+      isRecording.value = false;
+      dataAvailable.value = false;
+      estimatedSize.value = 0;
+      break;
+  }
 }
 </script>
 
