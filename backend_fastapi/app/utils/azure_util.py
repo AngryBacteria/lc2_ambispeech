@@ -4,9 +4,10 @@ import asyncio
 import os
 import time
 from enum import Enum
+import json
 
 import azure.cognitiveservices.speech as speechsdk
-from azure.cognitiveservices.speech import SpeechConfig
+from azure.cognitiveservices.speech import SpeechConfig, ResultReason
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
 from fastapi import UploadFile
@@ -90,23 +91,18 @@ class AzureUtil(object):
         recognized_queue = asyncio.Queue()
         done = False
 
-        def recognized_callback(event):
-            logger.info(f"RECOGNIZED: {event}")
+        def yield_event(event):
+            logger.info(f"{event}")
             recognized_queue.put_nowait(event)
 
-        speech_recognizer.recognized.connect(recognized_callback)
-        speech_recognizer.recognizing.connect(
-            lambda event: logger.debug(f"RECOGNIZING: {event}")
-        )
-        speech_recognizer.session_started.connect(
-            lambda event: logger.info(f"SESSION STARTED: {event}")
-        )
-        speech_recognizer.session_stopped.connect(
-            lambda event: logger.info(f"SESSION STOPPED {event}")
-        )
-        speech_recognizer.canceled.connect(
-            lambda event: logger.info(f"CANCELED {event}")
-        )
+        def print_event(event):
+            logger.debug(f"{event}")
+
+        speech_recognizer.recognized.connect(yield_event)
+        speech_recognizer.recognizing.connect(yield_event)
+        speech_recognizer.session_started.connect(print_event)
+        speech_recognizer.session_stopped.connect(print_event)
+        speech_recognizer.canceled.connect(print_event)
 
         # start continuous speech recognition
         n_bytes = 4096
@@ -122,11 +118,14 @@ class AzureUtil(object):
                     done = True
                 else:
                     stream.write(chunk)
-
                 # read from queue if not empty
                 if not recognized_queue.empty():
                     item = await recognized_queue.get()
-                    yield f"{item.result.text}"
+                    response = {
+                        "text": item.result.text,
+                        "reason": item.result.reason.name,
+                    }
+                    yield json.dumps(response)
                 await asyncio.sleep(0.1)
         finally:
             # stop recognition and clean up
@@ -137,7 +136,11 @@ class AzureUtil(object):
             # get latest data
             if not recognized_queue.empty():
                 item = await recognized_queue.get()
-                yield f"{item.result.text}"
+                response = {
+                    "text": item.result.text,
+                    "reason": item.result.reason.name,
+                }
+                yield json.dumps(response)
             logger.debug("Closed stream and stop recognition")
 
     # work in progress. Main problem right now: cannot send data directly in websocket

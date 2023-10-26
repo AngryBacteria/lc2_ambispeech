@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', () => {
   const toggleDark = useToggle(isDark);
 
   const bufferSize = useLocalStorage<BufferSize>('bufferSize', 4096);
+  const downloadRecording = useLocalStorage<boolean>('downloadRecording', false);
 
   const openAiConfig = useLocalStorage('openAiConfig', {
     frequency_penalty: 0,
@@ -25,6 +26,7 @@ export const useUserStore = defineStore('user', () => {
       top_p: 1
     };
     bufferSize.value = 4096;
+    downloadRecording.value = false;
   }
 
   const openAiPrompt = useLocalStorage(
@@ -58,6 +60,7 @@ export const useUserStore = defineStore('user', () => {
     bufferSize,
     openAiConfig,
     resetSettings,
-    openAiPrompt
+    openAiPrompt,
+    downloadRecording
   };
 });

@@ -18,6 +18,10 @@
         />
       </section>
       <section class="setting">
+        <h2>Audio Datei nach aufnahme Herunterladen?</h2>
+        <ToggleButton v-model="store.downloadRecording" />
+      </section>
+      <section class="setting">
         <h2>OpenAI</h2>
         <p>OpenAI ermöglicht es den Output etwas anzupassen mithilfe von Parametern.</p>
         <section class="sliders">

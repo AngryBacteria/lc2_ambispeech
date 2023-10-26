@@ -1,4 +1,5 @@
 <template>
+  <Toast label="sticky" />
   <Menubar :model="items">
     <template #end>
       <div class="branding">

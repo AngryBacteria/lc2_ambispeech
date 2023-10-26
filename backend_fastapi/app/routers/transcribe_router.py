@@ -30,10 +30,9 @@ async def post_file(file: UploadFile):
 
     # try to transcribe the wav
     try:
-        # TODO: return all recognizing events not only recognized
         return StreamingResponse(
             azure_util.speech_recognition_with_push_stream(file, audio_params),
-            media_type="text/event-stream",
+            media_type="application/json",
         )
     except Exception:
         raise HTTPException(

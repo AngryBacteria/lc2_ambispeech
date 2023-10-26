@@ -22,7 +22,7 @@
         label="Delete recorded data"
         icon="pi pi-trash"
       />
-      <p v-if="estimatedSize > 0" class="centered-p">Aufnahmegrösse: {{ estimatedSizeString }}</p>
+      <p v-if="estimatedSize > 0" style="margin: 0">Aufnahmegrösse: {{ estimatedSizeString }}</p>
     </section>
   </section>
 </template>
@@ -33,6 +33,7 @@ import { RecordRTCPromisesHandler, StereoAudioRecorder, invokeSaveAsDialog } fro
 import { useUserStore } from '@/stores/user';
 import { type FileTranscriptionProps } from '@/model/interfaces';
 import { getHumanFileSize } from '@/composables/util';
+import { useToast } from 'primevue/usetoast';
 
 enum RecordingStateFlag {
   START,
@@ -42,6 +43,7 @@ enum RecordingStateFlag {
   DELETE
 }
 
+// Props v-model and emits
 const emit = defineEmits(['startUpload']);
 defineProps<FileTranscriptionProps>();
 const transcriptionError = defineModel<string>('transcriptionError', {
@@ -57,6 +59,7 @@ const estimatedSizeString = computed(() => {
 });
 
 const store = useUserStore();
+const toast = useToast();
 
 let stream: MediaStream;
 let recorder: RecordRTCPromisesHandler;
@@ -68,7 +71,17 @@ let recorder: RecordRTCPromisesHandler;
  */
 async function startRecording() {
   if (!stream) {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+      toast.add({
+        severity: 'warn',
+        summary: 'Kein Zugriff auf ihr Mikrofon',
+        detail:
+          'Die Applikation braucht Zugriff auf ihr Mikrofon um die Aufnahme zu starten. Überprüfen sie ihre Browsereinstellungen'
+      });
+      return;
+    }
   }
 
   if (!recorder) {
@@ -122,7 +135,7 @@ async function upload() {
   await recorder.stopRecording();
   let blob = await recorder.getBlob();
   emit('startUpload', [new File([blob], 'recording.wav')]);
-  invokeSaveAsDialog(blob);
+  if (store.downloadRecording) invokeSaveAsDialog(blob);
   await recorder.reset();
 }
 
@@ -172,6 +185,8 @@ function setState(state: RecordingStateFlag) {
   padding: 1rem;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
 }
 

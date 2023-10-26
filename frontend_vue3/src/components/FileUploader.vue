@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import { getHumanFileSize } from '@/composables/util';
 import { type FileTranscriptionProps } from '@/model/interfaces';
 import { ref } from 'vue';
 /**
@@ -35,12 +36,12 @@ const transcriptionError = defineModel<string>('transcriptionError', {
 });
 
 const fileName = ref('');
-const fileSize = ref(0);
+const fileSize = ref('');
 
 function handleUpload(files: File[]) {
   // Reset state
   fileName.value = '';
-  fileSize.value = 0;
+  fileSize.value = '';
 
   const file = files[0];
   console.log('Got File from user: ', file);
@@ -50,7 +51,7 @@ function handleUpload(files: File[]) {
     return;
   }
   fileName.value = file.name;
-  fileSize.value = file.size;
+  fileSize.value = getHumanFileSize(file.size);
 
   emit('startUpload', files);
 }

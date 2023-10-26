@@ -17,7 +17,10 @@
     />
 
     <Accordion :activeIndex="0">
-      <AccordionTab header="Transkribierter Text">
+      <AccordionTab>
+        <template #header>
+          <span>Transkribierter Text</span>
+        </template>
         <Textarea
           :disabled="
             transcriptionIsLoading || transcription.length < 1 || transcriptionError.length > 0
@@ -29,28 +32,39 @@
       </AccordionTab>
     </Accordion>
 
-    <button @click="abortUpload()">Abort</button>
+    <div class="action-row">
+      <Button @click="abortUpload()" v-show="transcriptionIsLoading" severity="warning"
+        >Transkription stoppen</Button
+      >
+      <Button v-show="!transcriptionIsLoading && transcription.length > 0" severity="success"
+        >Analyse starten</Button
+      >
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { getHumanFileSize } from '@/composables/util';
 import { ref } from 'vue';
-import { StateFlag } from '@/model/interfaces';
 import FileUploader from './FileUploader.vue';
 import FileRecorder from './FileRecorder.vue';
+import type { S2TEndpointResponse } from '@/model/interfaces';
 /**
  * This component transcribes the contents of an audio file with the backend.
  * It receives audio data, uploads it to the backend and retrieves the transcribed text
  */
+
+enum StateFlag {
+  INITIAL,
+  ERROR,
+  SUCCESS,
+  ABORTED
+}
 
 // state
 const transcriptionError = ref('');
 const transcriptionIsLoading = ref(false);
 
 // data
-const fileName = ref('');
-const fileSize = ref();
 const uploadProgress = ref(0);
 const transcription = ref('');
 const apiUrl = 'http://localhost:8000/api/transcribe/file';
@@ -61,7 +75,7 @@ function abortUpload() {
     activeXHR.abort();
     console.log('Upload aborted');
     activeXHR = null;
-    setState(StateFlag.INITIAL);
+    setState(StateFlag.ABORTED);
   }
 }
 
@@ -79,11 +93,6 @@ function customUploaderXHR(files: File[]) {
     return;
   }
   setState(StateFlag.INITIAL);
-
-  fileName.value = file.name;
-  uploadProgress.value = 0;
-  fileSize.value = getHumanFileSize(file.size);
-  transcription.value = '';
 
   // Create form data and open xhr request
   const data = new FormData();
@@ -119,7 +128,10 @@ function customUploaderXHR(files: File[]) {
       // Response good, get data chunk by chunk
       else {
         console.log(`New stream chunk received [${this.status}]: ${newText}`);
-        transcription.value = transcription.value + ' ' + newText;
+        let newData = JSON.parse(newText) as S2TEndpointResponse;
+        if (newData?.reason === 'RecognizedSpeech') {
+          transcription.value = transcription.value + ' ' + newData.text;
+        }
         lastReadPosition = this.responseText.length;
       }
     }
@@ -153,8 +165,6 @@ function setState(state: StateFlag, error: string = '') {
       transcriptionIsLoading.value = false;
       transcriptionError.value = error;
 
-      fileName.value = '';
-      fileSize.value = 0;
       uploadProgress.value = 0;
       transcription.value = '';
       break;
@@ -162,14 +172,17 @@ function setState(state: StateFlag, error: string = '') {
       transcriptionIsLoading.value = true;
       transcriptionError.value = '';
 
-      fileName.value = '';
-      fileSize.value = 0;
       uploadProgress.value = 0;
       transcription.value = '';
       break;
     case StateFlag.SUCCESS:
       transcriptionIsLoading.value = false;
       transcriptionError.value = '';
+      break;
+    case StateFlag.ABORTED:
+      transcriptionIsLoading.value = false;
+      transcriptionError.value = '';
+      uploadProgress.value = 0;
       break;
   }
 }
