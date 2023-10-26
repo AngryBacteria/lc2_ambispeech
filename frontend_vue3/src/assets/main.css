@@ -9,6 +9,8 @@ html {
   --warning: #fcd34d;
   --help: #d8b4fe;
   --danger: #fca5a5;
+
+  --custom-border-radius: 6px;
 }
 
 body {

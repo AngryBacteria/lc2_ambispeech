@@ -58,7 +58,7 @@ function handleUpload(files: File[]) {
 
 <style scoped>
 .upload-wrapper {
-  border-radius: 6px;
+  border-radius: var(--custom-border-radius);
   display: flex;
   flex-direction: column;
   background-color: var(--surface-card);

@@ -164,7 +164,7 @@ function setState(state: RecordingStateFlag) {
 
 <style scoped>
 .recorder-wrapper {
-  border-radius: 6px;
+  border-radius: var(--custom-border-radius);
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
 }

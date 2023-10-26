@@ -35,12 +35,12 @@ const items = ref([
   {
     label: 'Datei analysieren',
     icon: 'pi pi-fw pi-upload',
-    route: '/upload'
+    route: '/transcribe/upload'
   },
   {
     label: 'Echtzeit Aufnahme',
     icon: 'pi pi-microphone',
-    route: '/record'
+    route: '/transcribe/record'
   },
   {
     label: 'Analysieren',
