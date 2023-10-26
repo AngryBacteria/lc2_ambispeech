@@ -1,19 +1,17 @@
 from __future__ import annotations
 
 import asyncio
-import os
-import time
-from enum import Enum
 import json
+import os
+from enum import Enum
 
 import azure.cognitiveservices.speech as speechsdk
-from azure.cognitiveservices.speech import SpeechConfig, ResultReason
+from azure.cognitiveservices.speech import SpeechConfig
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
 from fastapi import UploadFile
 from fastapi import WebSocket, WebSocketDisconnect
 
-from app.utils.general_util import format_time
 from app.utils.logging_util import logger
 
 
@@ -88,15 +86,23 @@ class AzureUtil(object):
         )
 
         # register callbacks
-        recognized_queue = asyncio.Queue()
+        recognized_queue: asyncio.Queue[
+            speechsdk.SpeechRecognitionEventArgs
+        ] = asyncio.Queue()
         done = False
 
-        def yield_event(event):
+        def yield_event(event: speechsdk.SpeechRecognitionEventArgs):
             logger.info(f"{event}")
             recognized_queue.put_nowait(event)
 
-        def print_event(event):
+        def print_event(event: speechsdk.SpeechRecognitionEventArgs):
             logger.debug(f"{event}")
+
+        def stop_cb(event: speechsdk.SessionEventArgs):
+            """callback that signals to stop continuous transcription upon receiving an event `evt`"""
+            print(f"CLOSING {event}")
+            nonlocal done
+            done = True
 
         speech_recognizer.recognized.connect(yield_event)
         speech_recognizer.recognizing.connect(yield_event)
@@ -104,20 +110,19 @@ class AzureUtil(object):
         speech_recognizer.session_stopped.connect(print_event)
         speech_recognizer.canceled.connect(print_event)
 
-        # start continuous speech recognition
-        n_bytes = 4096
+        # stop continuous transcription on either session stopped or canceled events
+        speech_recognizer.session_stopped.connect(stop_cb)
+        speech_recognizer.canceled.connect(stop_cb)
+
+        # start continuous speech recognition and write data to stream
         speech_recognizer.start_continuous_recognition()
+        chunk = await file.read()
+        stream.write(chunk)
+        stream.close()
 
         # process data
         try:
             while not done or not recognized_queue.empty():
-                # check if there are still bytes left
-                chunk = await file.read(n_bytes)
-                # logger.debug(f"read {len(chunk)} bytes")
-                if not chunk:
-                    done = True
-                else:
-                    stream.write(chunk)
                 # read from queue if not empty
                 if not recognized_queue.empty():
                     item = await recognized_queue.get()
@@ -129,11 +134,10 @@ class AzureUtil(object):
                 await asyncio.sleep(0.1)
         finally:
             # stop recognition and clean up
-            logger.debug("Closing stream and stop recognition")
+            logger.debug("Stopping recognition")
             await file.close()
-            stream.close()
             speech_recognizer.stop_continuous_recognition()
-            # get latest data
+            # get remaining data
             if not recognized_queue.empty():
                 item = await recognized_queue.get()
                 response = {
