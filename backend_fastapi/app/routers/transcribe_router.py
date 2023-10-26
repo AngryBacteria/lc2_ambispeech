@@ -31,7 +31,7 @@ async def post_file(file: UploadFile):
     # try to transcribe the wav
     try:
         return StreamingResponse(
-            azure_util.speech_recognition_with_push_stream(file, audio_params),
+            azure_util.diarization_with_push_stream(file, audio_params),
             media_type="application/json",
         )
     except Exception:

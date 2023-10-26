@@ -117,6 +117,7 @@ class AzureUtil(object):
         # start continuous speech recognition and write data to stream
         speech_recognizer.start_continuous_recognition()
         chunk = await file.read()
+        await file.close()
         stream.write(chunk)
         stream.close()
 
@@ -135,7 +136,6 @@ class AzureUtil(object):
         finally:
             # stop recognition and clean up
             logger.debug("Stopping recognition")
-            await file.close()
             speech_recognizer.stop_continuous_recognition()
             # get remaining data
             if not recognized_queue.empty():
@@ -143,6 +143,87 @@ class AzureUtil(object):
                 response = {
                     "text": item.result.text,
                     "reason": item.result.reason.name,
+                }
+                yield json.dumps(response)
+            logger.debug("Closed stream and stop recognition")
+
+    async def diarization_with_push_stream(self, file: UploadFile, params):
+        """Azure continuous recognition for a Spooled File with a push stream"""
+        # get the correct audio format
+        audio_format = AudioStreamFormat(
+            channels=params.nchannels,
+            samples_per_second=params.framerate,
+            bits_per_sample=params.sampwidth * 8,
+        )
+        # get the push stream
+        stream = speechsdk.audio.PushAudioInputStream(audio_format)
+        audio_config = speechsdk.audio.AudioConfig(stream=stream)
+
+        # instantiate the speech recognizer with push stream input
+        speech_recognizer = speechsdk.transcription.ConversationTranscriber(
+            speech_config=self.speech_config, audio_config=audio_config
+        )
+
+        # register callbacks
+        recognized_queue: asyncio.Queue[
+            speechsdk.SpeechRecognitionEventArgs
+        ] = asyncio.Queue()
+        done = False
+
+        def yield_event(event: speechsdk.SpeechRecognitionEventArgs):
+            logger.info(f"{event}")
+            recognized_queue.put_nowait(event)
+
+        def print_event(event: speechsdk.SpeechRecognitionEventArgs):
+            logger.debug(f"{event}")
+
+        def stop_cb(event: speechsdk.SessionEventArgs):
+            """callback that signals to stop continuous transcription upon receiving an event `evt`"""
+            print(f"CLOSING {event}")
+            nonlocal done
+            done = True
+
+        # Subscribe to the events fired by the conversation transcriber
+        speech_recognizer.transcribed.connect(yield_event)
+        speech_recognizer.session_started.connect(print_event)
+        speech_recognizer.session_stopped.connect(print_event)
+        speech_recognizer.canceled.connect(print_event)
+        # stop continuous transcription on either session stopped or canceled events
+        speech_recognizer.session_stopped.connect(stop_cb)
+        speech_recognizer.canceled.connect(stop_cb)
+
+        # start continuous speech recognition and write data to stream
+        speech_recognizer.start_transcribing_async()
+        chunk = await file.read()
+        await file.close()
+        stream.write(chunk)
+        stream.close()
+
+        # process data
+        try:
+            while not done or not recognized_queue.empty():
+                # read from queue if not empty
+                if not recognized_queue.empty():
+                    item = await recognized_queue.get()
+                    # TODO: event could be no recognition. also  handle null case
+                    response = {
+                        "text": item.result.text,
+                        "reason": item.result.reason.name,
+                        "speaker": item.result.speaker_id,
+                    }
+                    yield json.dumps(response)
+                await asyncio.sleep(0.1)
+        finally:
+            # stop recognition and clean up
+            logger.debug("Stopping recognition")
+            speech_recognizer.stop_transcribing_async()
+            # get remaining data
+            if not recognized_queue.empty():
+                item = await recognized_queue.get()
+                response = {
+                    "text": item.result.text,
+                    "reason": item.result.reason.name,
+                    "speaker": item.result.speaker_id,
                 }
                 yield json.dumps(response)
             logger.debug("Closed stream and stop recognition")
