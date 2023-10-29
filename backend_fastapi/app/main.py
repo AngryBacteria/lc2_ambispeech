@@ -9,10 +9,12 @@ from starlette.responses import StreamingResponse
 from app.routers.llm_router import llmRouter
 from app.routers.logging_router import loggingRouter
 from app.routers.transcribe_router import transcribeRouter
+from app.routers.langchain_router import langchainRouter
 from app.utils.azure_util import AzureUtil
 from app.utils.logging_util import logger
 from app.utils.mongo_util import MongoUtil
 from app.utils.openai_util import OpenAIUtil
+from app.utils.langchain_util import  LangchainUtil
 
 # start app and configure CORS
 app = FastAPI()
@@ -28,11 +30,13 @@ app.add_middleware(
 azure_util = AzureUtil()
 mongo = MongoUtil()
 openai_util = OpenAIUtil()
+langchain_util = LangchainUtil
 
 # load other routers
 app.include_router(loggingRouter)
 app.include_router(llmRouter)
 app.include_router(transcribeRouter)
+app.include_router(langchainRouter)
 
 
 @app.on_event("shutdown")
