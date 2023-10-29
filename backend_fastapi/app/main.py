@@ -15,6 +15,7 @@ from app.utils.logging_util import logger
 from app.utils.mongo_util import MongoUtil
 from app.utils.openai_util import OpenAIUtil
 from app.utils.langchain_util import  LangchainUtil
+from app.utils.whisper_util import WhisperUtil
 
 # start app and configure CORS
 app = FastAPI()
@@ -28,12 +29,11 @@ app.add_middleware(
 
 # load dependencies
 azure_util = AzureUtil()
-mongo = MongoUtil()
 openai_util = OpenAIUtil()
 langchain_util = LangchainUtil
+whisper_util = WhisperUtil()
 
 # load other routers
-app.include_router(loggingRouter)
 app.include_router(llmRouter)
 app.include_router(transcribeRouter)
 app.include_router(langchainRouter)
@@ -41,8 +41,7 @@ app.include_router(langchainRouter)
 
 @app.on_event("shutdown")
 def shutdown_event():
-    logger.info("Shutting down the server. Closing the database connections....")
-    mongo.client.close()
+    logger.info("Shutting down the server")
 
 
 @app.get("/")
@@ -58,7 +57,7 @@ def fakeStream():
 
 @app.post("/fakefilestream")
 async def create_upload_file(file: UploadFile):
-    print({"filename": file.filename, "bytea": file.size})
+    print({"filename": file.filename, "bytes": file.size})
     return StreamingResponse(
         fakeStream(),
         media_type="text/event-stream",
