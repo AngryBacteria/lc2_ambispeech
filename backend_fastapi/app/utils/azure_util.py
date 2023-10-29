@@ -15,7 +15,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 from app.utils.logging_util import logger
 
 
-class LanguageCode(str, Enum):
+class AzureLanguageCode(str, Enum):
     """Enum for all supported Azure languages"""
 
     DE_CH = "de-CH"
@@ -32,14 +32,14 @@ class AzureUtil(object):
     speech_config: SpeechConfig
     azure_region: str
     azure_speech_Key: str
-    language_code: LanguageCode
+    language_code: AzureLanguageCode
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(AzureUtil, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, language_code: LanguageCode = LanguageCode.DE_CH):
+    def __init__(self, language_code: AzureLanguageCode = AzureLanguageCode.DE_CH):
         load_dotenv()
         if (
             os.getenv("AZURE_REGION") is None
@@ -73,7 +73,7 @@ class AzureUtil(object):
         file: UploadFile,
         params,
         use_diarization: bool = False,
-        language: LanguageCode = LanguageCode.DE_CH,
+        language: AzureLanguageCode = AzureLanguageCode.DE_CH,
     ):
         """Azure continuous recognition/diarization for a Spooled File with a push stream"""
         self.speech_config.speech_recognition_language = language

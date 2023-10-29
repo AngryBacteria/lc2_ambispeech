@@ -161,7 +161,7 @@ function customUploaderXHR(files: File[]) {
 
   activeXHR.open(
     'POST',
-    `http://localhost:8000/api/transcribe/file?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
+    `http://localhost:8000/api/transcribe/file/azure?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
     true
   );
   activeXHR.send(data);
