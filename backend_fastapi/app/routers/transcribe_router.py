@@ -3,7 +3,7 @@ import wave
 from fastapi import APIRouter, UploadFile, HTTPException, WebSocket
 from starlette.responses import StreamingResponse
 
-from app.utils.azure_util import AzureUtil
+from app.utils.azure_util import AzureUtil, LanguageCode
 
 transcribeRouter = APIRouter(
     prefix="/api/transcribe",
@@ -14,7 +14,9 @@ azure_util = AzureUtil()
 
 
 @transcribeRouter.post("/file")
-async def post_file(file: UploadFile):
+async def post_file(
+    file: UploadFile, diarization: bool = False, language: LanguageCode = "de-CH"
+):
     # validate if the file is a valid wav
     try:
         await file.seek(0)
@@ -31,7 +33,9 @@ async def post_file(file: UploadFile):
     # try to transcribe the wav
     try:
         return StreamingResponse(
-            azure_util.diarization_with_push_stream(file, audio_params),
+            azure_util.transcribe_with_push_stream(
+                file, audio_params, use_diarization=diarization, language=language
+            ),
             media_type="application/json",
         )
     except Exception:

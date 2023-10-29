@@ -19,7 +19,33 @@
       </section>
       <section class="setting">
         <h2>Audio Datei nach aufnahme Herunterladen?</h2>
-        <ToggleButton v-model="store.downloadRecording" />
+        <ToggleButton
+          v-model="store.downloadRecording"
+          onLabel="Ja"
+          offLabel="Nein"
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+        />
+      </section>
+      <section class="setting">
+        <h2>Sprecher-Erkennung (Diarization) aktivieren?</h2>
+        <ToggleButton
+          v-model="store.useDiarization"
+          onLabel="Ja"
+          offLabel="Nein"
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+        />
+      </section>
+      <section class="setting">
+        <h2>Sprache für die Audio Transkribierung</h2>
+        <Dropdown
+          v-model="store.transcriptionLanguage"
+          :options="transcriptionLanguages"
+          optionLabel="name"
+          option-value="code"
+          placeholder="Transkribierungssprache"
+        />
       </section>
       <section class="setting">
         <h2>OpenAI</h2>
@@ -63,6 +89,14 @@ const bufferSizes = ref([
   { name: 4096, code: 4096 },
   { name: 8192, code: 8192 },
   { name: 16384, code: 16384 }
+]);
+
+const transcriptionLanguages = ref([
+  { name: 'Deutsch (Schweiz)', code: 'de-CH' },
+  { name: 'Deutsch', code: 'de-DE' },
+  { name: 'Deutsch (Östereich)', code: 'de-AT' },
+  { name: 'Englisch (England)', code: 'en-GB' },
+  { name: 'Englisch (USA)', code: 'en-US' }
 ]);
 
 const openAiSettings = [
