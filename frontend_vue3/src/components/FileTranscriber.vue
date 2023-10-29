@@ -48,6 +48,7 @@ import { ref } from 'vue';
 import FileUploader from './FileUploader.vue';
 import FileRecorder from './FileRecorder.vue';
 import type { S2TEndpointResponse } from '@/model/interfaces';
+import { useUserStore } from '@/stores/user';
 /**
  * This component transcribes the contents of an audio file with the backend.
  * It receives audio data, uploads it to the backend and retrieves the transcribed text
@@ -60,6 +61,9 @@ enum StateFlag {
   ABORTED
 }
 
+// dependencies
+const store = useUserStore();
+
 // state
 const transcriptionError = ref('');
 const transcriptionIsLoading = ref(false);
@@ -67,7 +71,6 @@ const transcriptionIsLoading = ref(false);
 // data
 const uploadProgress = ref(0);
 const transcription = ref('');
-const apiUrl = 'http://localhost:8000/api/transcribe/file';
 let activeXHR: XMLHttpRequest | null = null;
 
 function abortUpload() {
@@ -130,12 +133,18 @@ function customUploaderXHR(files: File[]) {
         console.log(`New stream chunk received [${this.status}]: ${newText}`);
         let newData = JSON.parse(newText) as S2TEndpointResponse;
         if (newData?.reason === 'RecognizedSpeech') {
-          transcription.value = transcription.value + ' ' + newData.text;
+          if (newData?.speaker) {
+            transcription.value =
+              transcription.value + `${newData?.speaker}: ${newData.text}` + '\n';
+          } else {
+            transcription.value = transcription.value + ' ' + newData.text;
+          }
         }
         lastReadPosition = this.responseText.length;
       }
     }
     if (this.readyState === XMLHttpRequest.DONE) {
+      transcription.value = transcription.value.trim();
       transcriptionIsLoading.value = false;
       console.log('Request finished');
     }
@@ -150,7 +159,11 @@ function customUploaderXHR(files: File[]) {
     console.error('XHR error.');
   };
 
-  activeXHR.open('POST', apiUrl, true);
+  activeXHR.open(
+    'POST',
+    `http://localhost:8000/api/transcribe/file?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
+    true
+  );
   activeXHR.send(data);
 }
 

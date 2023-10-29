@@ -1,23 +1,46 @@
 import { defineStore } from 'pinia';
 import { useDark, useLocalStorage, useToggle, useWindowSize } from '@vueuse/core';
-import type { BufferSize } from '@/model/interfaces';
+import type { BufferSize, TranscriptionLanguage } from '@/model/interfaces';
 
 export const useUserStore = defineStore('user', () => {
+  // General app state
   const { width, height } = useWindowSize();
-
   const isDark = useDark();
-
   const toggleDark = useToggle(isDark);
 
+  // Transcribption state
+  /**
+   * Buffer state to  use for the audio recording.
+   * Higher value means better quality
+   */
   const bufferSize = useLocalStorage<BufferSize>('bufferSize', 4096);
+  /**
+   * Boolean to control if an audio file should be downloaded after the recording or not
+   */
   const downloadRecording = useLocalStorage<boolean>('downloadRecording', false);
+  /**
+   * What language to use for the transcription
+   */
+  const transcriptionLanguage = useLocalStorage<TranscriptionLanguage>(
+    'transcriptionLanguage',
+    'de-CH'
+  );
+  /**
+   * If diarization should be used (azure only feature)
+   */
+  const useDiarization = useLocalStorage<boolean>('useDiarization', false);
 
+  /**
+   * Parameters for the openai completion requests
+   */
   const openAiConfig = useLocalStorage('openAiConfig', {
     frequency_penalty: 0,
     presence_penalty: 0,
     temperature: 1,
     top_p: 1
   });
+
+  // Methods
   function resetSettings() {
     openAiConfig.value = {
       frequency_penalty: 0,
@@ -27,6 +50,8 @@ export const useUserStore = defineStore('user', () => {
     };
     bufferSize.value = 4096;
     downloadRecording.value = false;
+    transcriptionLanguage.value = 'de-CH';
+    useDiarization.value = false;
   }
 
   const openAiPrompt = useLocalStorage(
@@ -61,6 +86,8 @@ export const useUserStore = defineStore('user', () => {
     openAiConfig,
     resetSettings,
     openAiPrompt,
-    downloadRecording
+    downloadRecording,
+    transcriptionLanguage,
+    useDiarization
   };
 });

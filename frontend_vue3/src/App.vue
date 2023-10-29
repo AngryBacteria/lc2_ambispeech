@@ -2,13 +2,12 @@
   <Toast label="sticky" />
   <Menubar :model="items">
     <template #end>
-      <div class="branding">
+      <div class="branding" @click="$router.push('/transcribe/upload')" style="cursor: pointer">
         <img
           alt="logo"
           src="./assets/ambispeech_logo_v1.png"
           height="40"
-          style="margin-right: 1rem; cursor: pointer"
-          @click="$router.push('/upload')"
+          style="margin-right: 1rem"
         />
         <p>Ambient Speech Recognition</p>
       </div>

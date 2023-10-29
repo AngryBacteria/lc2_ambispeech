@@ -18,5 +18,11 @@ export type RecorderState = 'inactive' | 'recording' | 'paused' | 'stopped';
  */
 export interface S2TEndpointResponse {
   text: string;
-  reason: 'RecognizedSpeech' | 'RecognizingSpeech';
+  reason: 'RecognizedSpeech' | 'RecognizingSpeech' | 'NoMatch';
+  speaker?: string;
 }
+
+/**
+ * Possible transcribtion languages (azure)
+ */
+export type TranscriptionLanguage = 'de-CH' | 'de-DE' | 'de-AT' | 'en-GB' | 'en-US';
