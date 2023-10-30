@@ -14,7 +14,7 @@ from app.utils.azure_util import AzureUtil
 from app.utils.logging_util import logger
 from app.utils.mongo_util import MongoUtil
 from app.utils.openai_util import OpenAIUtil
-from app.utils.langchain_util import  LangchainUtil
+from app.utils.langchain_util import LangchainUtil
 from app.utils.whisper_util import WhisperUtil
 
 # start app and configure CORS
