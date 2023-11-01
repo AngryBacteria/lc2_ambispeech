@@ -36,10 +36,15 @@ class WhisperUtil:
         return cls._instance
 
     def __init__(self, language_code: AzureLanguageCode = AzureLanguageCode.DE_CH):
+        if hasattr(self, "_initialized"):
+            return
         self.language = language_code
         # set cpu cores to use
         cpu_count = multiprocessing.cpu_count()
-        self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 2
+        self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 4
+
+        print("Created WhisperUtil")
+        self._initialized = True
 
     # todo make yield return intermediate results with callback
     def transcribe_file(self, file_path: str, language: AzureLanguageCode):

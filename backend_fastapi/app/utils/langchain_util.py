@@ -19,11 +19,15 @@ class LangchainUtil:
         return cls._instance
 
     def __init__(self):
+        if hasattr(self, "_initialized"):
+            return
         load_dotenv()
         if os.getenv("OPENAI_KEY") is None:
             raise EnvironmentError(".env file is missing the OPENAI_KEY")
         else:
             self.llm = ChatOpenAI(model_name="gpt-3.5-turbo")
+        print("Created LangchainUtil")
+        self._initialized = True
 
     async def hello_chat_completion(self):
         """Async Hello World chat completion example for openai"""

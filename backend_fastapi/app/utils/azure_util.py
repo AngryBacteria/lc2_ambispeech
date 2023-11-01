@@ -40,6 +40,8 @@ class AzureUtil(object):
         return cls._instance
 
     def __init__(self, language_code: AzureLanguageCode = AzureLanguageCode.DE_CH):
+        if hasattr(self, "_initialized"):
+            return
         load_dotenv()
         if (
             os.getenv("AZURE_REGION") is None
@@ -58,6 +60,8 @@ class AzureUtil(object):
                 region=self.azure_region,
                 speech_recognition_language=self.language_code,
             )
+        print("Created AzureUtil")
+        self._initialized = True
 
     def azure_short_s2t(self, file_path: str):
         """Azure single-shot recognition for an existing audio file. Max length is 15 seconds"""

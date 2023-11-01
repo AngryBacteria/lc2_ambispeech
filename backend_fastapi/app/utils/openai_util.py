@@ -19,12 +19,16 @@ class OpenAIUtil:
         return cls._instance
 
     def __init__(self):
+        if hasattr(self, "_initialized"):
+            return
         load_dotenv()
         if os.getenv("OPENAI_KEY") is None:
             raise EnvironmentError(".env file is missing the OPENAI_KEY")
         else:
             openai.api_key = os.getenv("OPENAI_KEY")
             self.openai_model = OpenaiModel.GPT_3_TURBO
+        print("Created OpenAIUtil")
+        self._initialized = True
 
     async def hello_chat_completion(self, config):
         """Async Hello World chat completion example for openai"""

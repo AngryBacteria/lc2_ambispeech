@@ -21,6 +21,8 @@ class MongoUtil:
         return cls._instance
 
     def __init__(self):
+        if hasattr(self, "_initialized"):
+            return
         load_dotenv()
         if os.getenv("MONGO_DB_URL") is None:
             raise EnvironmentError(".env file is missing the MONGO_DB_URL")
@@ -31,6 +33,8 @@ class MongoUtil:
             )
         if MongoUtil._db is None:
             MongoUtil._db = MongoUtil._client["main"]
+        print("Created MongoUtil")
+        self._initialized = True
 
     @property
     def client(self):
