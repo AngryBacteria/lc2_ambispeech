@@ -47,7 +47,6 @@
 import { ref } from 'vue';
 import FileUploader from './FileUploader.vue';
 import FileRecorder from './FileRecorder.vue';
-import type { S2TEndpointResponse } from '@/model/interfaces';
 import { useUserStore } from '@/stores/user';
 /**
  * This component transcribes the contents of an audio file with the backend.
@@ -130,7 +129,6 @@ function customUploaderXHR(files: File[]) {
       }
       // Response good, get data chunk by chunk
       else {
-        //TODO: handle possible event that no text is returned but an nothing recognized event
         console.log(`New stream chunk received [${this.status}]: ${newText}`);
         transcription.value = transcription.value + newText;
         lastReadPosition = this.responseText.length;
@@ -152,9 +150,11 @@ function customUploaderXHR(files: File[]) {
     console.error('XHR error.');
   };
 
+  let service = store.useCloudS2T ? 'azure' : 'whisper';
+  console.log(`Starting a speech to text request with ${service}`);
   activeXHR.open(
     'POST',
-    `http://localhost:8000/api/transcribe/file/whisper?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
+    `http://localhost:8000/api/transcribe/file/${service}?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
     true
   );
   activeXHR.send(data);

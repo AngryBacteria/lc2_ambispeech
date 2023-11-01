@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
   const isDark = useDark();
   const toggleDark = useToggle(isDark);
 
-  // Transcribption state
+  // Transcription state
   /**
    * Buffer state to  use for the audio recording.
    * Higher value means better quality
@@ -30,6 +30,17 @@ export const useUserStore = defineStore('user', () => {
    */
   const useDiarization = useLocalStorage<boolean>('useDiarization', false);
 
+  /**
+   * If cloud services should be used for speech to text
+   */
+  const useCloudS2T = useLocalStorage<boolean>('useCloudS2T', true);
+
+  /**
+   * If cloud services should be used for natural langugae processing
+   */
+  const useCloudLLM = useLocalStorage<boolean>('useCloudLLM', true);
+
+  //LLM State
   /**
    * Parameters for the openai completion requests
    */
@@ -81,6 +92,8 @@ export const useUserStore = defineStore('user', () => {
     openAiPrompt,
     downloadRecording,
     transcriptionLanguage,
-    useDiarization
+    useDiarization,
+    useCloudLLM,
+    useCloudS2T
   };
 });

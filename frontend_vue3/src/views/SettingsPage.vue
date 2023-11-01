@@ -4,6 +4,36 @@
     <Button @click="store.resetSettings" severity="warning">Einstellungen Zurücksetzen</Button>
     <section class="settings">
       <section class="setting">
+        <h2>Cloud Dienste verwenden für Speech to Text?</h2>
+        <ToggleButton
+          v-model="store.useCloudS2T"
+          onLabel="Ja"
+          offLabel="Nein"
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+        />
+      </section>
+      <section class="setting">
+        <h2>Cloud Dienste verwenden für Natural Language Processing?</h2>
+        <ToggleButton
+          v-model="store.useCloudLLM"
+          onLabel="Ja"
+          offLabel="Nein"
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+        />
+      </section>
+      <section class="setting">
+        <h2>Sprecher-Erkennung (Diarization) aktivieren?</h2>
+        <ToggleButton
+          v-model="store.useDiarization"
+          onLabel="Ja"
+          offLabel="Nein"
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+        />
+      </section>
+      <section class="setting">
         <h2>Buffer-Grösse</h2>
         <p>
           Eine grösserer Buffer bringt eine höhere Audioqualität, verbraucht aber mehr Speicher. Wir
@@ -21,16 +51,6 @@
         <h2>Audio Datei nach aufnahme Herunterladen?</h2>
         <ToggleButton
           v-model="store.downloadRecording"
-          onLabel="Ja"
-          offLabel="Nein"
-          onIcon="pi pi-check"
-          offIcon="pi pi-times"
-        />
-      </section>
-      <section class="setting">
-        <h2>Sprecher-Erkennung (Diarization) aktivieren?</h2>
-        <ToggleButton
-          v-model="store.useDiarization"
           onLabel="Ja"
           offLabel="Nein"
           onIcon="pi pi-check"
