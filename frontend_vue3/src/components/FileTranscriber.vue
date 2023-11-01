@@ -130,16 +130,9 @@ function customUploaderXHR(files: File[]) {
       }
       // Response good, get data chunk by chunk
       else {
+        //TODO: handle possible event that no text is returned but an nothing recognized event
         console.log(`New stream chunk received [${this.status}]: ${newText}`);
-        let newData = JSON.parse(newText) as S2TEndpointResponse;
-        if (newData?.reason === 'RecognizedSpeech') {
-          if (newData?.speaker) {
-            transcription.value =
-              transcription.value + `${newData?.speaker}: ${newData.text}` + '\n';
-          } else {
-            transcription.value = transcription.value + ' ' + newData.text;
-          }
-        }
+        transcription.value = transcription.value + newText;
         lastReadPosition = this.responseText.length;
       }
     }
@@ -161,7 +154,7 @@ function customUploaderXHR(files: File[]) {
 
   activeXHR.open(
     'POST',
-    `http://localhost:8000/api/transcribe/file/azure?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
+    `http://localhost:8000/api/transcribe/file/whisper?diarization=${store.useDiarization}&language=${store.transcriptionLanguage}`,
     true
   );
   activeXHR.send(data);

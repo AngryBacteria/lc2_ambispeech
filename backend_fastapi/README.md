@@ -1,28 +1,21 @@
 # How to install and run
+## Whisper
+Whisper needs some special dependencies to run on a GPU with CUDA support. These
+instructions will help you install it on a Windows machine. 
 
-## Whisper Setup
-For Whisper support, your system needs to have FFmpeg installed and the PATH configured.
-If you have a functioning Install, try to type `ffmpeg` into a console prompt and see
-if there is output. If yes ffmpeg is installed!
+1) First install Nvidia CUDA Toolkit Version 1.11.8. You can use [this link](https://developer.nvidia.com/cuda-11-8-0-download-archive).
+This will install the Toolkit and set all the important Path configurations. 
+The files should be in a folder similar to this (you will need this later):
+```C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8```
+2) Now you have to download the NVIDIA cuDNN for CUDA 11.x. You have to create an NVIDIA account
+for this. You can use [this link](https://developer.nvidia.com/rdp/cudnn-download).
+Extract the downloaded zip. There should be 3 folders (bin, include, lib).
+Copy all 3 folders to the location from before.
 
-Else you have to install it. 
-Here are a couple of ways to install [FFmpeg](https://ffmpeg.org/) for different operating systems:
-```
-# on Ubuntu or Debian
-sudo apt update && sudo apt install ffmpeg
-
-# on Arch Linux
-sudo pacman -S ffmpeg
-
-# on MacOS using Homebrew (https://brew.sh/)
-brew install ffmpeg
-
-# on Windows using Chocolatey (https://chocolatey.org/)
-choco install ffmpeg
-
-# on Windows using Scoop (https://scoop.sh/)
-scoop install ffmpeg
-```
+If these instructions did not work, maybe these guides are better:
+- https://docs.nvidia.com/deeplearning/cudnn/archives/cudnn-841/install-guide/index.html
+- https://medium.com/analytics-vidhya/installing-cuda-and-cudnn-on-windows-d44b8e9876b5
+- https://medium.com/geekculture/install-cuda-and-cudnn-on-windows-linux-52d1501a8805
 
 ## Python setup
 For the following commands you may need either the `python` or `python3` and 

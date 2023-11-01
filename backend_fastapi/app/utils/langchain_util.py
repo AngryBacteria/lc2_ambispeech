@@ -7,6 +7,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chat_models.base import BaseChatModel
 from dotenv import load_dotenv
 
+
 class LangchainUtil:
     """Singleton util class to handle various llm related operations with langchain"""
 
@@ -36,7 +37,7 @@ class LangchainUtil:
         return response
 
     async def chat_completion(self, model, messages_list, config):
-      return self.llm._identifying_params
+        return self.llm._identifying_params
 
 
 class OpenAIModel(str, Enum):

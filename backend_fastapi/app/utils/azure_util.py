@@ -6,6 +6,7 @@ import os
 from enum import Enum
 
 import azure.cognitiveservices.speech as speechsdk
+import azure.cognitiveservices.speech.enums
 from azure.cognitiveservices.speech import SpeechConfig
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
@@ -124,7 +125,7 @@ class AzureUtil(object):
         final_event_type = "transcribed" if use_diarization else "recognized"
         intermediate_event_type = "transcribing" if use_diarization else "recognizing"
         getattr(recognizer, final_event_type).connect(yield_event)
-        getattr(recognizer, intermediate_event_type).connect(yield_event)
+        getattr(recognizer, intermediate_event_type).connect(print_event)
         recognizer.session_started.connect(print_event)
         recognizer.session_stopped.connect(print_event)
         recognizer.canceled.connect(print_event)
@@ -149,13 +150,11 @@ class AzureUtil(object):
                 # read from queue if not empty
                 if not recognized_queue.empty():
                     item = await recognized_queue.get()
-                    response = {
-                        "text": item.result.text,
-                        "reason": item.result.reason.name,
-                    }
+                    text = getattr(item.result, 'text', '')
                     if use_diarization:
-                        response["speaker"] = getattr(item.result, "speaker_id", "")
-                    yield json.dumps(response)
+                        yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
+                    else:
+                        yield f"{text} "
                 await asyncio.sleep(0.1)
         finally:
             # stop recognition/diarization and clean up
@@ -167,13 +166,11 @@ class AzureUtil(object):
             # get remaining data
             if not recognized_queue.empty():
                 item = await recognized_queue.get()
-                response = {
-                    "text": item.result.text,
-                    "reason": item.result.reason.name,
-                }
+                text = getattr(item.result, 'text', '')
                 if use_diarization:
-                    response["speaker"] = getattr(item.result, "speaker_id", "")
-                yield json.dumps(response)
+                    yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
+                else:
+                    yield f"{text} "
             logger.debug("Stopped recognition")
 
     # work in progress. Main problem right now: cannot send data directly in websocket

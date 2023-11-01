@@ -2,10 +2,12 @@ import wave
 from enum import Enum
 
 import aiofiles
-from fastapi import APIRouter, UploadFile, HTTPException, WebSocket
+import aiofiles.os
+from fastapi import APIRouter, UploadFile, HTTPException, WebSocket, BackgroundTasks
 from starlette.responses import StreamingResponse
 
 from app.utils.azure_util import AzureUtil, AzureLanguageCode
+from app.utils.logging_util import logger
 from app.utils.whisper_util import WhisperUtil
 
 transcribeRouter = APIRouter(
@@ -22,13 +24,31 @@ class TranscribeService(str, Enum):
     azure = "azure"
 
 
+async def async_delete_if_exists(filename: str):
+    """Function to async delete a file if it exists. Useful for a fastapi background task"""
+    try:
+        if await aiofiles.os.path.exists(filename):
+            await aiofiles.os.remove(filename)
+            logger.info(f"File: {filename} deleted successfully")
+        else:
+            logger.info(f"File: {filename} does not exist")
+
+    except Exception as error:
+        logger.error(f"Error while deleting File: {filename} Error: {error}")
+
+
 @transcribeRouter.post("/file/{service}")
 async def post_file(
+    background_tasks: BackgroundTasks,
     file: UploadFile,
     service: TranscribeService,
     diarization: bool = False,
     language: AzureLanguageCode = "de-CH",
 ):
+    """
+    Transcribes a file. Either with whisper locally or azure on the cloud.
+    First it checks if the file is a correct wav file. After that it transcribes with the corresponding util classes.
+    """
     # validate if the file is a valid wav
     try:
         await file.seek(0)
@@ -45,12 +65,13 @@ async def post_file(
     # try to transcribe the wav
     try:
         if service.name.lower() == "whisper":
-            # TODO: cleanup after done (delete file)
             async with aiofiles.open(
                 f"files/{file.filename}", "wb"
             ) as out_file:  # this closes the file
                 while content := await file.read(1024):  # async read chunk
                     await out_file.write(content)  # async write chunk.
+
+            background_tasks.add_task(async_delete_if_exists, f"files/{file.filename}")
 
             return StreamingResponse(
                 whisper_util.transcribe_file(out_file.name, language),

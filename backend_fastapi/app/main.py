@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.langchain_router import langchainRouter
@@ -40,14 +40,3 @@ def shutdown_event():
 @app.get("/")
 async def root():
     return "Hello World! The Ambient Speech Recognition Server is working"
-
-
-def write_notification():
-    print("I am running after the response")
-
-@app.get("/background")
-async def background(background_tasks: BackgroundTasks):
-    print("I am running before the response 1")
-    background_tasks.add_task(write_notification)
-    print("I am running before the response 2")
-    return {"message": "Notification sent in the background"}

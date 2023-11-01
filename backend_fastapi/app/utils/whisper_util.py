@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
-import logging
-import multiprocessing
+import os
 
-from pywhispercpp.model import Model
+import ctranslate2
+from faster_whisper import WhisperModel
 
 from app.utils.azure_util import AzureLanguageCode
+from app.utils.logging_util import logger
 
 
 def get_whisper_language(language: AzureLanguageCode):
@@ -29,6 +30,12 @@ class WhisperUtil:
     _instance = None
     language: AzureLanguageCode = None
     cpu_threads: int = None
+    # whisper config
+    model_size = "base"
+    model: WhisperModel = None
+    beam_size = 5
+    useVad: bool = True
+    useGPU: bool = True
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -40,26 +47,38 @@ class WhisperUtil:
             return
         self.language = language_code
         # set cpu cores to use
-        cpu_count = multiprocessing.cpu_count()
+        cpu_count = os.cpu_count()
         self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 4
 
-        print("Created WhisperUtil")
+        if ctranslate2.get_cuda_device_count() >= 1 and self.useGPU:
+            try:
+                self.model = WhisperModel(self.model_size, device="cuda")
+            except Exception as error:
+                logger.error(f"Cuda could not be loaded: {error}")
+            finally:
+                logger.info("Created WhisperUtil [GPU support]")
+        else:
+            self.model = WhisperModel(
+                self.model_size, device="cpu", cpu_threads=self.cpu_threads
+            )
+            logger.info("Created WhisperUtil [CPU support]")
+
         self._initialized = True
 
-    # todo make yield return intermediate results with callback
-    def transcribe_file(self, file_path: str, language: AzureLanguageCode):
-        model = Model(
-            "base",
-            language=get_whisper_language(language),
-            n_threads=self.cpu_threads,
-            log_level=logging.INFO,
+    def transcribe_file(self, file_path: str, language_code: AzureLanguageCode = None):
+        segments, info = self.model.transcribe(
+            file_path,
+            beam_size=self.beam_size,
+            vad_filter=self.useVad,
+            language=get_whisper_language(language_code),
         )
+        logger.info(
+            f"Detected language {info.language} with probability {info.language_probability}"
+        )
+        logger.info(f"Audio duration [{info.duration}][{info.duration_after_vad}]")
 
-        segments = model.transcribe(file_path, speed_up=True)
         for segment in segments:
-            print(f"Analyzed Text: {segment.text}")
-            response = {
-                "text": segment.text,
-                "reason": "Recognized",
-            }
-            yield json.dumps(response)
+            logger.debug(f"Recognized: {segment.text}")
+            yield getattr(segment, 'text', '')
+
+        logger.info("Finished whisper audio-processing")
