@@ -66,23 +66,23 @@ async def post_file(
     try:
         if service.name.lower() == "whisper":
             async with aiofiles.open(
-                f"files/{file.filename}", "wb"
+                f"upload_files/{file.filename}", "wb"
             ) as out_file:  # this closes the file
                 while content := await file.read(1024):  # async read chunk
                     await out_file.write(content)  # async write chunk.
 
-            background_tasks.add_task(async_delete_if_exists, f"files/{file.filename}")
+            background_tasks.add_task(async_delete_if_exists, f"upload_files/{file.filename}")
 
             return StreamingResponse(
                 whisper_util.transcribe_file(out_file.name, language),
-                media_type="application/json",
+                media_type="application/text",
             )
         else:
             return StreamingResponse(
                 azure_util.transcribe_with_push_stream(
                     file, audio_params, use_diarization=diarization, language=language
                 ),
-                media_type="application/json",
+                media_type="application/text",
             )
 
     except Exception as error:

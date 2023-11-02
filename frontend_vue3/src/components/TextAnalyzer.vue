@@ -1,11 +1,5 @@
 <template>
   <section class="component-wrapper">
-    <h3>Füge den transkribierten Text hier ein</h3>
-    <Textarea v-model="transcription" autoResize rows="4" />
-    <Button @click="analyzeText()" :disabled="transcription.length < 1 || analysisIsLoading"
-      >Analysiere Text</Button
-    >
-
     <Accordion>
       <AccordionTab header="Extrahierte Informationen">
         <p v-if="analysisIsLoading">Am Analysieren...</p>
@@ -17,17 +11,28 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
-import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { ref, watch } from 'vue';
 
-const transcription = ref('');
+const store = useUserStore();
+
 const extractedInfo = ref('');
 const analysisIsLoading = ref(false);
 const userStore = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/llm/openai/gpt-3.5-turbo';
 
-async function analyzeText() {
-  if (!transcription.value.trim()) return; // No Input no output.
+/**
+ * Get the transcriptionText from the store and start analyzing if it is present
+ */
+const { transcriptionText } = storeToRefs(store);
+watch(transcriptionText, () => {
+  if (transcriptionText.value.length >= 10) {
+    extractedInfo.value = '';
+    analyzeText(transcriptionText.value);
+  }
+});
 
+async function analyzeText(text: string) {
   analysisIsLoading.value = true;
 
   let prev_messages = [
@@ -51,7 +56,7 @@ async function analyzeText() {
   ];
 
   //Load prompt and insert transcript
-  let prompt = userStore.openAiPrompt.replace('<PLACEHOLDER>', transcription.value);
+  let prompt = userStore.openAiPrompt.replace('<PLACEHOLDER>', text);
 
   //TODO handling too large file
   //TODO relocate max tokens into backend

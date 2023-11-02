@@ -23,7 +23,8 @@
         </template>
         <Textarea
           :disabled="
-            transcriptionIsLoading || transcription.length < 1 || transcriptionError.length > 0
+            !store.isDebug &&
+            (transcriptionIsLoading || transcription.length < 1 || transcriptionError.length > 0)
           "
           v-model="transcription"
           autoResize
@@ -36,7 +37,12 @@
       <Button @click="abortUpload()" v-show="transcriptionIsLoading" severity="warning"
         >Transkription stoppen</Button
       >
-      <Button v-show="!transcriptionIsLoading && transcription.length > 0" severity="success"
+      <Button
+        @click="store.transcriptionText = transcription"
+        v-show="
+          !transcriptionIsLoading && transcription.length > 0 && transcriptionError.length == 0
+        "
+        severity="success"
         >Analyse starten</Button
       >
     </div>
@@ -170,16 +176,16 @@ function setState(state: StateFlag, error: string = '') {
     case StateFlag.ERROR:
       transcriptionIsLoading.value = false;
       transcriptionError.value = error;
-
       uploadProgress.value = 0;
       transcription.value = '';
+      store.transcriptionText = '';
       break;
     case StateFlag.INITIAL:
       transcriptionIsLoading.value = true;
       transcriptionError.value = '';
-
       uploadProgress.value = 0;
       transcription.value = '';
+      store.transcriptionText = '';
       break;
     case StateFlag.SUCCESS:
       transcriptionIsLoading.value = false;

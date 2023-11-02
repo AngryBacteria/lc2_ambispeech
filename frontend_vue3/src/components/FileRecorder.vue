@@ -22,7 +22,10 @@
         label="Delete recorded data"
         icon="pi pi-trash"
       />
-      <p v-if="estimatedSize > 0" style="margin: 0">Aufnahmegrösse: {{ estimatedSizeString }}</p>
+      <p v-if="transcriptionError" style="color: var(--danger)">{{ transcriptionError }}</p>
+      <p v-else-if="estimatedSize > 0" style="margin: 0">
+        Aufnahmegrösse: {{ estimatedSizeString }}
+      </p>
     </section>
   </section>
 </template>

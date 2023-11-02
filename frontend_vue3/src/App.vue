@@ -43,11 +43,6 @@ const items = ref([
     route: '/transcribe/record'
   },
   {
-    label: 'Analysieren',
-    icon: 'pi pi-eye',
-    route: '/analyze'
-  },
-  {
     label: 'Einstellungen',
     icon: 'pi pi-cog',
     route: '/einstellungen'

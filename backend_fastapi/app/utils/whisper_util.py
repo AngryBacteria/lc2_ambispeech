@@ -10,6 +10,8 @@ from app.utils.azure_util import AzureLanguageCode
 from app.utils.logging_util import logger
 
 
+# TODO add util classes to download and manage models locally
+
 def get_whisper_language(language: AzureLanguageCode):
     match language:
         case AzureLanguageCode.DE_CH:
@@ -49,7 +51,6 @@ class WhisperUtil:
         # set cpu cores to use
         cpu_count = os.cpu_count()
         self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 4
-
         if ctranslate2.get_cuda_device_count() >= 1 and self.useGPU:
             try:
                 self.model = WhisperModel(self.model_size, device="cuda")
@@ -73,7 +74,7 @@ class WhisperUtil:
             language=get_whisper_language(language_code),
         )
         logger.info(
-            f"Detected language {info.language} with probability {info.language_probability}"
+            f"Starting inference: Detected language {info.language} with probability {info.language_probability}"
         )
         logger.info(f"Audio duration [{info.duration}][{info.duration_after_vad}]")
 

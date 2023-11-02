@@ -1,12 +1,24 @@
 import { defineStore } from 'pinia';
 import { useDark, useLocalStorage, useToggle, useWindowSize } from '@vueuse/core';
 import type { BufferSize, TranscriptionLanguage } from '@/model/interfaces';
+import { ref } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
   // General app state
+  /**
+   * Indicates if the app is in debug mode.
+   * This enables manually editing state that shouldnt be editable normally
+   */
+  const isDebug = ref(true);
   const { width, height } = useWindowSize();
   const isDark = useDark();
   const toggleDark = useToggle(isDark);
+
+  // Shared state
+  /**
+   * Text that was transcribed from audio
+   */
+  const transcriptionText = ref('');
 
   // Transcription state
   /**
@@ -94,6 +106,8 @@ export const useUserStore = defineStore('user', () => {
     transcriptionLanguage,
     useDiarization,
     useCloudLLM,
-    useCloudS2T
+    useCloudS2T,
+    isDebug,
+    transcriptionText
   };
 });
