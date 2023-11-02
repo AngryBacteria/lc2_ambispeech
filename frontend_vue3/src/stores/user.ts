@@ -75,6 +75,8 @@ export const useUserStore = defineStore('user', () => {
     downloadRecording.value = false;
     transcriptionLanguage.value = 'de-CH';
     useDiarization.value = false;
+    useCloudLLM.value = true;
+    useCloudS2T.value = true;
   }
 
   const openAiPrompt = useLocalStorage(

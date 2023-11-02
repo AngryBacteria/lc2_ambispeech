@@ -59,6 +59,7 @@ import { useUserStore } from '@/stores/user';
  * It receives audio data, uploads it to the backend and retrieves the transcribed text
  */
 
+//TODO: check business logic again
 enum StateFlag {
   INITIAL,
   ERROR,

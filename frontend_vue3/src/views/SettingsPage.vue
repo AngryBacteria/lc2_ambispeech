@@ -34,6 +34,16 @@
         />
       </section>
       <section class="setting">
+        <h2>Audio Datei nach aufnahme Herunterladen?</h2>
+        <ToggleButton
+          v-model="store.downloadRecording"
+          onLabel="Ja"
+          offLabel="Nein"
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+        />
+      </section>
+      <section class="setting">
         <h2>Buffer-Grösse</h2>
         <p>
           Eine grösserer Buffer bringt eine höhere Audioqualität, verbraucht aber mehr Speicher. Wir
@@ -45,16 +55,6 @@
           optionLabel="name"
           option-value="code"
           placeholder="Buffer-Grösse"
-        />
-      </section>
-      <section class="setting">
-        <h2>Audio Datei nach aufnahme Herunterladen?</h2>
-        <ToggleButton
-          v-model="store.downloadRecording"
-          onLabel="Ja"
-          offLabel="Nein"
-          onIcon="pi pi-check"
-          offIcon="pi pi-times"
         />
       </section>
       <section class="setting">
@@ -150,9 +150,24 @@ const openAiSettings = [
 }
 
 .settings {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  /* Adjusts the layout for small devices */
+  .settings {
+    grid-template-columns: 1fr; /* Makes it a single column on small screens */
+  }
+}
+
+.setting {
+  background-color: var(--surface-card);
+  padding: 1rem;
+  border-radius: var(--custom-border-radius);
 }
 
 .sliders {

@@ -11,6 +11,7 @@ from app.utils.logging_util import logger
 
 
 # TODO add util classes to download and manage models locally
+# TODO add support for both cpu and cuda and dynamic switching
 
 def get_whisper_language(language: AzureLanguageCode):
     match language:
@@ -32,7 +33,6 @@ class WhisperUtil:
     _instance = None
     language: AzureLanguageCode = None
     cpu_threads: int = None
-    # whisper config
     model_size = "base"
     model: WhisperModel = None
     beam_size = 5
