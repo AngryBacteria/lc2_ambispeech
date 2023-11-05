@@ -13,6 +13,8 @@ from langchain.schema.language_model import BaseLanguageModel
 
 from app.utils.openai_helper import OpenAIHelper
 
+from app.utils.logging_util import logger
+
 
 class LangchainUtil:
     """Singleton util class to handle various llm related operations with langchain"""

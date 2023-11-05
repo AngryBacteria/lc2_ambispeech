@@ -6,6 +6,8 @@ from enum import Enum
 import openai
 from dotenv import load_dotenv
 
+from app.utils.logging_util import logger
+
 
 class OpenAIUtil:
     """Singleton util class to handle various llm related operations with openai"""
@@ -27,7 +29,7 @@ class OpenAIUtil:
         else:
             openai.api_key = os.getenv("OPENAI_KEY")
             self.openai_model = OpenaiModel.GPT_3_TURBO
-        print("Created OpenAIUtil")
+        logger.info("Created OpenAIUtil")
         self._initialized = True
 
     async def hello_chat_completion(self, config):

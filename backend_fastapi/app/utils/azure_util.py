@@ -61,7 +61,7 @@ class AzureUtil(object):
                 region=self.azure_region,
                 speech_recognition_language=self.language_code,
             )
-        print("Created AzureUtil")
+        logger.info("Created AzureUtil")
         self._initialized = True
 
     def azure_short_s2t(self, file_path: str):
@@ -150,7 +150,7 @@ class AzureUtil(object):
                 # read from queue if not empty
                 if not recognized_queue.empty():
                     item = await recognized_queue.get()
-                    text = getattr(item.result, 'text', '')
+                    text = getattr(item.result, "text", "")
                     if use_diarization:
                         yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
                     else:
@@ -166,7 +166,7 @@ class AzureUtil(object):
             # get remaining data
             if not recognized_queue.empty():
                 item = await recognized_queue.get()
-                text = getattr(item.result, 'text', '')
+                text = getattr(item.result, "text", "")
                 if use_diarization:
                     yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
                 else:
