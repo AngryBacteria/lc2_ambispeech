@@ -4,15 +4,24 @@ import os
 from enum import Enum
 
 from langchain.chat_models import ChatOpenAI
-from langchain.chat_models.base import BaseChatModel
+from langchain.llms import LlamaCpp, OpenAI
+from langchain.llms.base import BaseLLM
+from langchain.prompts import PromptTemplate
+
 from dotenv import load_dotenv
+from langchain.schema.language_model import BaseLanguageModel
+
+from app.utils.openai_helper import OpenAIHelper
 
 
 class LangchainUtil:
     """Singleton util class to handle various llm related operations with langchain"""
 
     _instance = None
-    llm: BaseChatModel = None
+    llm: BaseLanguageModel = None
+    openai_helper = OpenAIHelper()
+
+    # llama_helper = LlammaHelper()
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -23,27 +32,43 @@ class LangchainUtil:
         if hasattr(self, "_initialized"):
             return
         load_dotenv()
-        if os.getenv("OPENAI_KEY") is None:
-            raise EnvironmentError(".env file is missing the OPENAI_KEY")
-        else:
-            self.llm = ChatOpenAI(model_name="gpt-3.5-turbo")
+        self.llm = ChatOpenAI()
         print("Created LangchainUtil")
         self._initialized = True
 
     async def hello_chat_completion(self):
         """Async Hello World chat completion example for openai"""
         response = self.llm.call("Hello World")
-
         return response
 
-    async def chat_completion(self, model, messages_list, config):
-        return self.llm._identifying_params
+    async def chat_completion(self, model, message):
+        helper = ModelHelperMapper.get_helper_for_model(model)
+        if not helper:
+            raise ValueError(f"Unsupported model: {model}")
+
+        print(helper.get_config().model_dump())
+
+        return self.llm.predict(message)
+
+    def test(self):
+        inputshema = self.llm.model_kwargs
+        print(inputshema)
+        return
 
 
-class OpenAIModel(str, Enum):
-    """Enum for all supported OpenAI models"""
+class LLModel(str, Enum):
+    """Enum for all supported Large Language models"""
 
-    GPT_4 = "gpt-4"
-    GPT_4_32k = "gpt-4-32k"
-    GPT_3_TURBO = "gpt-3.5-turbo"
-    GPT_3_TURBO_16k = "gpt-3.5-turbo-16k"
+    ChatOpenAI = "chat-open-ai"
+    Llama = "llama-cpp"
+
+
+class ModelHelperMapper:
+    _mapping = {
+        LLModel.ChatOpenAI: OpenAIHelper()
+        # LLModel.Llama: LlamaHelper()
+    }
+
+    @classmethod
+    def get_helper_for_model(cls, model: LLModel):
+        return cls._mapping.get(model)
