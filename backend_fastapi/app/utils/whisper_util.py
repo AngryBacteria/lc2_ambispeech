@@ -84,7 +84,7 @@ class WhisperUtil:
         # Forces the file to store on disk
         file.file.fileno()
         segments = info = None  # Initialize variables
-        gpu_failed = False
+        gpu_failed = True
         # Try to transcribe with GPU model
         if self.useGPU and self.model_GPU is not None:
             try:
@@ -94,13 +94,14 @@ class WhisperUtil:
                     vad_filter=self.useVad,
                     language=get_whisper_language(language_code),
                 )
-                logger.error(f"Inference with gpu")
+                gpu_failed = False
+                logger.debug(f"Inference with GPU")
             except Exception as e:
                 logger.error(f"GPU model transcription failed: {e}")
                 # Flag to indicate GPU failure, in case separate logic is needed
                 gpu_failed = True
         # If GPU transcription failed or not available, try CPU model
-        if not self.useGPU or gpu_failed:
+        if gpu_failed:
             try:
                 segments, info = self.model_CPU.transcribe(
                     file.file,
@@ -108,9 +109,10 @@ class WhisperUtil:
                     vad_filter=self.useVad,
                     language=get_whisper_language(language_code),
                 )
-                logger.error(f"Inference with cpu")
+                logger.debug(f"Inference with CPU")
             except Exception as e:
                 logger.error(f"CPU model transcription also failed: {e}")
+                file.file.close()
                 raise e  # If both methods fail, re-raise the exception.
         # Close the file manually (not required but good practice)
         file.file.close()
