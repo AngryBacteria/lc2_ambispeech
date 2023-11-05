@@ -1,13 +1,10 @@
 import wave
 from enum import Enum
 
-import aiofiles
-import aiofiles.os
 from fastapi import APIRouter, UploadFile, HTTPException, WebSocket, BackgroundTasks
 from starlette.responses import StreamingResponse
 
 from app.utils.azure_util import AzureUtil, AzureLanguageCode
-from app.utils.logging_util import logger
 from app.utils.whisper_util import WhisperUtil
 
 transcribeRouter = APIRouter(
@@ -22,19 +19,6 @@ whisper_util = WhisperUtil()
 class TranscribeService(str, Enum):
     whisper = "whisper"
     azure = "azure"
-
-
-async def async_delete_if_exists(filename: str):
-    """Function to async delete a file if it exists. Useful for a fastapi background task"""
-    try:
-        if await aiofiles.os.path.exists(filename):
-            await aiofiles.os.remove(filename)
-            logger.info(f"File: {filename} deleted successfully")
-        else:
-            logger.info(f"File: {filename} does not exist")
-
-    except Exception as error:
-        logger.error(f"Error while deleting File: {filename} Error: {error}")
 
 
 @transcribeRouter.post("/file/{service}")
@@ -65,16 +49,8 @@ async def post_file(
     # try to transcribe the wav
     try:
         if service.name.lower() == "whisper":
-            async with aiofiles.open(
-                f"upload_files/{file.filename}", "wb"
-            ) as out_file:  # this closes the file
-                while content := await file.read(1024):  # async read chunk
-                    await out_file.write(content)  # async write chunk.
-
-            background_tasks.add_task(async_delete_if_exists, f"upload_files/{file.filename}")
-
             return StreamingResponse(
-                whisper_util.transcribe_file(out_file.name, language),
+                whisper_util.transcribe_file(file, language),
                 media_type="application/text",
             )
         else:

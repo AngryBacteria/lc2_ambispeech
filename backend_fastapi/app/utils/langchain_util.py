@@ -7,6 +7,8 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chat_models.base import BaseChatModel
 from dotenv import load_dotenv
 
+from app.utils.logging_util import logger
+
 
 class LangchainUtil:
     """Singleton util class to handle various llm related operations with langchain"""
@@ -27,7 +29,7 @@ class LangchainUtil:
             raise EnvironmentError(".env file is missing the OPENAI_KEY")
         else:
             self.llm = ChatOpenAI(model_name="gpt-3.5-turbo")
-        print("Created LangchainUtil")
+        logger.info("Created LangchainUtil")
         self._initialized = True
 
     async def hello_chat_completion(self):

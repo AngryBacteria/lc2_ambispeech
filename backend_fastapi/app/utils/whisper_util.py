@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-import json
 import os
+from typing import BinaryIO
 
 import ctranslate2
-from faster_whisper import WhisperModel
+from fastapi import UploadFile
+from faster_whisper import WhisperModel, download_model
 
 from app.utils.azure_util import AzureLanguageCode
 from app.utils.logging_util import logger
 
-
-# TODO add util classes to download and manage models locally
-# TODO add support for both cpu and cuda and dynamic switching
 
 def get_whisper_language(language: AzureLanguageCode):
     match language:
@@ -31,10 +29,14 @@ def get_whisper_language(language: AzureLanguageCode):
 
 class WhisperUtil:
     _instance = None
+    model_size = "base"
+    model_folder = "models"
+
+    model_GPU: WhisperModel = None
+    model_CPU: WhisperModel = None
+
     language: AzureLanguageCode = None
     cpu_threads: int = None
-    model_size = "base"
-    model: WhisperModel = None
     beam_size = 5
     useVad: bool = True
     useGPU: bool = True
@@ -48,38 +50,87 @@ class WhisperUtil:
         if hasattr(self, "_initialized"):
             return
         self.language = language_code
-        # set cpu cores to use
+        # set amount of cpu cores to use
         cpu_count = os.cpu_count()
         self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 4
+        # download the model
+        self.downloadModels()
+        # Load the GPU model if supported
         if ctranslate2.get_cuda_device_count() >= 1 and self.useGPU:
             try:
-                self.model = WhisperModel(self.model_size, device="cuda")
+                self.model_GPU = WhisperModel(
+                    f"models/{self.model_size}", device="cuda"
+                )
+                logger.debug("Created Whisper GPU-Model")
             except Exception as error:
-                logger.error(f"Cuda could not be loaded: {error}")
-            finally:
-                logger.info("Created WhisperUtil [GPU support]")
-        else:
-            self.model = WhisperModel(
-                self.model_size, device="cpu", cpu_threads=self.cpu_threads
+                logger.error(f"GPU support for Whisper could not be loaded: {error}")
+        # Load the CPU model
+        try:
+            self.model_CPU = WhisperModel(
+                f"models/{self.model_size}", device="cpu", cpu_threads=self.cpu_threads
             )
-            logger.info("Created WhisperUtil [CPU support]")
+            logger.debug("Created Whisper CPU-Model")
+        except Exception as error:
+            logger.error(f"GPU support for Whisper could not be loaded: {error}")
+            if self.model_GPU is None:
+                raise error
 
+        logger.info(f"Created WhisperUtil [lang={self.language}, useVad={self.useVad}]")
         self._initialized = True
 
-    def transcribe_file(self, file_path: str, language_code: AzureLanguageCode = None):
-        segments, info = self.model.transcribe(
-            file_path,
-            beam_size=self.beam_size,
-            vad_filter=self.useVad,
-            language=get_whisper_language(language_code),
-        )
+    def transcribe_file(
+        self, file: UploadFile | BinaryIO, language_code: AzureLanguageCode = None
+    ):
+        # Forces the file to store on disk
+        file.file.fileno()
+        segments = info = None  # Initialize variables
+        gpu_failed = False
+        # Try to transcribe with GPU model
+        if self.useGPU and self.model_GPU is not None:
+            try:
+                segments, info = self.model_GPU.transcribe(
+                    file.file,
+                    beam_size=self.beam_size,
+                    vad_filter=self.useVad,
+                    language=get_whisper_language(language_code),
+                )
+                logger.error(f"Inference with gpu")
+            except Exception as e:
+                logger.error(f"GPU model transcription failed: {e}")
+                # Flag to indicate GPU failure, in case separate logic is needed
+                gpu_failed = True
+        # If GPU transcription failed or not available, try CPU model
+        if not self.useGPU or gpu_failed:
+            try:
+                segments, info = self.model_CPU.transcribe(
+                    file.file,
+                    beam_size=self.beam_size,
+                    vad_filter=self.useVad,
+                    language=get_whisper_language(language_code),
+                )
+                logger.error(f"Inference with cpu")
+            except Exception as e:
+                logger.error(f"CPU model transcription also failed: {e}")
+                raise e  # If both methods fail, re-raise the exception.
+        # Close the file manually (not required but good practice)
+        file.file.close()
+
+        if segments is None or info is None:
+            raise Exception("Both GPU and CPU transcriptions failed.")
         logger.info(
             f"Starting inference: Detected language {info.language} with probability {info.language_probability}"
         )
-        logger.info(f"Audio duration [{info.duration}][{info.duration_after_vad}]")
-
+        # VAD may reduce the audio length because of parts without speech
+        logger.debug(f"Audio duration [{info.duration}][{info.duration_after_vad}]")
         for segment in segments:
             logger.debug(f"Recognized: {segment.text}")
-            yield getattr(segment, 'text', '')
+            yield getattr(segment, "text", "")
 
         logger.info("Finished whisper audio-processing")
+
+    def downloadModels(self):
+        # Check if the model already exists. Download only if not
+        if not os.path.exists(f"models/{self.model_size}/model.bin"):
+            os.makedirs(f"models/{self.model_size}")
+            path = download_model(self.model_size, f"models/{self.model_size}")
+            logger.info(f"Downloaded the Whisper model into: {path}")
