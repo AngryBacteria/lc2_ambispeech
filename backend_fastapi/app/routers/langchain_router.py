@@ -27,8 +27,8 @@ class LangchainCompletionBody(BaseModel):
 @langchainRouter.post("/complete/{model}")
 async def openai(model: LLModel, body: LangchainCompletionBody):
     """Non-Streaming chat completion"""
-    message = body.message
-    return await langchainUtil.chat_completion(model, message)
+    transcript = body.message
+    return await langchainUtil.chat_completion(model, transcript)
 
 
 # TODO under Construction

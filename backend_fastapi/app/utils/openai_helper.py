@@ -5,6 +5,7 @@ from enum import Enum
 
 from langchain.chat_models import ChatOpenAI
 from langchain.chat_models.base import BaseChatModel
+from langchain.schema.language_model import BaseLanguageModel
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
@@ -13,12 +14,12 @@ class OpenAIHelper:
     """Singleton util class to handle various llm related operations with langchain"""
 
     _instance = None
+    llm: BaseLanguageModel = None
     config = None
 
-    class OpenaiCompletionConfig(BaseModel):
+    class OpenaiLangchainConfig(BaseModel):
         submodel: OpenAIModel = "gpt-3.5-turbo"
         max_tokens: int = 10
-
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -32,12 +33,16 @@ class OpenAIHelper:
         if os.getenv("OPENAI_KEY") is None:
             raise EnvironmentError(".env file is missing the OPENAI_KEY")
         else:
-            self.config = OpenAIHelper.OpenaiCompletionConfig()
+            self.config = OpenAIHelper.OpenaiLangchainConfig()
+            self.llm = ChatOpenAI()
         print("Created OpenAIHelper")
         self._initialized = True
 
     def get_config(self):
         return self.config
+
+    def get_llm(self):
+        return self.llm
 
 
 class OpenAIModel(str, Enum):

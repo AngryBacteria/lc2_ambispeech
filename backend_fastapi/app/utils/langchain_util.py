@@ -3,13 +3,10 @@ from __future__ import annotations
 import os
 from enum import Enum
 
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import LlamaCpp, OpenAI
-from langchain.llms.base import BaseLLM
 from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 
 from dotenv import load_dotenv
-from langchain.schema.language_model import BaseLanguageModel
 
 from app.utils.openai_helper import OpenAIHelper
 
@@ -20,10 +17,10 @@ class LangchainUtil:
     """Singleton util class to handle various llm related operations with langchain"""
 
     _instance = None
-    llm: BaseLanguageModel = None
-    openai_helper = OpenAIHelper()
-
-    # llama_helper = LlammaHelper()
+    prompt_template = PromptTemplate(
+        input_variables=["transcript"],
+        template="Bitte extrahiere spezifische Informationen über Symptome und Medikamente aus diesem Transkript: \n {transcript}",
+    )
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -34,27 +31,29 @@ class LangchainUtil:
         if hasattr(self, "_initialized"):
             return
         load_dotenv()
-        self.llm = ChatOpenAI()
         print("Created LangchainUtil")
         self._initialized = True
 
+    #does not work anymore
     async def hello_chat_completion(self):
         """Async Hello World chat completion example for openai"""
-        response = self.llm.call("Hello World")
+        response = ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI).getLLM().call("Hello World")
         return response
 
-    async def chat_completion(self, model, message):
+    async def chat_completion(self, model, transcript):
         helper = ModelHelperMapper.get_helper_for_model(model)
         if not helper:
             raise ValueError(f"Unsupported model: {model}")
 
-        print(helper.get_config().model_dump())
+        chain = LLMChain(llm=helper.get_llm(), prompt=self.prompt_template)
 
-        return self.llm.predict(message)
+        return chain.run(transcript)
 
     def test(self):
-        inputshema = self.llm.model_kwargs
-        print(inputshema)
+
+        self.llm.temperature = 1
+        answer = self.llm.generate
+        print(answer)
         return
 
 
