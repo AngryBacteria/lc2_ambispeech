@@ -8,6 +8,7 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.schema.language_model import BaseLanguageModel
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from typing import Dict, List, Type
 
 
 class OpenAIHelper:
@@ -18,8 +19,9 @@ class OpenAIHelper:
     config = None
 
     class OpenaiLangchainConfig(BaseModel):
-        submodel: OpenAIModel = "gpt-3.5-turbo"
-        max_tokens: int = 10
+        submodule: OpenAIModel = "gpt-3.5-turbo"
+        max_tokens: int = 20
+        temperature: float = 1
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -38,8 +40,7 @@ class OpenAIHelper:
         print("Created OpenAIHelper")
         self._initialized = True
 
-    def get_config(self):
-        return self.config
+    #TODO get_configurable_fields implementing
 
     def get_llm(self):
         return self.llm

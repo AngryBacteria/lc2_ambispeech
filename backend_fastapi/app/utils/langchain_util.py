@@ -6,9 +6,9 @@ from enum import Enum
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-from dotenv import load_dotenv
-
 from app.utils.openai_helper import OpenAIHelper
+
+from dotenv import load_dotenv
 
 from app.utils.logging_util import logger
 
@@ -37,7 +37,7 @@ class LangchainUtil:
     #does not work anymore
     async def hello_chat_completion(self):
         """Async Hello World chat completion example for openai"""
-        response = ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI).getLLM().call("Hello World")
+        response = ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI).get_llm().call("Hello World")
         return response
 
     async def chat_completion(self, model, transcript):
@@ -49,12 +49,8 @@ class LangchainUtil:
 
         return chain.run(transcript)
 
-    def test(self):
-
-        self.llm.temperature = 1
-        answer = self.llm.generate
-        print(answer)
-        return
+    async def test(self):
+        return ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI).get_configurable_fields()
 
 
 class LLModel(str, Enum):
