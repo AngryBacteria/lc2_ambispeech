@@ -17,3 +17,85 @@ export type RecorderState = 'inactive' | 'recording' | 'paused' | 'stopped';
  * Possible transcribtion languages (azure)
  */
 export type TranscriptionLanguage = 'de-CH' | 'de-DE' | 'de-AT' | 'en-GB' | 'en-US';
+
+export interface Patient {
+  resourceType: string;
+  id: string;
+  meta: Meta;
+  identifier: Identifier[];
+  name: Name[];
+  telecom: Telecom[];
+  gender: string;
+  birthDate: string;
+  address: Address[];
+  maritalStatus: MaritalStatus;
+  generalPractitioner: GeneralPractitioner[];
+}
+
+export interface Address {
+  use: string;
+  line: string[];
+  city: string;
+  postalCode: string;
+}
+
+export interface GeneralPractitioner {
+  reference: string;
+}
+
+export interface Identifier {
+  system: string;
+  value: string;
+}
+
+export interface MaritalStatus {
+  coding: Coding[];
+}
+
+export interface Coding {
+  system: string;
+  code: string;
+  display: string;
+}
+
+export interface Meta {
+  source: string;
+  profile: string[];
+}
+
+export interface Name {
+  family: string;
+  given: string[];
+}
+
+export interface Telecom {
+  system: string;
+  value: string;
+  use?: string;
+}
+
+export interface Practitioner {
+  resourceType: string;
+  id: string;
+  meta: Meta;
+  identifier: Identifier[];
+  name: Name_Doctor[];
+  gender: string;
+  birthDate: string;
+}
+
+export interface Name_Doctor {
+  family: string;
+  given: string[];
+  prefix: string[];
+  _prefix: Array<Prefix | null>;
+}
+
+export interface Prefix {
+  extension: Extension[];
+}
+
+export interface Extension {
+  url: string;
+  valueCode: string;
+}

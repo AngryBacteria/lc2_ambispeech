@@ -1,0 +1,219 @@
+[
+  {
+    "resourceType": "Patient",
+    "id": "ElisabethBroennimann",
+    "meta": {
+      "source": "https://www.ti.bfh.ch/de/bachelor/medizininformatik.html",
+      "profile": ["http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient"]
+    },
+    "identifier": [
+      {
+        "system": "urn:oid:2.16.756.5.30.1.123.100.1.1.1",
+        "value": "80756015090002647590"
+      }
+    ],
+    "name": [
+      {
+        "family": "Brönnimann-Bertholet",
+        "given": ["Elisabeth"]
+      }
+    ],
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "+41 32 321 61 11",
+        "use": "home"
+      },
+      {
+        "system": "email",
+        "value": "elisabeth@broennimann.today"
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1937-05-03",
+    "address": [
+      {
+        "use": "home",
+        "line": ["Kreuzweg 11"],
+        "city": "Biel/Bienne",
+        "postalCode": "2500"
+      }
+    ],
+    "maritalStatus": {
+      "coding": [
+        {
+          "system": "http://fhir.ch/ig/ch-core/CodeSystem/ech-11-maritalstatus",
+          "code": "2",
+          "display": "verheiratet"
+        }
+      ]
+    },
+    "generalPractitioner": [
+      {
+        "reference": "Practitioner/HanspeterWengerByBFH"
+      }
+    ]
+  },
+  {
+    "resourceType": "Patient",
+    "id": "AlexanderGermann",
+    "meta": {
+      "profile": ["http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient"]
+    },
+    "identifier": [
+      {
+        "system": "urn:oid:2.16.756.5.30.1.123.100.1.1.1",
+        "value": "80756021890003765490"
+      }
+    ],
+    "name": [
+      {
+        "family": "Germann",
+        "given": ["Alexander"]
+      }
+    ],
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "+41 33 442 22 11",
+        "use": "home"
+      },
+      {
+        "system": "email",
+        "value": "alexander@germann.today"
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1945-08-21",
+    "address": [
+      {
+        "use": "home",
+        "line": ["Weinbergstrasse 15"],
+        "city": "Zürich",
+        "postalCode": "8001"
+      }
+    ],
+    "maritalStatus": {
+      "coding": [
+        {
+          "system": "http://fhir.ch/ig/ch-core/CodeSystem/ech-11-maritalstatus",
+          "code": "1",
+          "display": "ledig"
+        }
+      ]
+    },
+    "generalPractitioner": [
+      {
+        "reference": "Practitioner/HanspeterWenger"
+      }
+    ]
+  },
+  {
+    "resourceType": "Patient",
+    "id": "ClaudiaMeier",
+    "meta": {
+      "profile": ["http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient"]
+    },
+    "identifier": [
+      {
+        "system": "urn:oid:2.16.756.5.30.1.123.100.1.1.1",
+        "value": "80756025120004857910"
+      }
+    ],
+    "name": [
+      {
+        "family": "Meier",
+        "given": ["Claudia"]
+      }
+    ],
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "+41 44 556 78 90",
+        "use": "home"
+      },
+      {
+        "system": "email",
+        "value": "claudia@meier.today"
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1962-03-15",
+    "address": [
+      {
+        "use": "home",
+        "line": ["Hauptstrasse 33"],
+        "city": "Bern",
+        "postalCode": "3000"
+      }
+    ],
+    "maritalStatus": {
+      "coding": [
+        {
+          "system": "http://fhir.ch/ig/ch-core/CodeSystem/ech-11-maritalstatus",
+          "code": "4",
+          "display": "geschieden"
+        }
+      ]
+    },
+    "generalPractitioner": [
+      {
+        "reference": "Practitioner/HanspeterWenger"
+      }
+    ]
+  },
+  {
+    "resourceType": "Patient",
+    "id": "DanielFrey",
+    "meta": {
+      "profile": ["http://fhir.ch/ig/ch-core/StructureDefinition/ch-core-patient"]
+    },
+    "identifier": [
+      {
+        "system": "urn:oid:2.16.756.5.30.1.123.100.1.1.1",
+        "value": "80756067100005678945"
+      }
+    ],
+    "name": [
+      {
+        "family": "Frey",
+        "given": ["Daniel"]
+      }
+    ],
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "+41 71 555 44 33",
+        "use": "home"
+      },
+      {
+        "system": "email",
+        "value": "daniel@frey.today"
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1975-06-30",
+    "address": [
+      {
+        "use": "home",
+        "line": ["Bahnhofstrasse 10"],
+        "city": "St. Gallen",
+        "postalCode": "9000"
+      }
+    ],
+    "maritalStatus": {
+      "coding": [
+        {
+          "system": "http://fhir.ch/ig/ch-core/CodeSystem/ech-11-maritalstatus",
+          "code": "6",
+          "display": "in eingetragener Partnerschaft"
+        }
+      ]
+    },
+    "generalPractitioner": [
+      {
+        "reference": "Practitioner/HanspeterWenger"
+      }
+    ]
+  }
+]

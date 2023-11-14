@@ -1,14 +1,10 @@
 <template>
   <Toast label="sticky" />
+  <SessionDialog />
   <Menubar :model="items">
     <template #end>
       <div class="branding" @click="$router.push('/transcribe/upload')" style="cursor: pointer">
-        <img
-          alt="logo"
-          src="./assets/ambispeech_logo_v1.png"
-          height="40"
-          style="margin-right: 1rem"
-        />
+        <img alt="logo" src="/ambispeech_logo_v1.png" height="40" style="margin-right: 1rem" />
         <p>Ambient Speech Recognition</p>
       </div>
     </template>
@@ -30,6 +26,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import SessionDialog from './components/SessionDialog.vue';
 
 const items = ref([
   {

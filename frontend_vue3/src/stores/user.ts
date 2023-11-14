@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia';
-import { useDark, useLocalStorage, useToggle, useWindowSize } from '@vueuse/core';
-import type { BufferSize, TranscriptionLanguage } from '@/model/interfaces';
+import {
+  StorageSerializers,
+  useDark,
+  useLocalStorage,
+  useSessionStorage,
+  useToggle,
+  useWindowSize
+} from '@vueuse/core';
+import type { BufferSize, Patient, Practitioner, TranscriptionLanguage } from '@/model/interfaces';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
@@ -13,6 +20,14 @@ export const useUserStore = defineStore('user', () => {
   const { width, height } = useWindowSize();
   const isDark = useDark();
   const toggleDark = useToggle(isDark);
+
+  // Session State
+  const practitioner = useSessionStorage<Practitioner | null>('practitioner', null, {
+    serializer: StorageSerializers.object
+  });
+  const patient = useSessionStorage<Patient | null>('patient', null, {
+    serializer: StorageSerializers.object
+  });
 
   // Shared state
   /**
@@ -110,6 +125,8 @@ export const useUserStore = defineStore('user', () => {
     useCloudLLM,
     useCloudS2T,
     isDebug,
-    transcriptionText
+    transcriptionText,
+    practitioner,
+    patient
   };
 });
