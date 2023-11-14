@@ -16,10 +16,19 @@
       v-else
     />
 
-    <Accordion :activeIndex="0">
+    <Accordion>
       <AccordionTab>
         <template #header>
-          <span>Transkribierter Text</span>
+          <section style="display: flex; align-items: center; width: 100%">
+            <div>Transkribierter Text</div>
+            <span
+              :class="{ hidden: !transcriptionIsLoading, 'pi-spin': transcriptionIsLoading }"
+              class="pi pi-times-circle"
+              style="font-size: 2rem; margin-left: auto"
+              @click="abortUpload()"
+            >
+            </span>
+          </section>
         </template>
         <Textarea
           :disabled="
@@ -32,20 +41,6 @@
         />
       </AccordionTab>
     </Accordion>
-
-    <div class="action-row">
-      <Button @click="abortUpload()" v-show="transcriptionIsLoading" severity="warning"
-        >Transkription stoppen</Button
-      >
-      <Button
-        @click="store.transcriptionText = transcription"
-        v-show="
-          !transcriptionIsLoading && transcription.length > 0 && transcriptionError.length == 0
-        "
-        severity="success"
-        >Analyse starten</Button
-      >
-    </div>
   </section>
 </template>
 
@@ -59,7 +54,6 @@ import { useUserStore } from '@/stores/user';
  * It receives audio data, uploads it to the backend and retrieves the transcribed text
  */
 
-//TODO: check business logic again
 enum StateFlag {
   INITIAL,
   ERROR,
@@ -117,6 +111,12 @@ function customUploaderXHR(files: File[]) {
     }
   };
 
+  activeXHR.onload = function () {
+    if (activeXHR?.status == 200) {
+      setState(StateFlag.SUCCESS);
+    }
+  };
+
   // Event listener for the server side streaming response
   let lastReadPosition = 0;
   activeXHR.onreadystatechange = function () {
@@ -140,11 +140,6 @@ function customUploaderXHR(files: File[]) {
         transcription.value = transcription.value + newText;
         lastReadPosition = this.responseText.length;
       }
-    }
-    if (this.readyState === XMLHttpRequest.DONE) {
-      transcription.value = transcription.value.trim();
-      transcriptionIsLoading.value = false;
-      console.log('Request finished');
     }
   };
 
@@ -191,6 +186,10 @@ function setState(state: StateFlag, error: string = '') {
     case StateFlag.SUCCESS:
       transcriptionIsLoading.value = false;
       transcriptionError.value = '';
+
+      transcription.value = transcription.value.trim();
+      store.transcriptionText = transcription.value;
+      console.log('Request finished');
       break;
     case StateFlag.ABORTED:
       transcriptionIsLoading.value = false;

@@ -31,6 +31,7 @@ import InputNumber from 'primevue/inputnumber';
 import Menubar from 'primevue/menubar';
 import ToggleButton from 'primevue/togglebutton';
 import Toast from 'primevue/toast';
+import ProgressSpinner from 'primevue/progressspinner';
 
 app.use(PrimeVue);
 app.use(ToastService);
@@ -46,5 +47,6 @@ app.component('InputNumber', InputNumber);
 app.component('Menubar', Menubar);
 app.component('ToggleButton', ToggleButton);
 app.component('Toast', Toast);
+app.component('ProgressSpinner', ProgressSpinner);
 
 app.mount('#app');

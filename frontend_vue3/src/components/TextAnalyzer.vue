@@ -1,7 +1,18 @@
 <template>
   <section class="component-wrapper">
     <Accordion>
-      <AccordionTab header="Extrahierte Informationen">
+      <AccordionTab>
+        <template #header>
+          <section style="display: flex; align-items: center; width: 100%">
+            <div>Extrahierte Informationen</div>
+            <span
+              :class="{ hidden: !analysisIsLoading, 'pi-spin': analysisIsLoading }"
+              class="pi pi-times-circle"
+              style="font-size: 2rem; margin-left: auto"
+            >
+            </span>
+          </section>
+        </template>
         <p v-if="analysisIsLoading">Am Analysieren...</p>
         <p>{{ extractedInfo }}</p>
       </AccordionTab>
