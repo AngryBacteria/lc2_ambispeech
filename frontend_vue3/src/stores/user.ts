@@ -16,7 +16,7 @@ export const useUserStore = defineStore('user', () => {
    * Indicates if the app is in debug mode.
    * This enables manually editing state that shouldnt be editable normally
    */
-  const isDebug = ref(true);
+  const isDebug = ref(false);
   const { width, height } = useWindowSize();
   const isDark = useDark();
   const toggleDark = useToggle(isDark);

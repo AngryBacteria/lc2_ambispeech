@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>Personalien</h3>
     <p>
       <b>Name:</b> {{ localPatient.name[0].given[0] }} {{ localPatient.name[0].family }} ({{
         localPatient.gender
@@ -9,12 +10,19 @@
       <b>Geboren am:</b> {{ localPatient.birthDate }} ({{ yearsSince(localPatient.birthDate) }}
       jahre alt)
     </p>
-    <p><b>Versicherten-Nummer:</b> {{ localPatient.identifier[0].value }}</p>
     <p>
       <b>Adresse:</b> {{ localPatient.address[0].line[0] }} {{ localPatient.address[0].city }} ({{
         localPatient.address[0].postalCode
       }})
     </p>
+    <h3>Kontakt</h3>
+    <p><b>Telefon:</b> {{ localPatient.telecom[0].value }}</p>
+    <p>
+      <b>E-Mail:</b>
+      <a :href="'mailto:' + localPatient.telecom[1].value">{{ localPatient.telecom[1].value }}</a>
+    </p>
+    <h3>Versicherung</h3>
+    <p><b>Versicherten-Nummer:</b> {{ localPatient.identifier[0].value }}</p>
   </div>
 </template>
 <script setup lang="ts">
