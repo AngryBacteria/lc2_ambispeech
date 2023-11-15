@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import Dict, List, Type
 
+from app.utils.logging_util import logger
+
 
 class OpenAIHelper:
     """Singleton util class to handle various llm related operations with langchain"""
@@ -37,10 +39,10 @@ class OpenAIHelper:
         else:
             self.config = OpenAIHelper.OpenaiLangchainConfig()
             self.llm = ChatOpenAI()
-        print("Created OpenAIHelper")
+        logger.info("Created OpenAIHelper")
         self._initialized = True
 
-    #TODO get_configurable_fields implementing
+    # TODO get_configurable_fields implementing
 
     def get_llm(self):
         return self.llm

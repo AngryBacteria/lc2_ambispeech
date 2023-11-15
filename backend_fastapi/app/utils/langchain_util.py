@@ -28,7 +28,7 @@ class LangchainUtil:
             
             „Symptome“: [„Symptom1“, „Symptom2“, …],
             „Medikamente“: [„Medikament1“, „Medikament2“, …]
-             """
+             """,
     )
 
     def __new__(cls, *args, **kwargs):
@@ -40,13 +40,17 @@ class LangchainUtil:
         if hasattr(self, "_initialized"):
             return
         load_dotenv()
-        print("Created LangchainUtil")
+        logger.info("Created LangchainUtil")
         self._initialized = True
 
-    #does not work anymore
+    # does not work anymore
     async def hello_chat_completion(self):
         """Async Hello World chat completion example for openai"""
-        response = ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI).get_llm().call("Hello World")
+        response = (
+            ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI)
+            .get_llm()
+            .call("Hello World")
+        )
         return response
 
     async def chat_completion(self, model, transcript):

@@ -18,7 +18,7 @@
     <h3>Kontakt</h3>
     <p><b>Telefon:</b> {{ localPatient.telecom[0].value }}</p>
     <p>
-      <b>E-Mail:</b>
+      <b>E-Mail: </b>
       <a :href="'mailto:' + localPatient.telecom[1].value">{{ localPatient.telecom[1].value }}</a>
     </p>
     <h3>Versicherung</h3>

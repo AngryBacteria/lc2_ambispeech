@@ -115,13 +115,6 @@ async function analyzeText(text: string) {
 </script>
 
 <style>
-.component-wrapper {
-  width: 80%;
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
-}
-
 .p-inputtextarea {
   width: 100%;
 }

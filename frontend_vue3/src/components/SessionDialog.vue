@@ -8,11 +8,11 @@
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
   >
     <section class="account-input" v-if="!store.practitioner">
-      <InputText type="text" placeholder="Benutzername" @keydown.enter="login()" />
-      <InputText type="text" placeholder="Passwort" @keydown.enter="login()" />
-      <Button @click="login()" label="Anmelden" severity="success" />
+      <InputText type="text" placeholder="Benutzername" @keydown.enter="loginPractitioner()" />
+      <InputText type="text" placeholder="Passwort" @keydown.enter="loginPractitioner()" />
+      <Button @click="loginPractitioner()" label="Anmelden" severity="success" />
     </section>
-    <section class="patient-input" v-if="!localPatient && store.practitioner">
+    <section class="patient-input" v-if="!store.patient && store.practitioner">
       <Dropdown
         v-model="localPatient"
         filter
@@ -23,7 +23,12 @@
     </section>
     <section v-if="localPatient">
       <PatientSummary :localPatient="localPatient" />
-      <Button @click="store.patient = localPatient" label="Bestätigen" severity="success" />
+      <Button
+        @click="loginPatient()"
+        label="Bestätigen"
+        severity="success"
+        @keydown.enter="loginPatient()"
+      />
     </section>
   </Dialog>
 </template>
@@ -35,17 +40,30 @@ import practitionersData from '@/data/practitioners.json';
 import patientData from '@/data/patients.json';
 import type { Patient, Practitioner } from '@/model/interfaces';
 import PatientSummary from './PatientSummary.vue';
+import { useRouter } from 'vue-router';
 
+// Data
 const patients: Patient[] = patientData as unknown as Patient[];
 const practitioners: Practitioner[] = practitionersData as unknown as Practitioner[];
+
+// Formatted data
 const patientOptions = (patient: Patient) =>
   `${patient.name[0].given[0]} ${patient.name[0].family} (${patient.identifier[0].value})`;
 const localPatient = ref<Patient | undefined>(undefined);
 
+// Composables
 const store = useUserStore();
+const router = useRouter();
 
-function login() {
+function loginPractitioner() {
   store.practitioner = practitioners[0];
+}
+
+function loginPatient() {
+  if (localPatient.value) {
+    store.patient = localPatient.value;
+    router.push('/');
+  }
 }
 
 const isVisible = computed(() => {

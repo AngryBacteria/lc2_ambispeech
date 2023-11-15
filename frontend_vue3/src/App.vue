@@ -8,15 +8,22 @@
         <p>Ambient Speech Recognition</p>
       </div>
     </template>
-    <template #item="{ label, item, props }">
-      <router-link v-slot="routerProps" :to="item.route" custom>
-        <a :href="routerProps.href" v-bind="props.action" @click="routerProps.navigate">
-          <span v-bind="props.icon" :class="{ 'router-link-active': routerProps.isActive }" />
-          <span v-bind="props.label" :class="{ 'router-link-active': routerProps.isActive }">{{
-            label
-          }}</span>
+    <template #item="{ item, props, hasSubmenu }">
+      <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+        <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+          <span :class="[item.icon, { 'router-link-active': href == $route.fullPath }]" />
+          <span
+            :class="{ 'router-link-active': href == $route.fullPath }"
+            style="margin-left: 0.5rem"
+            >{{ item.label }}</span
+          >
         </a>
       </router-link>
+      <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
+        <span :class="item.icon" />
+        <span style="margin-left: 0.5rem">{{ item.label }}</span>
+        <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down" style="margin-left: 0.5rem" />
+      </a>
     </template>
   </Menubar>
   <Suspense>
@@ -27,6 +34,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import SessionDialog from './components/SessionDialog.vue';
+import { useUserStore } from './stores/user';
+
+const store = useUserStore();
 
 const items = ref([
   {
@@ -43,6 +53,25 @@ const items = ref([
     label: 'Einstellungen',
     icon: 'pi pi-cog',
     route: '/einstellungen'
+  },
+  {
+    label: 'Session',
+    icon: 'pi pi-sign-out',
+    items: [
+      {
+        label: 'Patient wechseln',
+        command: () => {
+          store.patient = null;
+        }
+      },
+      {
+        label: 'Abmelden',
+        command: () => {
+          store.patient = null;
+          store.practitioner = null;
+        }
+      }
+    ]
   }
 ]);
 </script>
