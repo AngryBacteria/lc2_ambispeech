@@ -8,7 +8,7 @@ import {
   useWindowSize
 } from '@vueuse/core';
 import type { BufferSize, Patient, Practitioner, TranscriptionLanguage } from '@/model/interfaces';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
   // General app state
@@ -20,6 +20,9 @@ export const useUserStore = defineStore('user', () => {
   const { width, height } = useWindowSize();
   const isDark = useDark();
   const toggleDark = useToggle(isDark);
+  const isMobile = computed(() => {
+    return width.value < 750;
+  });
 
   // Session State
   const practitioner = useSessionStorage<Practitioner | null>('practitioner', null, {
@@ -29,13 +32,17 @@ export const useUserStore = defineStore('user', () => {
     serializer: StorageSerializers.object
   });
 
-  // Shared state
+  // Transcription state
   /**
    * Text that was transcribed from audio
    */
   const transcriptionText = ref('');
+  /**
+   * If a transcription is currently loading or not
+   */
+  const transcriptionIsLoading = ref(false);
 
-  // Transcription state
+  // Settings-State
   /**
    * Buffer state to  use for the audio recording.
    * Higher value means better quality
@@ -67,7 +74,6 @@ export const useUserStore = defineStore('user', () => {
    */
   const useCloudLLM = useLocalStorage<boolean>('useCloudLLM', true);
 
-  //LLM State
   /**
    * Parameters for the openai completion requests
    */
@@ -78,7 +84,6 @@ export const useUserStore = defineStore('user', () => {
     top_p: 1
   });
 
-  // Methods
   function resetSettings() {
     openAiConfig.value = {
       frequency_penalty: 0,
@@ -127,6 +132,8 @@ export const useUserStore = defineStore('user', () => {
     isDebug,
     transcriptionText,
     practitioner,
-    patient
+    patient,
+    transcriptionIsLoading,
+    isMobile
   };
 });

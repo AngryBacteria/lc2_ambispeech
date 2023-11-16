@@ -5,12 +5,20 @@
         <template #header>
           <section style="display: flex; align-items: center; width: 100%">
             <div>Extrahierte Informationen</div>
-            <span
-              :class="{ hidden: !analysisIsLoading, 'pi-spin': analysisIsLoading }"
-              class="pi pi-times-circle"
-              style="font-size: 2rem; margin-left: auto"
-            >
-            </span>
+            <Button
+              @click="
+                $event.stopPropagation();
+                analyzeText(store.transcriptionText);
+              "
+              :label="store.isMobile ? '' : 'Analyse starten'"
+              icon="pi pi-eye"
+              size="small"
+              :loading="analysisIsLoading"
+              :class="{
+                hidden: store.transcriptionText.length <= 0 || store.transcriptionIsLoading
+              }"
+              style="margin-left: auto"
+            />
           </section>
         </template>
         <p v-if="analysisIsLoading">Am Analysieren...</p>
@@ -22,8 +30,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
-import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const store = useUserStore();
 
@@ -31,17 +38,6 @@ const extractedInfo = ref('');
 const analysisIsLoading = ref(false);
 const userStore = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/llm/openai/gpt-3.5-turbo';
-
-/**
- * Get the transcriptionText from the store and start analyzing if it is present
- */
-const { transcriptionText } = storeToRefs(store);
-watch(transcriptionText, () => {
-  if (transcriptionText.value.length >= 10) {
-    extractedInfo.value = '';
-    analyzeText(transcriptionText.value);
-  }
-});
 
 async function analyzeText(text: string) {
   analysisIsLoading.value = true;

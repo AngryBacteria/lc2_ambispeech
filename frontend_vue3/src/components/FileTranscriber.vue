@@ -2,7 +2,7 @@
   <section class="component-wrapper">
     <FileUploader
       v-model:transcriptionError="transcriptionError"
-      :transcription-is-loading="transcriptionIsLoading"
+      :transcription-is-loading="store.transcriptionIsLoading"
       :upload-progress="uploadProgress"
       @start-upload="customUploaderXHR"
       v-if="$route.params.type == 'upload'"
@@ -10,7 +10,7 @@
 
     <FileRecorder
       v-model:transcriptionError="transcriptionError"
-      :transcription-is-loading="transcriptionIsLoading"
+      :transcription-is-loading="store.transcriptionIsLoading"
       :upload-progress="uploadProgress"
       @start-upload="customUploaderXHR"
       v-else
@@ -21,21 +21,28 @@
         <template #header>
           <section style="display: flex; align-items: center; width: 100%">
             <div>Transkribierter Text</div>
-            <span
-              :class="{ hidden: !transcriptionIsLoading, 'pi-spin': transcriptionIsLoading }"
-              class="pi pi-times-circle"
-              style="font-size: 2rem; margin-left: auto"
-              @click="abortUpload()"
-            >
-            </span>
+            <Button
+              @click="
+                $event.stopPropagation();
+                abortUpload();
+              "
+              :label="store.isMobile ? '' : 'Abbrechen'"
+              severity="warning"
+              icon="pi pi-stop "
+              size="small"
+              :class="{ hidden: !store.transcriptionIsLoading }"
+              style="margin-left: auto"
+            />
           </section>
         </template>
         <Textarea
           :disabled="
             !store.isDebug &&
-            (transcriptionIsLoading || transcription.length < 1 || transcriptionError.length > 0)
+            (store.transcriptionIsLoading ||
+              store.transcriptionText.length < 1 ||
+              transcriptionError.length > 0)
           "
-          v-model="transcription"
+          v-model="store.transcriptionText"
           autoResize
           rows="1"
         />
@@ -66,11 +73,9 @@ const store = useUserStore();
 
 // state
 const transcriptionError = ref('');
-const transcriptionIsLoading = ref(false);
 
 // data
 const uploadProgress = ref(0);
-const transcription = ref('');
 let activeXHR: XMLHttpRequest | null = null;
 
 function abortUpload() {
@@ -137,7 +142,7 @@ function customUploaderXHR(files: File[]) {
       // Response good, get data chunk by chunk
       else {
         console.log(`New stream chunk received [${this.status}]: ${newText}`);
-        transcription.value = transcription.value + newText;
+        store.transcriptionText = store.transcriptionText + newText;
         lastReadPosition = this.responseText.length;
       }
     }
@@ -170,31 +175,29 @@ function customUploaderXHR(files: File[]) {
 function setState(state: StateFlag, error: string = '') {
   switch (state) {
     case StateFlag.ERROR:
-      transcriptionIsLoading.value = false;
+      store.transcriptionIsLoading = false;
       transcriptionError.value = error;
       uploadProgress.value = 0;
-      transcription.value = '';
       store.transcriptionText = '';
       break;
     case StateFlag.INITIAL:
-      transcriptionIsLoading.value = true;
+      store.transcriptionIsLoading = true;
       transcriptionError.value = '';
       uploadProgress.value = 0;
-      transcription.value = '';
       store.transcriptionText = '';
       break;
     case StateFlag.SUCCESS:
-      transcriptionIsLoading.value = false;
+      store.transcriptionIsLoading = false;
       transcriptionError.value = '';
 
-      transcription.value = transcription.value.trim();
-      store.transcriptionText = transcription.value;
+      store.transcriptionText = store.transcriptionText.trim();
       console.log('Request finished');
       break;
     case StateFlag.ABORTED:
-      transcriptionIsLoading.value = false;
+      store.transcriptionIsLoading = false;
       transcriptionError.value = '';
       uploadProgress.value = 0;
+      store.transcriptionText = '';
       break;
   }
 }
