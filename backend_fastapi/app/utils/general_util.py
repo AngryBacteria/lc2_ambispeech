@@ -1,3 +1,9 @@
+import re
+from typing import TypedDict
+
+import jiwer
+
+
 def print_attributes(obj, indent=0):
     """Recursively print attributes and their values of a Python object."""
 
@@ -39,3 +45,42 @@ def format_time(milliseconds):
         parts.append(f"{milliseconds}ms")
 
     return " ".join(parts) or "0ms"
+
+
+class AccuracyReport(TypedDict):
+    """Output of a WER analysis"""
+
+    wer: float
+    mer: float
+    wil: float
+
+
+def clean_string(input_text: str):
+    patterns_to_remove = [r"Sprecher [A-Z]:", r"\[PAUSE\]"]
+
+    input_text = input_text.strip()
+    for pattern in patterns_to_remove:
+        input_text = re.sub(pattern, "", input_text)
+    single_line_text = re.sub(r"\n+", " ", input_text)
+    single_line_text = re.sub(r"\s+", " ", single_line_text).strip()
+
+    return single_line_text
+
+
+def getWER(reference: str, hypothesis: str, make_lower: bool = True) -> AccuracyReport:
+    reference = clean_string(reference)
+    hypothesis = clean_string(hypothesis)
+
+    if make_lower:
+        reference = reference.lower()
+        hypothesis = hypothesis.lower()
+
+    output_dict: AccuracyReport = {
+        "wer": jiwer.wer(reference, hypothesis),
+        "mer": jiwer.mer(reference, hypothesis),
+        "wil": jiwer.wil(reference, hypothesis),
+    }
+
+    output = jiwer.process_words(reference, hypothesis)
+    print(jiwer.visualize_alignment(output))
+    return output_dict

@@ -13,13 +13,13 @@
       <Button
         @click="upload()"
         :disabled="!dataAvailable || isRecording"
-        label="Upload"
+        label="Hochladen"
         icon="pi pi-upload"
       />
       <Button
         @click="deleteData()"
         :disabled="!dataAvailable || isRecording"
-        label="Delete recorded data"
+        label="Aufnahme löschen"
         icon="pi pi-trash"
       />
       <p v-if="transcriptionError" style="color: var(--danger)">{{ transcriptionError }}</p>
