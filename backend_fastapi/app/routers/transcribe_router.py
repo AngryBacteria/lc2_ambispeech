@@ -49,19 +49,22 @@ async def post_file(
     # try to transcribe the wav
     try:
         if service.name.lower() == "whisper":
+            data = await file.read()
             return StreamingResponse(
-                whisper_util.transcribe_file(file, language),
+                whisper_util.transcribe(data, language),
                 media_type="application/text",
             )
         else:
+            data = await file.read()
             return StreamingResponse(
                 azure_util.transcribe_with_push_stream(
-                    file, audio_params, use_diarization=diarization, language=language
+                    data, audio_params, use_diarization=diarization, language=language
                 ),
                 media_type="application/text",
             )
 
     except Exception as error:
+        await file.close()
         raise HTTPException(
             status_code=500,
             detail=f"The processing of the audio file failed: {error}",

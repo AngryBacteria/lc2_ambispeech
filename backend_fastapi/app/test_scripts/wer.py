@@ -44,7 +44,6 @@ df = pd.DataFrame(
     ]
 )
 
-
 # iterate over all files
 for audio_wav_path in audio_wav_paths:
     audio_wav = audio_wav_path.split("\\")[-1]

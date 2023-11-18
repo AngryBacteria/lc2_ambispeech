@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import os
 from typing import BinaryIO
 
@@ -29,7 +30,7 @@ def get_whisper_language(language: AzureLanguageCode):
 
 class WhisperUtil:
     _instance = None
-    model_size = "base"
+    model_size = "large-v2"
     model_folder = "models"
 
     model_GPU: WhisperModel = None
@@ -78,18 +79,14 @@ class WhisperUtil:
         logger.info(f"Created WhisperUtil [lang={self.language}, useVad={self.useVad}]")
         self._initialized = True
 
-    def transcribe_file(
-        self, file: UploadFile, language_code: AzureLanguageCode = None
-    ):
-        # Forces the file to store on disk
-        file.file.fileno()
+    def transcribe(self, data: bytes, language_code: AzureLanguageCode = None):
         segments = info = None  # Initialize variables
         gpu_failed = True
         # Try to transcribe with GPU model
         if self.useGPU and self.model_GPU is not None:
             try:
                 segments, info = self.model_GPU.transcribe(
-                    file.file,
+                    io.BytesIO(data),
                     beam_size=self.beam_size,
                     vad_filter=self.useVad,
                     language=get_whisper_language(language_code),
@@ -104,7 +101,7 @@ class WhisperUtil:
         if gpu_failed:
             try:
                 segments, info = self.model_CPU.transcribe(
-                    file.file,
+                    io.BytesIO(data),
                     beam_size=self.beam_size,
                     vad_filter=self.useVad,
                     language=get_whisper_language(language_code),
@@ -112,10 +109,7 @@ class WhisperUtil:
                 logger.debug(f"Inference with CPU")
             except Exception as e:
                 logger.error(f"CPU model transcription also failed: {e}")
-                file.file.close()
                 raise e  # If both methods fail, re-raise the exception.
-        # Close the file manually (not required but good practice)
-        file.file.close()
 
         if segments is None or info is None:
             raise Exception("Both GPU and CPU transcriptions failed.")
@@ -126,50 +120,6 @@ class WhisperUtil:
         logger.debug(f"Audio duration [{info.duration}][{info.duration_after_vad}]")
         for segment in segments:
             logger.debug(f"Recognized: {segment.text}")
-            yield getattr(segment, "text", "")
-
-        logger.info("Finished whisper audio-processing")
-
-    def transcribe_file_path(self, file: str, language_code: AzureLanguageCode = None):
-        segments = info = None  # Initialize variables
-        gpu_failed = True
-        # Try to transcribe with GPU model
-        if self.useGPU and self.model_GPU is not None:
-            try:
-                segments, info = self.model_GPU.transcribe(
-                    file,
-                    beam_size=self.beam_size,
-                    vad_filter=self.useVad,
-                    language=get_whisper_language(language_code),
-                )
-                gpu_failed = False
-                logger.debug(f"Inference with GPU")
-            except Exception as e:
-                logger.error(f"GPU model transcription failed: {e}")
-                # Flag to indicate GPU failure, in case separate logic is needed
-                gpu_failed = True
-        # If GPU transcription failed or not available, try CPU model
-        if gpu_failed:
-            try:
-                segments, info = self.model_CPU.transcribe(
-                    file,
-                    beam_size=self.beam_size,
-                    vad_filter=self.useVad,
-                    language=get_whisper_language(language_code),
-                )
-                logger.debug(f"Inference with CPU")
-            except Exception as e:
-                logger.error(f"CPU model transcription also failed: {e}")
-                raise e  # If both methods fail, re-raise the exception.
-
-        if segments is None or info is None:
-            raise Exception("Both GPU and CPU transcriptions failed.")
-        logger.info(
-            f"Starting inference: Detected language {info.language} with probability {info.language_probability}"
-        )
-        # VAD may reduce the audio length because of parts without speech
-        logger.debug(f"Audio duration [{info.duration}][{info.duration_after_vad}]")
-        for segment in segments:
             yield getattr(segment, "text", "")
 
         logger.info("Finished whisper audio-processing")

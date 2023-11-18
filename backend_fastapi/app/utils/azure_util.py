@@ -75,7 +75,7 @@ class AzureUtil(object):
 
     async def transcribe_with_push_stream(
         self,
-        file: UploadFile,
+        data: bytes,
         params,
         use_diarization: bool = False,
         language: AzureLanguageCode = AzureLanguageCode.DE_CH,
@@ -139,9 +139,7 @@ class AzureUtil(object):
         else:
             recognizer.start_continuous_recognition()
 
-        chunk = await file.read()
-        await file.close()
-        stream.write(chunk)
+        stream.write(data)
         stream.close()
 
         # process data
