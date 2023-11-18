@@ -11,7 +11,7 @@ def set_log_level(level_name):
     """
     level = getattr(logging, level_name.upper(), None)
     if not isinstance(level, int):
-        raise ValueError(f'Invalid log level: {level_name}')
+        raise ValueError(f"Invalid log level: {level_name}")
 
     # Set the logger level
     logger.setLevel(level)

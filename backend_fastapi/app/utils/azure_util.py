@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import os
 from enum import Enum
 
 import azure.cognitiveservices.speech as speechsdk
-import azure.cognitiveservices.speech.enums
 from azure.cognitiveservices.speech import SpeechConfig
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
-from fastapi import UploadFile
 from fastapi import WebSocket, WebSocketDisconnect
 
 from app.utils.logging_util import logger
@@ -109,7 +106,7 @@ class AzureUtil(object):
         done = False
 
         def yield_event(event: speechsdk.SpeechRecognitionEventArgs):
-            logger.info(f"{event}")
+            logger.debug(f"{event}")
             recognized_queue.put_nowait(event)
 
         def print_event(event: speechsdk.SpeechRecognitionEventArgs):
@@ -117,7 +114,7 @@ class AzureUtil(object):
 
         def stop_cb(event: speechsdk.SessionEventArgs):
             """callback that signals to stop continuous recognition/diarization upon receiving an event `evt`"""
-            print(f"CLOSING {event}")
+            logger.debug(f"CLOSING {event}")
             nonlocal done
             done = True
 
@@ -139,6 +136,9 @@ class AzureUtil(object):
         else:
             recognizer.start_continuous_recognition()
 
+        logger.info(
+            f"Starting Azure Recognition [language={language}, diarization={use_diarization}]"
+        )
         stream.write(data)
         stream.close()
 
@@ -156,7 +156,9 @@ class AzureUtil(object):
                 await asyncio.sleep(0.1)
         finally:
             # stop recognition/diarization and clean up
-            logger.debug("Stopping recognition")
+            logger.info(
+                f"Stopping Azure Recognition [language={language}, diarization={use_diarization}]"
+            )
             if use_diarization:
                 recognizer.stop_transcribing_async()
             else:
@@ -169,7 +171,7 @@ class AzureUtil(object):
                     yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
                 else:
                     yield f"{text} "
-            logger.debug("Stopped recognition")
+            logger.debug("Stopped Azure Recognition")
 
     # work in progress. Main problem right now: cannot send data directly in websocket
     # because callback functions cannot be async :(
