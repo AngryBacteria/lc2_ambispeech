@@ -30,7 +30,7 @@ def get_whisper_language(language: AzureLanguageCode):
 
 class WhisperUtil:
     _instance = None
-    model_size = "large-v2"
+    model_size = "base"
     model_folder = "models"
 
     model_GPU: WhisperModel = None
