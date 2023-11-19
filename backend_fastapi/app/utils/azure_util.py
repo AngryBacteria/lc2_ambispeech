@@ -8,7 +8,6 @@ import azure.cognitiveservices.speech as speechsdk
 from azure.cognitiveservices.speech import SpeechConfig
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
-from fastapi import WebSocket, WebSocketDisconnect
 
 from app.utils.logging_util import logger
 
@@ -79,6 +78,7 @@ class AzureUtil(object):
     ):
         """Azure continuous recognition/diarization for a Spooled File with a push stream"""
         self.speech_config.speech_recognition_language = language
+        # self.speech_config.output_format = speechsdk.OutputFormat.Detailed
         # get the correct audio format
         audio_format = AudioStreamFormat(
             channels=params.nchannels,
@@ -106,8 +106,9 @@ class AzureUtil(object):
         done = False
 
         def yield_event(event: speechsdk.SpeechRecognitionEventArgs):
-            logger.debug(f"{event}")
-            recognized_queue.put_nowait(event)
+            logger.info(f"{event}")
+            if event.result.reason == speechsdk.ResultReason.RecognizedSpeech:
+                recognized_queue.put_nowait(event)
 
         def print_event(event: speechsdk.SpeechRecognitionEventArgs):
             logger.debug(f"{event}")
@@ -171,60 +172,4 @@ class AzureUtil(object):
                     yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
                 else:
                     yield f"{text} "
-            logger.debug("Stopped Azure Recognition")
-
-    # work in progress. Main problem right now: cannot send data directly in websocket
-    # because callback functions cannot be async :(
-    async def test_websocket(self, websocket: WebSocket):
-        # get the correct audio format
-        audio_format = AudioStreamFormat(
-            channels=1,
-            samples_per_second=16000,
-            bits_per_sample=16,
-        )
-        # get the push stream
-        stream = speechsdk.audio.PushAudioInputStream(audio_format)
-        audio_config = speechsdk.audio.AudioConfig(stream=stream)
-
-        # instantiate the speech recognizer with push stream input
-        speech_recognizer = speechsdk.SpeechRecognizer(
-            speech_config=self.speech_config, audio_config=audio_config
-        )
-
-        recognized_queue = asyncio.Queue()
-
-        def recognized_callback(event):
-            logger.info(f"RECOGNIZED: {event}")
-            recognized_queue.put_nowait(event.result.text)
-
-        speech_recognizer.recognized.connect(recognized_callback)
-        speech_recognizer.recognizing.connect(
-            lambda event: logger.debug(f"RECOGNIZING: {event}")
-        )
-        speech_recognizer.session_started.connect(
-            lambda event: logger.info(f"SESSION STARTED: {event}")
-        )
-        speech_recognizer.session_stopped.connect(
-            lambda event: logger.info(f"SESSION STOPPED {event}")
-        )
-        speech_recognizer.canceled.connect(
-            lambda event: logger.info(f"CANCELED {event}")
-        )
-
-        # start continuous speech recognition
-        speech_recognizer.start_continuous_recognition()
-
-        await websocket.accept()
-        try:
-            while True:
-                data = await websocket.receive_bytes()
-                stream.write(data)
-
-                if not recognized_queue.empty():
-                    item = await recognized_queue.get()
-                    await websocket.send_text(item)
-        except WebSocketDisconnect:
-            logger.debug("Closing stream and stop recognition")
-            stream.close()
-            speech_recognizer.stop_continuous_recognition()
-            logger.debug("Closed stream and stop recognition")
+            logger.info("Stopped Azure Recognition")

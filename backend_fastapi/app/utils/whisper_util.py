@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import io
 import os
-from typing import BinaryIO
 
 import ctranslate2
-from fastapi import UploadFile
 from faster_whisper import WhisperModel, download_model
 
 from app.utils.azure_util import AzureLanguageCode
