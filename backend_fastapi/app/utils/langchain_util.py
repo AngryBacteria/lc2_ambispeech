@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import os
 from enum import Enum
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-from app.utils.openai_helper import OpenAIHelper
+from app.langchain.openai_helper import OpenAIHelper
 
 from dotenv import load_dotenv
 
