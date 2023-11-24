@@ -56,7 +56,16 @@ class AccuracyReport(TypedDict):
 
 
 def clean_string(input_text: str):
-    patterns_to_remove = [r"Sprecher [A-Z]:", r"\[PAUSE\]", "Guest-[0-9]:"]
+    patterns_to_remove = [
+        r"Sprecher [A-Z]:",
+        r"\[PAUSE\]",
+        "Guest-[0-9]:",
+        "PATIENT:",
+        "ARZT:",
+        "PFLEGE:",
+        "SANITÄTER:",
+        "SPRECHER [A-Z]:",
+    ]
 
     input_text = input_text.strip()
     for pattern in patterns_to_remove:

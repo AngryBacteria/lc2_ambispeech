@@ -11,16 +11,9 @@ from app.utils.general_util import getWER
 from app.utils.logging_util import logger
 from app.utils.whisper_util import WhisperUtil
 
-# EDIT PARAMS HERE
-audio_wav_paths = [
-    "C:\\Users\\nicog\\Downloads\\whatstheweatherlike.wav",
-    # "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\Testfiles\\Ohne Hintergrundgeräusche\\dialog-herzinfarkt (ohne).wav",
-    # "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\Testfiles\\Ohne Hintergrundgeräusche\\dialog-appendizitis (ohne).wav",
-    # "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\Testfiles\\Mit Hintergrundgeräuschen\\dialog-herzinfarkt (mit).wav",
-    # "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\Testfiles\\Mit Hintergrundgeräuschen\\dialog-appendizitis (mit).wav",
-]
+file_base_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\testfiles"
 excel_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\LC2_Resultate_S2T.xlsx"
-service = "azure"
+service = "whisper"
 
 
 # helper function for later
@@ -77,6 +70,8 @@ else:
             "gpu",
             "params",
             "audio_wav",
+            "synthetic",
+            "noise",
             "exec_time",
             "length",
             "wer",
@@ -87,8 +82,10 @@ else:
     )
 
 # iterate over all files
-for audio_wav_path in audio_wav_paths:
-    audio_wav = audio_wav_path.split("\\")[-1]
+for test_file in medical_texts["files"]:
+    audio_wav_path = os.path.join(
+        file_base_path, test_file["folder"], test_file["name"]
+    )
 
     with open(audio_wav_path, "rb") as file:
         data = file.read()
@@ -104,16 +101,9 @@ for audio_wav_path in audio_wav_paths:
         output = asyncio.run(transcribe_audio_with_azure(data, audio_params))
     end_time = time.time()
 
-    # get reference data
-    reference = (
-        medical_texts["herzinfarkt"]
-        if "herzinfarkt" in audio_wav
-        else medical_texts["appendizitis"]
-    )
-
     # calculate data
     length = len(output)
-    report = getWER(reference, output)
+    report = getWER(test_file["transcript"], output)
     exec_time = (end_time - start_time) * 1000
 
     new_row = [
@@ -122,7 +112,9 @@ for audio_wav_path in audio_wav_paths:
         cpu,
         gpu,
         params,
-        audio_wav,
+        test_file["name"],
+        test_file["synthetic"],
+        test_file["noise"],
         round(exec_time),
         length,
         report.get("wer"),
