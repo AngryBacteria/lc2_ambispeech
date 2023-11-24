@@ -57,19 +57,33 @@ class AccuracyReport(TypedDict):
 
 def clean_string(input_text: str):
     patterns_to_remove = [
-        r"Sprecher [A-Z]:",
+        r"Sprecher \[[A-Z]\]:",
+        r"Guest-\[[0-9]\]:",
+        r"sprecher [A-Z]:",
         r"\[PAUSE\]",
-        "Guest-[0-9]:",
-        "PATIENT:",
-        "ARZT:",
-        "PFLEGE:",
-        "SANITÄTER:",
-        "SPRECHER [A-Z]:",
+        r"\(Pause\)",
+        r"PATIENT:",
+        r"ARZT:",
+        r"PFLEGE:",
+        r"SANITÄTER:",
+        r"\[.*\]",
+    ]
+
+    sentences_to_remove = [
+        "(Zum Patienten gewandt)",
+        "(Nach der CT-Untersuchung...)",
+        "(Etwas später…)",
     ]
 
     input_text = input_text.strip()
     for pattern in patterns_to_remove:
-        input_text = re.sub(pattern, "", input_text)
+        input_text = re.sub(pattern, "", input_text, flags=re.I)
+
+    for sentence in sentences_to_remove:
+        input_text = input_text.replace(sentence, "")
+
+    input_text = input_text.replace("...", ".")
+
     single_line_text = re.sub(r"\n+", " ", input_text)
     single_line_text = re.sub(r"\s+", " ", single_line_text).strip()
 
@@ -77,12 +91,18 @@ def clean_string(input_text: str):
 
 
 def getWER(reference: str, hypothesis: str, make_lower: bool = True) -> AccuracyReport:
-    reference = clean_string(reference)
-    hypothesis = clean_string(hypothesis)
-
     if make_lower:
         reference = reference.lower()
         hypothesis = hypothesis.lower()
+
+    reference = clean_string(reference)
+    hypothesis = clean_string(hypothesis)
+
+    # remove characters that are not required for WER analysis
+    to_remove = [".", "!", "?", ":"]
+    for removable in to_remove:
+        reference = reference.replace(removable, "")
+        hypothesis = hypothesis.replace(removable, "")
 
     output_dict: AccuracyReport = {
         "wer": jiwer.wer(reference, hypothesis),

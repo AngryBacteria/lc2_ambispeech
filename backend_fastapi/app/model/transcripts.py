@@ -94,57 +94,6 @@ Sprecher A: Für eine Operation ja.
 Sprecher A: [PAUSE] Jetzt bekommen Sie noch einmal etwas gegen die Schmerzen und dann sehen wir weiter, wenn das Labor da ist. Bitte nichts mehr essen oder trinken und nicht rauchen!
 Sprecher B: Ist gut."""
 
-transcript_herzinfarkt = """Sprecher D: Alle parat für die Übergabe?
-Sprecher D: [PAUSE] Das ist Franz Feldmann, 66 Jahre. Hat vernichtende Brustschmerzen seit etwa 30 Minuten. Strahlen aus in den linken Arm. Hat etwas Dyspnö, ist nicht synkopiert. Keine KHK bekannt. Hat noch Hypertonus, kennt aber seine Medis nicht. Vitalparameter waren Blutdruck 145 zu 90, Puls 95, Sauerstoffsättigung 93% an Raumluft. Haben mal 4 Liter Sauerstoff und 2mg Morphin gegeben. Das EKG hatten wir Euch schon per Mail geschickt. Da hat es Senkungen in V2 bis V4. Wir haben mit Heparin noch gewartet, weil er nicht sicher war, ob er auch was zur Blutverdünnung nimmt.
-Sprecher B: Vielen Dank. Peter, kannst Du bitte das EKG organisieren?
-Sprecher C: Klar, mache ich.
-Sprecher B: [PAUSE] Guten Tag Herr Feldmann, ich bin Dr. Fischer. Sie haben Schmerzen in der Brust?
-Sprecher A: Ja, und sie sind wirklich stark. Ich hatte in den letzten Monaten schon öfter so ein leichtes Ziehen, aber jetzt ist es viel intensiver.
-Sprecher B: Strahlt der Schmerz in den Arm, den Hals oder den Rücken aus?
-Sprecher A: Ja, der linke Arm tut weh und der Kiefer schmerzt.
-Sprecher B: Haben Sie Schwierigkeiten beim Atmen oder ein Gefühl von Benommenheit?
-Sprecher A: Vielleicht ist es auch nur die Aufregung aber ich bin etwas knapp mit der Luft..
-Sprecher B: Nehmen Sie Medikamente?
-Sprecher A: Ich nehme Tabletten für meinen Bluthochdruck, aber den Namen weiß ich nicht.
-Sprecher B: Rauchen oder Alkohol?
-Sprecher A: Nein, beides nicht.
-Sprecher B: Gut. 
-Sprecher B: [PAUSE] Ich werde Sie jetzt untersuchen. Zunächst möchte ich Ihren Brustkorb abhören. Bitte atmen Sie tief durch.
-Sprecher B: [PAUSE] Herz- und Lungengeräusche sind normal. Jetzt werde ich Ihren Bauch abtasten.
-Sprecher A: Okay.
-Sprecher B: [PAUSE] Der Bauch ist weich, nicht druckschmerzhaft. Leber und Milz nicht vergrößert. 
-Sprecher B: Peter, hast Du das EKG?
-Sprecher C: Ja, hier.
-Sprecher B: [PAUSE] Ja, es hat ST-Senkungen – ist aber verwackelt. Machst Du bitte ein neues?
-Sprecher C: Mache ich!
-Sprecher C: [PAUSE] Herr Feldmann, ich lege Ihnen jetzt die Elektroden an, dafür muss ich etwas rasieren.
-Sprecher B: Herr Feldmann, hat jemand in Ihrer Familie Herzerkrankungen?
-Sprecher A: Ja, mein Vater hatte einen Herzinfarkt in meinem Alter.
-Sprecher B: Waren Sie in letzter Zeit beim Hausarzt oder Kardiologen?
-Sprecher A: Es ist schon eine Weile her. Mein Hausarzt hat mir die Blutdrucktabletten verschrieben, aber ich war lange nicht zur Kontrolle. Ich hole die einfach von der Apotheke.
-Sprecher B: Wie ist das mit der Blutverdünnung?
-Sprecher A: Ich habe so etwas, was ich mir manchmal auf die Beine reibe, Heparincreme oder so wegen den Krampfadern.
-Sprecher B: OK, dann müssen wir da nichts beachten.
-Sprecher B: [PAUSE] Peter, machst Du bitte Herz-Schema mit Troponin, CK und pro-BNP?
-Sprecher C: [PAUSE] In Ordnung, ich nehme jetzt Blut ab, Herr Feldmann.
-Sprecher A: Okay.
-Sprecher B: [PAUSE] Also auch im neuen EKG zeigen sich diese Veränderungen, die für einen Herzinfarkt sprechen. Ich melde Sie dem Kardiologen und voraussichtlich wird es eine Koronarangiografie geben.
-Sprecher A: Was bedeutet das?
-Sprecher B: Entschuldigung. Das ist eine Herzkatheteruntersuchung, da wird ein Schlauch in die Arterie am Handgelenk eingeführt und die Kardiologen können sich dann die Herzkranzgefässe anschauen. Wenn es dort Engstellen hat, können sie die aufweiten und mit einem Körbchen, einem Stent sichern.
-Sprecher A: [PAUSE] Ist das gefährlich?
-Sprecher B: Das gefährliche ist der Herzinfarkt selbst. Wenn wir nichts machen, wird eine grosse Narbe im Herzmuskel zurückbleiben. Moment bitte, der Kardiologe ruft zurück.
-Sprecher B: [PAUSE] Ja, ja. 
-Sprecher B: [PAUSE] Das ist richtig. 66 Jahre alt. Nein, Keine Antikoagulation. Hat bisher nur Morphin. OK, dann geben wir noch Heparin. 
-Sprecher B: [PAUSE] KORO eins? Wann? Willst Du das Troponin noch abwarten
-Sprecher B: [PAUSE] OK, dann bringen wir ihn gleich rüber!
-Sprecher B: [PAUSE] 
-Sprecher B: [PAUSE] Peter? Wir können los. Nimmst Du bitte Sauerstoff und Notfallkoffer mit? Wir gehen ins KORO eins.
-Sprecher C: Mache ich. Anita? Wir gehen ins KORO. Übernimmst Du bitte Koje 2 für mich?
-Sprecher B: [PAUSE]
-Sprecher B: [PAUSE] OK, Herr Feldmann. Ich erkläre Ihnen auf dem Weg, wie es weiter geht.
-Sprecher A: Danke. Können Sie bitte noch meine Frau anrufen?
-Sprecher B: Mache ich, nachdem Sie in der Koronarangiografie sind."""
-
 transcript_autounfall_1_0 = """SPRECHER D:Übergabe von Herrn X. Nach Autounfall mit niedriger Geschwindigkeit. Patient war Beifahrer und nicht angeschnallt. Kopfanprall wahrscheinlich. Ansprechbar und erinnert sich an das Ereignis. Keine sichtbaren Verletzungen. RR 86/52mmHg, HF 99/ min.
 
 SPRECHER B:Danke für die Übergabe. Guten Abend, Herr X. Mein Name ist Dr. Schwarz. Wir untersuchen Sie jetzt und schauen uns Ihre Verletzungen genau an.
@@ -182,6 +131,46 @@ SPRECHER B:Sie sollten sich auf jeden Fall eine Woche lang schonen und körperli
 SPRECHER A:Verstanden, danke Doktor. 
 
 SPRECHER B:Gern geschehen, Herr X. Wir sind da, wenn Sie uns brauchen."""
+
+transcript_autounfall_1_1 = """SPRECHER D:Übergabe von Patient Herr X, 25 Jahre alt, Autounfall auf der Autobahn, nach Kollision selbständig ausgestiegen, Schmerzen im Nacken, bewusstlos geworden. Auf der Fahrt stabil, Vitalfunktionen alle innerhalb der Normwerte. 
+
+SPRECHER B:Vielen Dank für die Übergabe. Hallo Herr X, mein Name ist Dr. Meier. Wo genau haben Sie Schmerzen?
+
+SPRECHER A:Ich glaube, meine Halswirbelsäule tut weh und irgendwie auch mein Bauch.
+
+SPRECHER B:Verstehen. Nehmen Sie momentan irgendwelche Medikamente ein?
+
+SPRECHER A:Nein, keine.
+
+SPRECHER B:In Ordnung. Ich werde jetzt beginnen, Sie zu untersuchen. Zuerst fühle ich Ihren Bauch ab.
+
+SPRECHER A:Autsch! Das tut dort weh!
+
+SPRECHER B:Druckschmerz im Epigastrium. Ich werde jetzt Ihren Nacken abtasten, eventuell ist das unangenehm, aber notwendig.
+
+SPRECHER A:Okay, ich verstehe.
+
+SPRECHER B:Druckdolenz über der oberen Halswirbelsäule. Wir müssen zusätzlich ein paar Untersuchungen machen, um die Ursache Ihrer Schmerzen heraus zu finden. Frau Schmid, könnten Sie bitte Blut abnehmen und ein Trauma-Profil anlegen?
+
+SPRECHER C:Ja, mache ich sofort.
+
+SPRECHER B:Herr X, wir werden Ihnen noch ein EKG machen und Sie in einen CT-Scanner legen, um Ihren Nacken und Ihren Bauch genauer anzuschauen.
+
+SPRECHER A:Ist das notwendig?
+
+SPRECHER B:Ja, es ist wichtig, um genau festzustellen, was passiert ist und sicherzustellen, dass keine innere Verletzung vorliegt.
+
+(Etwas später…)
+
+SPRECHER B:Herr X, die Untersuchungsergebnisse sind nun da. Sie haben eine Kontusion im Oberbauch sowie eine Distorsion der Halswirbelsäule. Es ist nichts gebrochen, und es gibt auch keine Anzeichen für innere Verletzungen.
+
+SPRECHER A:Was bedeutet das?
+
+SPRECHER B:Eine Kontusion ist quasi ein blauer Fleck im Bauch und eine Distorsion ist ein Schleudertrauma im Nacken. Wir können Sie nach Hause entlassen, mit der Auflage, dass Sie die nächsten Tage Schmerzmittel nehmen und Ihren Hausarzt aufsuchen, wenn die Schmerzen stärker werden oder weitere Symptome auftreten.
+
+SPRECHER A:Ist das gefährlich?
+
+SPRECHER B:Normalerweise nicht. Aber es ist wichtig, dass Sie die Ruhe- und Schmerzmittelanweisungen befolgen und bei Veränderungen umgehend Ihren Arzt informieren."""
 
 transcript_bauchschmerzen_1_0 = """SPRECHER D:Übergabe des Patienten Michael Schäfer. Complaints über zunehmende linksseitige Oberbauchschmerzen. Er ist untergewichtig und zeigt Anzeichen einer ernährungsbedingten Schwäche.
 
@@ -221,6 +210,52 @@ SPRECHER B:Sehr gut! Wenn Sie irgendetwas brauchen, wir sind für Sie da. Schwes
 
 SPRECHER C:Sofort, Dr. Weber."""
 
+transcript_bauchschmerzen_1_1 = """SPRECHER B:Guten Tag Herr Schmidt, was kann ich für Sie tun?
+
+SPRECHER A:Hallo Doktor, ich habe seit ein paar Tagen Schmerzen im Unterbauch rechts. Meist nach dem Essen.
+
+SPRECHER B:Seit wann genau haben Sie diese Schmerzen? Strahlen sie aus? 
+
+SPRECHER A:Es hat vor drei Tagen angefangen. Die Schmerzen strahlen nicht aus, sind aber sehr unangenehm und nachts am schlimmsten. 
+
+SPRECHER B:Das tut mir leid zu hören. Haben Sie dazu Übelkeit, Erbrechen oder andere Symptome?
+
+SPRECHER A:Nein, aber mein Stuhlgang ist eher hart und gestern habe ich etwas Frischblut bemerkt.
+
+SPRECHER B:Danke für die Information. Was nehmen Sie für Medikamente ein?
+
+SPRECHER A:Ich nehme Aspirin Cardio, eine Tablette am Morgen. 
+
+SPRECHER B:Nehmen Sie noch weitere Medikamente ein?
+
+SPRECHER A:Ja, Atorvastatin nehme ich eineinhalb Tabletten abends. Zusätzlich Bisoprolol, eine halben Tablette morgens und Lisinopril, eine Tablette morgens.
+
+SPRECHER B:Alles klar, danke. Lassen Sie uns jetzt mal den Bauch prüfen. Ich schaue mal, ob ich eine Verhärtung oder Schwellung fühlen kann. Tut das hier weh?
+
+SPRECHER A:Nein, das tut nicht weh.
+
+SPRECHER B:Gut, ich spüre keine Druckdolenz oder Abwehrspannung. Der Bauch ist weich. Sie haben auch keine äußeren Anzeichen für Blut im Stuhl. Ich möchte nun ein paar weitere Untersuchungen machen, um der Ursache auf den Grund zu gehen. 
+
+SPRECHER C:Soll ich Blut abnehmen, Doktor?
+
+SPRECHER B:Ja, bitte nehmen Sie ein Abdomenlabor-Profil. 
+
+SPRECHER A:Dauert das lange?
+
+SPRECHER B:Nein, das Ergebnis haben wir in etwa einer Stunde.
+
+[Nach der Laborauswertung]
+
+SPRECHER B:Die Ergebnisse des Labortests liegen vor. Alles ist weitgehend unauffällig, bis auf eine leicht erhöhte Entzündungsreaktion. Ich würde gerne noch einen Ultraschall machen, um sicherzugehen, dass wir nichts übersehen. 
+
+[Nach dem Ultraschall]
+
+SPRECHER B:Im Ultraschall konnten wir keine freie Flüssigkeit oder andere auffällige Befunde feststellen. Allerdings zeigte die Untersuchung eine deutliche Überfüllung des aufsteigenden Dickdarms. Das könnte Ihre Schmerzen erklären und mit Ihrer Verstopfung zusammenhängen. 
+
+SPRECHER A:Was können wir dagegen tun?
+
+SPRECHER B:Ich werde Ihnen ein Abführmittel namens Moviprep verschreiben, das Sie schon einmal erfolgreich verwendet haben. Damit sollten die Beschwerden zunächst abklingen. Ab morgen sollten Sie täglich ein Päckchen Movicol einnehmen und bei Bedarf Laxoberon. Ich würde Sie bitten, in ein paar Tagen noch einmal zur Kontrolle zu kommen."""
+
 transcript_distorsion_1_0 = """SPRECHER D:Übergabe von Patient Heinz Bauer. Zustand nach 2-maligem Supinationstrauma links mit Sturz auf den Kopf. Bewusstseinslage immer stabil, kurzzeitige Verwirrtheit nach Schädelkontusion. Er klagt über Schmerzen am äußeren Knöchel links und Kopfschmerzen. Keine Erinnerungslücken, keine Synkope. Tetanusschutz dürfte nicht aktuell sein.
 
 SPRECHER B:Danke für die Übergabe. Hallo Herr Bauer, ich bin Dr. Schneider. Wie geht es Ihnen?
@@ -254,9 +289,61 @@ SPRECHER B:Unspezifisches Profil bitte.
 
 SPRECHER C:Sehr gut, ich kümmere mich darum.
 
-SPRECHER B:Vielen Dank. Lieber Herr Bauer, wir warten nun auf die Befunde, dann sehen wir weiter. 
+SPRECHER B:Vielen Dank. Lieber Herr Bauer, wir warten nun auf die Befunde, dann sehen wir weiter."""
 
-[Aufgrund der Länge der [ANGABEN] enthält der Dialog nur die bisherigen Teile der Behandlung]"""
+transcript_distorsion_1_1 = """SPRECHER D:Übergabe von Patient Michael Schmidt, 51 Jahre alt. Nach einem Sturz beim Treppenabstieg heute Nacht massive Knieschmerzen im linken Knie. Hat selbst schon mit Heroin gegengesteuert und wir haben ihm bereits 250 mcg Fentanyl verabreicht.
+
+SPRECHER B:Danke für die Übergabe. Herr Schmidt, guten Abend, ich bin Dr. Wagner, wie geht es Ihnen?
+
+SPRECHER A:Es schmerzt furchtbar, Doktor. Ich kann das Knie kaum bewegen.
+
+SPRECHER B:Haben Sie das Knie bei dem Sturz verdreht?
+
+SPRECHER A:Ja, ich hab das Gefühl, es hat richtig geknackt.
+
+SPRECHER B:Hat das Knie vorher schon einmal geschmerzt?
+
+SPRECHER A:Ja, seit ein paar Wochen tut es weh, ich weiß aber nicht wieso. 
+
+SPRECHER B:Nehmen Sie dafür Medikamente ein?
+
+SPRECHER A:Nur Sevrelong, jeden Morgen eine 600 mg Tablette. 
+
+SPRECHER B:Und wie lange schon?
+
+SPRECHER A:Seit ein paar Monaten.
+
+SPRECHER B:Gut. Ich werde jetzt Ihr Knie untersuchen. Sag Sie mir bitte, wo es besonders schmerzt. 
+
+SPRECHER A:Autsch, das tut weh!
+
+SPRECHER B:Schmerz und Schwellung um das Knie, passiver Dehnungsschmerz bei Knieflexion. Dann wird es wohl eine Ultraschalluntersuchung brauchen.  
+
+SPRECHER C:Ja, ich kümmere mich darum, Doktor.
+
+SPRECHER B:Danke, Frau Müller. 
+
+[...] 
+
+SPRECHER B:Frau Müller, was zeigt das Ultraschall?
+
+SPRECHER C:Es gibt ein Hämatoom sowohl medial als auch lateral der Patella, Doktor. 
+
+SPRECHER B:Herr Schmidt, das Ultraschall zeigt ein Hämatom um das Knie, wir müssen eine Punktion durchführen, um Blut oder Flüssigkeit zu entnehmen. 
+
+SPRECHER A:Aua, das tut weh. Aber wenn es hilft…
+
+SPRECHER B:Danke für Ihre Geduld, Herr Schmidt. Der nächste Schritt ist dann die Ruhigstellung des Knies und eine stationäre Aufnahme zur weiteren Behandlung.
+
+SPRECHER A:Muss ich hier bleiben?
+
+SPRECHER B:Ja, es wäre besser, das Knie muss weiter untersucht und behandelt werden. Es ist möglich, dass im Knie eine innere Verletzung stattgefunden hat. 
+
+SPRECHER C:Wir bereiten das Zimmer vor, Herr Schmidt. 
+
+SPRECHER B:Danke, Frau Müller.  Bis dahin bekommen Sie zur Schmerzlinderung Perfalgan, Novalgin und Fentanyl sowie Co-Amoxicillin als Prophylaxe und machen wir noch ein MRI von Ihrem Knie. Gute Besserung, Herr Schmidt.
+
+SPRECHER A:Danke, Doktor Wagner."""
 
 transcript_dyspnoe_1_0 = """SPRECHER B:Guten Tag Herr Fischer, mein Name ist Dr. Maier. Ich werde heute Ihre Behandlung übernehmen. Sie kommen aus dem onkologischen Ambulatorium zu uns, weil Sie Atemnot hatten, richtig? 
 
@@ -314,6 +401,89 @@ SPRECHER A:In Ordnung, solange es hilft, bin ich einverstanden.
 
 SPRECHER B:Das ist eine gute Einstellung, Herr Fischer. Wir tun unser Bestes, um Ihnen zu helfen."""
 
+transcript_dyspnoe_1_1 = """SPRECHER D:Guten Tag, dies ist unser Patient, Herr Schmidt. Er wurde gegen 13:00 Uhr zu uns gerufen, Herr Schmidt hatte plötzliche Atemnot. Bei unserer Ankunft war er stark dyspnoeisch mit einer Sättigung von 80%, hyperton bei 180/130 mmHg und tachykard bei 100/min. Nach einer NIV-Therapie und 8 mg Morphin hatte er eine leichte Besserung.
+
+SPRECHER B:Danke für die Information. Guten Tag, Herr Schmidt. Ich heiße Dr. Müller und ich bin der Arzt hier heute. Können Sie bitte erzählen, was genau passiert ist?
+
+SPRECHER A:Hallo, es hat plötzlich angefangen, als ich am Mittag aß. Solche Atemnot wie heute hatte ich noch nie. Da ist kein Auslöser, nur ein leichter Husten.
+
+SPRECHER B:Ich verstehe. Nehmen Sie irgendwelche Medikamente ein, Herr Schmidt?
+
+SPRECHER A:Ja, ich nehme täglich eine Xarelto-Tablette. Daneben nehme ich Nexium MUPS 40 mg ein Mal am Tag an. Bei Bedarf nehme ich auch Valverde Verstopfungssirup oder Laxoberon und Novalgin.
+
+SPRECHER B:Danke. Ich werde jetzt einige Untersuchungen durchführen, um Ihren Zustand besser zu evaluieren. Beginnen wir mit der körperlichen Untersuchung.
+
+SPRECHER B:Atemwege sind frei, keine Anzeichen von Emphysem im Halsbereich, der Halsvenen sind nicht gestaut. Keinerlei Anzeichen für Spannungs- oder Hämatothorax. Ihr Bauch fühlt sich weich an und der Blutdruck ist jetzt 171/89mmHg, Herzfrequenz 87/min. 
+
+SPRECHER B:Jetzt höre ich mir das Herz an. Es sind reine, rhythmische Herztöne, keine ungewöhnlichen Geräusche. Die Atmung klingt vesikulär. Der Bauch ist weich und es gibt keine Schmerzreaktion. Neurologisch ist bei Ihnen alles im grünen Bereich, GCS 15.
+
+SPRECHER C:Herr Dr. Müller, soll ich jetzt das Abdomenlabor und EKG vorbereiten?
+
+SPRECHER B:Ja, bitte tun Sie das, Frau Huber. Herr Schmidt, wir werden jetzt einige Blutentnahmen machen und ein EKG durchführen lassen, um Klarheit über Ihren Zustand zu erlangen.
+
+SPRECHER A:Verstanden. Wie lange wird das dauern?
+
+SPRECHER B:Es wird ungefähr eine Stunde dauern, bis wir die Ergebnisse haben.
+
+SPRECHER C:Ich werde das Blut in der Zwischenzeit abnehmen, Herr Schmidt.
+
+(SSK: Beilagen-Labor, EKG: ncSR, ML, PQ 146ms, S-Persistenz bis V6, QRS 101ms, keine ERBS, QTcB 452ms)
+
+SPRECHER B:Die Entzündungswerte sind etwas erhöht, aber im Vergleich zu ihrer Basis eher tief. Im EKG konnte ich eine Sinus-Tachykardie erkennen. Der Ultraschall zeigt einige Auffälligkeiten, die auf Ihre Tumorerkrankung zurückzuführen sein könnten.
+
+SPRECHER B:Also, basierend auf den Befunden, könnte die Atembeschwerden durch eine Atelektase oder eine hypertensive Entgleisung ausgelöst worden sein. Die genaue Ursache ist im Moment nicht klar. Wir werden Sie zur weiteren Überwachung auf die Onkologie versetzen. Auch die Blutdruckkontrolle und ggf. eine Anpassung der Therapie sind vorzunehmen. Vielleicht hat auch der Husten einen Einfluss, daher lassen wir nebenbei auf COVID und Influenza testen."""
+
+transcript_herzinfarkt = """Sprecher D: Alle parat für die Übergabe?
+Sprecher D: [PAUSE] Das ist Franz Feldmann, 66 Jahre. Hat vernichtende Brustschmerzen seit etwa 30 Minuten. Strahlen aus in den linken Arm. Hat etwas Dyspnö, ist nicht synkopiert. Keine KHK bekannt. Hat noch Hypertonus, kennt aber seine Medis nicht. Vitalparameter waren Blutdruck 145 zu 90, Puls 95, Sauerstoffsättigung 93% an Raumluft. Haben mal 4 Liter Sauerstoff und 2mg Morphin gegeben. Das EKG hatten wir Euch schon per Mail geschickt. Da hat es Senkungen in V2 bis V4. Wir haben mit Heparin noch gewartet, weil er nicht sicher war, ob er auch was zur Blutverdünnung nimmt.
+Sprecher B: Vielen Dank. Peter, kannst Du bitte das EKG organisieren?
+Sprecher C: Klar, mache ich.
+Sprecher B: [PAUSE] Guten Tag Herr Feldmann, ich bin Dr. Fischer. Sie haben Schmerzen in der Brust?
+Sprecher A: Ja, und sie sind wirklich stark. Ich hatte in den letzten Monaten schon öfter so ein leichtes Ziehen, aber jetzt ist es viel intensiver.
+Sprecher B: Strahlt der Schmerz in den Arm, den Hals oder den Rücken aus?
+Sprecher A: Ja, der linke Arm tut weh und der Kiefer schmerzt.
+Sprecher B: Haben Sie Schwierigkeiten beim Atmen oder ein Gefühl von Benommenheit?
+Sprecher A: Vielleicht ist es auch nur die Aufregung aber ich bin etwas knapp mit der Luft..
+Sprecher B: Nehmen Sie Medikamente?
+Sprecher A: Ich nehme Tabletten für meinen Bluthochdruck, aber den Namen weiß ich nicht.
+Sprecher B: Rauchen oder Alkohol?
+Sprecher A: Nein, beides nicht.
+Sprecher B: Gut. 
+Sprecher B: [PAUSE] Ich werde Sie jetzt untersuchen. Zunächst möchte ich Ihren Brustkorb abhören. Bitte atmen Sie tief durch.
+Sprecher B: [PAUSE] Herz- und Lungengeräusche sind normal. Jetzt werde ich Ihren Bauch abtasten.
+Sprecher A: Okay.
+Sprecher B: [PAUSE] Der Bauch ist weich, nicht druckschmerzhaft. Leber und Milz nicht vergrößert. 
+Sprecher B: Peter, hast Du das EKG?
+Sprecher C: Ja, hier.
+Sprecher B: [PAUSE] Ja, es hat ST-Senkungen – ist aber verwackelt. Machst Du bitte ein neues?
+Sprecher C: Mache ich!
+Sprecher C: [PAUSE] Herr Feldmann, ich lege Ihnen jetzt die Elektroden an, dafür muss ich etwas rasieren.
+Sprecher B: Herr Feldmann, hat jemand in Ihrer Familie Herzerkrankungen?
+Sprecher A: Ja, mein Vater hatte einen Herzinfarkt in meinem Alter.
+Sprecher B: Waren Sie in letzter Zeit beim Hausarzt oder Kardiologen?
+Sprecher A: Es ist schon eine Weile her. Mein Hausarzt hat mir die Blutdrucktabletten verschrieben, aber ich war lange nicht zur Kontrolle. Ich hole die einfach von der Apotheke.
+Sprecher B: Wie ist das mit der Blutverdünnung?
+Sprecher A: Ich habe so etwas, was ich mir manchmal auf die Beine reibe, Heparincreme oder so wegen den Krampfadern.
+Sprecher B: OK, dann müssen wir da nichts beachten.
+Sprecher B: [PAUSE] Peter, machst Du bitte Herz-Schema mit Troponin, CK und pro-BNP?
+Sprecher C: [PAUSE] In Ordnung, ich nehme jetzt Blut ab, Herr Feldmann.
+Sprecher A: Okay.
+Sprecher B: [PAUSE] Also auch im neuen EKG zeigen sich diese Veränderungen, die für einen Herzinfarkt sprechen. Ich melde Sie dem Kardiologen und voraussichtlich wird es eine Koronarangiografie geben.
+Sprecher A: Was bedeutet das?
+Sprecher B: Entschuldigung. Das ist eine Herzkatheteruntersuchung, da wird ein Schlauch in die Arterie am Handgelenk eingeführt und die Kardiologen können sich dann die Herzkranzgefässe anschauen. Wenn es dort Engstellen hat, können sie die aufweiten und mit einem Körbchen, einem Stent sichern.
+Sprecher A: [PAUSE] Ist das gefährlich?
+Sprecher B: Das gefährliche ist der Herzinfarkt selbst. Wenn wir nichts machen, wird eine grosse Narbe im Herzmuskel zurückbleiben. Moment bitte, der Kardiologe ruft zurück.
+Sprecher B: [PAUSE] Ja, ja. 
+Sprecher B: [PAUSE] Das ist richtig. 66 Jahre alt. Nein, Keine Antikoagulation. Hat bisher nur Morphin. OK, dann geben wir noch Heparin. 
+Sprecher B: [PAUSE] KORO eins? Wann? Willst Du das Troponin noch abwarten
+Sprecher B: [PAUSE] OK, dann bringen wir ihn gleich rüber!
+Sprecher B: [PAUSE] 
+Sprecher B: [PAUSE] Peter? Wir können los. Nimmst Du bitte Sauerstoff und Notfallkoffer mit? Wir gehen ins KORO eins.
+Sprecher C: Mache ich. Anita? Wir gehen ins KORO. Übernimmst Du bitte Koje 2 für mich?
+Sprecher B: [PAUSE]
+Sprecher B: [PAUSE] OK, Herr Feldmann. Ich erkläre Ihnen auf dem Weg, wie es weiter geht.
+Sprecher A: Danke. Können Sie bitte noch meine Frau anrufen?
+Sprecher B: Mache ich, nachdem Sie in der Koronarangiografie sind."""
+
 transcript_kopfschmerzen_1_0 = """SPRECHER D:Hier ist Herr Meier. Er stellt sich wegen wiederkehrenden Kopfschmerzen sowie Schwindel und Inkontinenz vor. Auffällig ist eine vorher diagnostizierte Hydrozephalus, Shunt ist seit 2004 in situ.
 
 SPRECHER B:Danke für die Information. Hallo Herr Meier, mein Name ist Dr. Schmidt. Bitte erzählen Sie uns, wie es Ihnen heute geht.
@@ -358,6 +528,62 @@ SPRECHER B:Diese Symptome scheinen mit Ihrem Hydrozephalus zusammenzuhängen. Wi
 SPRECHER A:In Ordnung, danke, Dr. Schmidt. 
 
 SPRECHER B:Bitte, Herr Meier. Mein Team und ich sind hier, um Ihnen zu helfen. Wir halten Sie auf dem Laufenden."""
+
+transcript_kopfschmerzen_1_1 = """SPRECHER D:Übergabe von Patient Manfred Schulz. Seine Frau berichtete uns, dass er seit gestern über starke Kopfschmerzen klagt. Ausserdem scheint er verwirrt zu sein und Probleme beim Lesen zu haben. Herr Schulz ist bei uns bekannt und hat immer eher einen niedrigen Blutdruck, aber heute haben wir bei ihm einen stark erhöhten festgestellt. Wir haben ihm bereits 25mg Ebrantil verabreicht.
+
+SPRECHER B:Danke für die Übergabe. Guten Tag, Herr Schulz. Ich bin Dr. Fischer. Wie geht es Ihnen gerade?
+
+SPRECHER A:Kopfschmerzen, die ich habe... 
+
+SPRECHER B:Das tut mir leid zu hören. Die Kopfschmerzen, sind die einseitig oder auf beiden Seiten?
+
+SPRECHER A:Links... hauptsächlich links...
+
+SPRECHER B:Ich verstehe. Ich werde Sie jetzt ein bisschen untersuchen, Herr Schulz. Zuerst höre ich mal Ihr Herz und Ihre Lungen ab. 
+
+SPRECHER A:Alles klar...
+
+SPRECHER B:Guter Atem, gute Herztöne... Ich untersuche jetzt Ihren Bauch, bitte sagen Sie mir, wenn es weh tut. 
+
+SPRECHER A:Nein, da ist alles in Ordnung...
+
+SPRECHER B:Sehr gut. Ich möchte jetzt noch etwas über Ihre Medikamente erfahren. Nehmen Sie Aspirin ein?
+
+SPRECHER A:Ja, eine Tablette am Tag.
+
+SPRECHER B:Und Gutron tropfen?
+
+SPRECHER A:Zweimal täglich, ja.
+
+SPRECHER B:Nehmen Sie auch Calperos D3?
+
+SPRECHER A:Ja, auch eine Tablette am Morgen.
+
+SPRECHER B:Und  Symfona forte?
+
+SPRECHER A:Eine Tablette, jeden Morgen.
+
+SPRECHER B:Gut, dankeschön. Schwester Petra, können Sie bitte Blut abnehmen für ein Blutbild und ein erweitertes Labor. 
+
+SPRECHER C:Natürlich, Dr. Fischer. 
+
+SPRECHER B:Herr Schulz, aufgrund Ihrer Symptome und Blutdruckschwankungen schlage ich vor, ein EKG und eine CT-Aufnahme Ihres Kopfes anzufertigen, um genauer zu sehen, was da los ist. 
+
+SPRECHER A:Ist das notwendig? 
+
+SPRECHER B:Ja, das ist sehr wichtig, um eine fundierte Diagnose stellen zu können.
+
+SPRECHER A:In Ordnung...
+
+SPRECHER B:Gut, die Befunde zeigen eine Hypertonie und es gibt Hinweise auf einen postiktalen Zustand im CT. Ich empfehle eine stationäre Aufnahme zur weiteren Überwachung und Blutdruckeinstellung. 
+
+SPRECHER A:Kann mir das helfen?
+
+SPRECHER B:Absolut, Herr Schulz. Es ist sehr wichtig, dass Ihr Blutdruck eingestellt wird und dass die Ursache Ihrer Beschwerden geklärt wird. Der Neurologe wird morgen zu Ihnen kommen und mit Ihnen die nächsten Schritte besprechen.
+
+SPRECHER A:Danke, Doktor Fischer...
+
+SPRECHER B:Sie sind in guten Händen, Herr Schulz. Wir tun unser Bestes, um Ihnen zu helfen."""
 
 transcript_stroke_1_0 = """SPRECHER D:Übergabe von Patient Herrn Baumann. Notfallmäßige Zuweisung mit der Ambulanz aufgrund des Verdachts auf ein zerebrovaskuläres Ereignis. Symptome bei Eintritt: Schwindel, verschwommene Sprache und Unsicherheit beim Bewegen mit einer Neigung nach rechts.
 
@@ -408,3 +634,43 @@ SPRECHER B:Wir halten Sie weiter auf dem Laufenden und informieren Sie über all
 SPRECHER A:Nein, vielen Dank für die Informationen.
 
 SPRECHER B:Wunderbar, wir sind für Sie da, Herr Baumann. und wir tun alles, was wir können, um Ihre Gesundheit zu sichern und zu verbessern."""
+
+transcript_stroke_1_1 = """SPRECHER D:Übergabe von Patient Herr Becker. Heute Morgen wohl aufgestanden, seitdem Dysarthrie und Mundastschwäche rechts bemerkt. Zudem ist er leicht verwirrt. Laut seiner Frau sind keine akuten Schmerzen oder sonstige Symptome aufgetreten. Bei Eintreffen des Rettungsdienstes kein auffälliger Befund und keine augenblicklichen Beschwerden.
+
+SPRECHER B:Danke für die Übergabe, Herr Becker. Können Sie mir genauer schildern wie die Symptome begonnen haben?
+
+SPRECHER A:Ich kann mich nicht exakt daran erinnern. Ich habe morgens gefrühstückt und wollte dann ins Bad gehen. Auf einmal fühlte sich meine Gesichtshälfte komisch an und ich bin gegen die Wand gekippt.
+
+SPRECHER B:Das tut mir leid zu hören. Nehmen Sie regelmäßig Medikamente ein?
+
+SPRECHER A:Ja, ich nehme Atorvastatin und Metoprolol ein. Das Atorvastatin jeden Morgen und das Metoprolol abends, aber nur eine halbe Tablette.
+
+SPRECHER B:Gut, danke für die Information. Ich werde jetzt eine körperliche Untersuchung durchführen. Ich überprüfe nun Ihr Abdomen. Tut das weh?
+
+SPRECHER A:Nein, das tut nicht weh.
+
+SPRECHER B:Bauch weich, rege Darmgeräusche in allen Quadranten, keine Druck- oder Loslassschmerzen. Nun führe ich eine neurologische Untersuchung durch. Bitte führen Sie meine Finger mit Ihrer Nase nach und dann zurück zu Ihrem Knie.
+
+SPRECHER A:Okay, das habe ich verstanden.
+
+SPRECHER B:Alles reibungslos, der Finger-Nase-Versuch und Knie-Hacke-Versuch sind regelrecht. Eudiadochokinese unauffällig. Ich denke, wir sollten weitere Untersuchungen durchführen. In der Neurologie werden wir ein MRT machen und ein EKG wird auch notwendig sein. 
+
+SPRECHER A:Dauert das lange?
+
+SPRECHER B:Nein, das sollte innerhalb der nächsten Stunde erledigt sein. Schwester Anna, können Sie bitte das Labor veranlassen und EKG aufnehmen?
+
+SPRECHER C:Selbstverständlich, welches Profil für das Labor?
+
+SPRECHER B:Vollblutbild und ein D-Dimer Test, bitte.
+
+Nach einiger Zeit gibt der Arzt dem Patienten die Ergebnisse der Untersuchungen bekannt.
+
+SPRECHER B:Herr Becker, die Untersuchungen zeigen, dass Sie einen leichten Schlaganfall, einen sogenannten TIA bzw. Minor Stroke, erlitten haben. Dies wurde durch eine Blockade in einem kleinen Blutgefäß Ihres Gehirns verursacht. Allerdings hat sich Ihr Zustand bereits signifikant verbessert. Trotzdem ist eine umfassende Behandlung notwendig.
+
+SPRECHER A:Und was beinhaltet die Behandlung?
+
+SPRECHER B:Sie werden auf die Stroke Unit verlegt, wo Ihre Herzfunktion und Ihr Blutdruck engmaschig überwacht werden. Dort beginnen wir auch mit einer therapeutischen Behandlung durch Heparin. Ihre vorbestehenden Medikamente Atorvastatin und Metoprolol werden weitergeführt und die Einnahmedosis des DOAK wird wieder aufgenommen. Eine Physiotherapie wird ebenfalls in den ersten 24 Stunden beginnen. Sollte es irgendeine Verschlechterung geben, wird die Pflege sofort die neurologischen Dienste benachrichtigen. 
+
+SPRECHER A:Also werde ich hier gut betreut sein?
+
+SPRECHER B:Absolut, Herr Becker. Unsere hochqualifizierten Teams auf der Stroke Unit sind speziell ausgebildet, um Ihnen die bestmögliche Pflege zu bieten."""
