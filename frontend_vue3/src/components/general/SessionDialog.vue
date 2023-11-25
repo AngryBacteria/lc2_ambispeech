@@ -39,7 +39,7 @@ import { computed, ref } from 'vue';
 import practitionersData from '@/data/practitioners.json';
 import patientData from '@/data/patients.json';
 import type { Patient, Practitioner } from '@/model/interfaces';
-import PatientSummary from './PatientSummary.vue';
+import PatientSummary from '@/components/general/PatientSummary.vue';
 import { useRouter } from 'vue-router';
 
 // Data

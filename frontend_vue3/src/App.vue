@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import SessionDialog from './components/SessionDialog.vue';
+import SessionDialog from '@/components/general/SessionDialog.vue';
 import { useUserStore } from './stores/user';
 
 const store = useUserStore();

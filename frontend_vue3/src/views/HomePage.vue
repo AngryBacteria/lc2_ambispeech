@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import FileTranscriber from '@/components/FileTranscriber.vue';
-import TextAnalyzer from '@/components/TextAnalyzer.vue';
+import FileTranscriber from '@/components/s2t/FileTranscriber.vue';
+import TextAnalyzer from '@/components/nlp/TextAnalyzer.vue';
 </script>
 
 <template>

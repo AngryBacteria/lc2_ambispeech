@@ -54,8 +54,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import FileUploader from './FileUploader.vue';
-import FileRecorder from './FileRecorder.vue';
+import FileUploader from '@/components/s2t/FileUploader.vue';
+import FileRecorder from '@/components/s2t/FileRecorder.vue';
 import { useUserStore } from '@/stores/user';
 import { StorageSerializers, useSessionStorage } from '@vueuse/core';
 /**

@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
-import NLPSummary from './NLPSummary.vue';
+import NLPSummary from '@/components/nlp/NLPSummary.vue';
 
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/llm/openai/gpt-3.5-turbo';

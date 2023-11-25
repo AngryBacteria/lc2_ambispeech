@@ -23,8 +23,7 @@ import _NLPData from '@/data/mockExtraction.json';
 import type { NLPData } from '@/model/interfaces';
 import { useUserStore } from '@/stores/user';
 import { useDialog } from 'primevue/usedialog';
-import { defineAsyncComponent } from 'vue';
-const ContextConfirmDialog = defineAsyncComponent(() => import('./ContextConfirmDialog.vue'));
+import ContextConfirmDialog from './ContextConfirmDialog.vue';
 
 const store = useUserStore();
 
