@@ -1,6 +1,6 @@
 <template>
   <div class="layout">
-    <section v-for="symptom in data.symptoms" :key="symptom.symptom" class="symptom">
+    <section v-for="symptom in computedSymptoms" :key="symptom.symptom" class="symptom">
       <section class="title">
         <h1>{{ symptom.symptom }}</h1>
         <Tag
@@ -24,6 +24,7 @@ import type { NLPData } from '@/model/interfaces';
 import { useUserStore } from '@/stores/user';
 import { useDialog } from 'primevue/usedialog';
 import ContextConfirmDialog from './ContextConfirmDialog.vue';
+import { computed } from 'vue';
 
 const store = useUserStore();
 
@@ -35,6 +36,12 @@ const data = _NLPData as NLPData;
 function isInTranscript(toFind: string) {
   return store.transcriptionText.includes(toFind);
 }
+const computedSymptoms = computed(() => {
+  return data.symptoms.map((symptom) => ({
+    ...symptom,
+    isInTranscript: isInTranscript(symptom.context)
+  }));
+});
 
 const dialog = useDialog();
 

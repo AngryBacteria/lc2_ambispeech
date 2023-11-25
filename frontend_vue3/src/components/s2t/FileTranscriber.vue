@@ -42,10 +42,9 @@
               store.transcriptionText.length < 1 ||
               transcriptionError.length > 0)
           "
-          auto-resize
           v-model="store.transcriptionText"
           style="max-width: 100%; width: 100%"
-          rows="2"
+          rows="6"
         />
       </AccordionTab>
     </Accordion>

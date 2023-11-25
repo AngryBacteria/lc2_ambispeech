@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data?.symptomContext && data?.transcript">
+  <div v-if="data?.symptomContext && data?.transcript" ref="containerRef">
     <div v-html="highlightedTranscript" />
   </div>
 </template>
@@ -11,6 +11,8 @@ interface ContextDialogData {
   symptomContext: string;
   transcript: string;
 }
+
+const containerRef = ref<HTMLElement | null>(null);
 
 /**
  * Ref to track data that was passed to the dialog
@@ -46,8 +48,18 @@ const highlightedTranscript = computed(() => {
       (match: any) => `<mark>${match}</mark>`
     );
   output = output + '</p>';
+
+  if (containerRef.value) {
+    const markElement = containerRef.value.querySelector('mark');
+    markElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   return output;
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+div {
+  white-space: pre-line;
+}
+</style>
