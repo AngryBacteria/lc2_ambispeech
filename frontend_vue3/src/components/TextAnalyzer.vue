@@ -23,7 +23,11 @@
         </template>
         <p v-if="store.analysisIsLoading">Am Analysieren...</p>
         <p v-if="analysisError">{{ analysisError }}</p>
-        <p>{{ store.extractedInfo }}</p>
+
+        <section v-if="!analysisError && !store.analysisIsLoading">
+          <p>{{ store.extractedInfo }}</p>
+          <NLPSummary />
+        </section>
       </AccordionTab>
     </Accordion>
   </section>
@@ -32,6 +36,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
+import NLPSummary from './NLPSummary.vue';
 
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/llm/openai/gpt-3.5-turbo';

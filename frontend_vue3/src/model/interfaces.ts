@@ -99,3 +99,28 @@ export interface Extension {
   url: string;
   valueCode: string;
 }
+
+export interface NLPData {
+  symptoms: Symptom[];
+  medications: Medication[];
+  findings: Finding[];
+}
+
+export interface Finding {
+  finding: string;
+  context: string;
+  value: string;
+}
+
+export interface Medication {
+  name: string;
+  dosage: string;
+  context: string;
+}
+
+export interface Symptom {
+  symptom: string;
+  onset: string;
+  location: string;
+  context: string;
+}

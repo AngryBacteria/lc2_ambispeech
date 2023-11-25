@@ -16,7 +16,7 @@
       v-else
     />
 
-    <Accordion>
+    <Accordion v-model:activeIndex="activeTab">
       <AccordionTab>
         <template #header>
           <section style="display: flex; align-items: center; width: 100%">
@@ -42,8 +42,9 @@
               store.transcriptionText.length < 1 ||
               transcriptionError.length > 0)
           "
+          auto-resize
           v-model="store.transcriptionText"
-          autoResize
+          style="max-width: 100%; width: 100%"
           rows="2"
         />
       </AccordionTab>
@@ -56,6 +57,7 @@ import { ref } from 'vue';
 import FileUploader from './FileUploader.vue';
 import FileRecorder from './FileRecorder.vue';
 import { useUserStore } from '@/stores/user';
+import { StorageSerializers, useSessionStorage } from '@vueuse/core';
 /**
  * This component transcribes the contents of an audio file with the backend.
  * It receives audio data, uploads it to the backend and retrieves the transcribed text
@@ -73,6 +75,9 @@ const store = useUserStore();
 
 // state
 const transcriptionError = ref('');
+const activeTab = useSessionStorage('activeTabFileTranscriber', null, {
+  serializer: StorageSerializers.number
+});
 
 // data
 const uploadProgress = ref(0);
@@ -181,6 +186,8 @@ function setState(state: StateFlag, error: string = '') {
       store.transcriptionText = '';
       break;
     case StateFlag.INITIAL:
+      store.extractedInfo = '';
+      store.analysisIsLoading = false;
       store.transcriptionIsLoading = true;
       transcriptionError.value = '';
       uploadProgress.value = 0;

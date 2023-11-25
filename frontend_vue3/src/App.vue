@@ -1,6 +1,8 @@
 <template>
   <Toast label="sticky" />
   <SessionDialog />
+  <DynamicDialog />
+
   <Menubar :model="items">
     <template #end>
       <div class="branding" @click="$router.push('/transcribe/upload')" style="cursor: pointer">

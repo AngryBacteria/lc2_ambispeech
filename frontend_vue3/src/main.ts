@@ -4,6 +4,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
+import DialogService from 'primevue/dialogservice';
 
 //Create vue app
 const app = createApp(App);
@@ -11,6 +12,7 @@ const app = createApp(App);
 // Load plugins
 app.use(createPinia());
 app.use(router);
+app.use(DialogService);
 
 // Prime vue config
 import '@/assets/main.css';
@@ -34,6 +36,8 @@ import Toast from 'primevue/toast';
 import ProgressSpinner from 'primevue/progressspinner';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
+import Tag from 'primevue/tag';
+import DynamicDialog from 'primevue/dynamicdialog';
 
 app.use(PrimeVue);
 app.use(ToastService);
@@ -52,5 +56,7 @@ app.component('Toast', Toast);
 app.component('ProgressSpinner', ProgressSpinner);
 app.component('Dialog', Dialog);
 app.component('InputText', InputText);
+app.component('Tag', Tag);
+app.component('DynamicDialog', DynamicDialog);
 
 app.mount('#app');
