@@ -44,7 +44,7 @@
           "
           v-model="store.transcriptionText"
           autoResize
-          rows="1"
+          rows="2"
         />
       </AccordionTab>
     </Accordion>

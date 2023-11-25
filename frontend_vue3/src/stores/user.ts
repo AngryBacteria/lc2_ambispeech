@@ -34,9 +34,19 @@ export const useUserStore = defineStore('user', () => {
 
   // Transcription state
   /**
+   * Information (Data) that was extracted from the transcript with NLP
+   */
+  const extractedInfo = useSessionStorage('extractedInfo', '');
+  /**
+   * If a transcription is currently loading or not
+   */
+  const analysisIsLoading = ref(false);
+
+  // NLP State
+  /**
    * Text that was transcribed from audio
    */
-  const transcriptionText = ref('');
+  const transcriptionText = useSessionStorage('transcriptionText', '');
   /**
    * If a transcription is currently loading or not
    */
@@ -134,6 +144,8 @@ export const useUserStore = defineStore('user', () => {
     practitioner,
     patient,
     transcriptionIsLoading,
-    isMobile
+    isMobile,
+    extractedInfo,
+    analysisIsLoading
   };
 });

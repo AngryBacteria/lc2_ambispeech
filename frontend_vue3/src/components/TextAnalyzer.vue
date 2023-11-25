@@ -13,7 +13,7 @@
               :label="store.isMobile ? '' : 'Analyse starten'"
               icon="pi pi-eye"
               size="small"
-              :loading="analysisIsLoading"
+              :loading="store.analysisIsLoading"
               :class="{
                 hidden: store.transcriptionText.length <= 0 || store.transcriptionIsLoading
               }"
@@ -21,8 +21,9 @@
             />
           </section>
         </template>
-        <p v-if="analysisIsLoading">Am Analysieren...</p>
-        <p>{{ extractedInfo }}</p>
+        <p v-if="store.analysisIsLoading">Am Analysieren...</p>
+        <p v-if="analysisError">{{ analysisError }}</p>
+        <p>{{ store.extractedInfo }}</p>
       </AccordionTab>
     </Accordion>
   </section>
@@ -33,14 +34,13 @@ import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 
 const store = useUserStore();
-
-const extractedInfo = ref('');
-const analysisIsLoading = ref(false);
-const userStore = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/llm/openai/gpt-3.5-turbo';
 
+const analysisError = ref('');
+
 async function analyzeText(text: string) {
-  analysisIsLoading.value = true;
+  store.analysisIsLoading = true;
+  analysisError.value = '';
 
   let prev_messages = [
     {
@@ -63,12 +63,12 @@ async function analyzeText(text: string) {
   ];
 
   //Load prompt and insert transcript
-  let prompt = userStore.openAiPrompt.replace('<PLACEHOLDER>', text);
+  let prompt = store.openAiPrompt.replace('<PLACEHOLDER>', text);
 
   //TODO handling too large file
   //TODO relocate max tokens into backend
 
-  let { temperature, presence_penalty, top_p, frequency_penalty } = userStore.openAiConfig;
+  let { temperature, presence_penalty, top_p, frequency_penalty } = store.openAiConfig;
 
   let requestBody = {
     messages: [
@@ -97,15 +97,15 @@ async function analyzeText(text: string) {
     const answer = await response.json();
     console.log(answer);
     if (answer.length > 1) {
-      extractedInfo.value = answer;
+      store.extractedInfo = answer;
     } else {
-      extractedInfo.value = 'Keine Informationen konnten herausgezogen werden.';
+      analysisError.value = 'Keine Informationen konnten herausgezogen werden.';
     }
   } catch (error) {
     console.error('Error:', error);
-    extractedInfo.value = 'Während dem Analysieren geschah ein Fehler. Versuche erneut.';
+    analysisError.value = 'Während dem Analysieren geschah ein Fehler. Versuche erneut.';
   } finally {
-    analysisIsLoading.value = false;
+    store.analysisIsLoading = false;
   }
 }
 </script>
