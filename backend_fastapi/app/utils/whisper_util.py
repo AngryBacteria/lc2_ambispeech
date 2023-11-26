@@ -87,7 +87,6 @@ class WhisperUtil:
                     io.BytesIO(data),
                     beam_size=self.beam_size,
                     vad_filter=self.useVad,
-                    # language=get_whisper_language(language_code),
                 )
                 gpu_failed = False
                 logger.debug(f"Inference with GPU")
@@ -102,7 +101,6 @@ class WhisperUtil:
                     io.BytesIO(data),
                     beam_size=self.beam_size,
                     vad_filter=self.useVad,
-                    language=get_whisper_language(language_code),
                 )
                 logger.debug(f"Inference with CPU")
             except Exception as e:

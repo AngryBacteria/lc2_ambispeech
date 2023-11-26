@@ -99,7 +99,7 @@ def getWER(reference: str, hypothesis: str, make_lower: bool = True) -> Accuracy
     hypothesis = clean_string(hypothesis)
 
     # remove characters that are not required for WER analysis
-    to_remove = [".", "!", "?", ":"]
+    to_remove = [".", "!", "?", ":", ",", "- "]
     for removable in to_remove:
         reference = reference.replace(removable, "")
         hypothesis = hypothesis.replace(removable, "")
