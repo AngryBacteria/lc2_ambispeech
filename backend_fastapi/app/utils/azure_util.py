@@ -113,7 +113,6 @@ class AzureUtil(object):
                 cancellation_details = event.result.cancellation_details
                 if cancellation_details.reason == speechsdk.CancellationReason.Error:
                     logger.error(cancellation_details.error_details)
-                    raise Exception(cancellation_details.error_details)
 
         def print_event(event: speechsdk.SpeechRecognitionEventArgs):
             logger.debug(f"{event}")

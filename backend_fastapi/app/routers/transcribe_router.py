@@ -50,12 +50,14 @@ async def post_file(
     try:
         if service.name.lower() == "whisper":
             data = await file.read()
+            await file.close()
             return StreamingResponse(
                 whisper_util.transcribe(data, language),
                 media_type="application/text",
             )
         else:
             data = await file.read()
+            await file.close()
             return StreamingResponse(
                 azure_util.transcribe_with_push_stream(
                     data, audio_params, use_diarization=diarization, language=language
@@ -68,16 +70,4 @@ async def post_file(
         raise HTTPException(
             status_code=500,
             detail=f"The processing of the audio file failed: {error}",
-        )
-
-
-# TODO: WORK IN PROGRESS
-@transcribeRouter.websocket("/stream")
-async def stream(websocket: WebSocket):
-    try:
-        await azure_util.test_websocket(websocket)
-    except Exception:
-        raise HTTPException(
-            status_code=500,
-            detail="The processing of the audio file failed",
         )
