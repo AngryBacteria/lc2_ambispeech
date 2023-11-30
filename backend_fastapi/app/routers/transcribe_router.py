@@ -1,7 +1,7 @@
 import wave
 from enum import Enum
 
-from fastapi import APIRouter, UploadFile, HTTPException, WebSocket, BackgroundTasks
+from fastapi import APIRouter, UploadFile, HTTPException, BackgroundTasks
 from starlette.responses import StreamingResponse
 
 from app.utils.azure_util import AzureUtil, AzureLanguageCode

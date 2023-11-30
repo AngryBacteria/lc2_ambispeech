@@ -1,4 +1,4 @@
-from app.model.transcripts import (
+from app.data.transcripts import (
     transcript_herzinfarkt,
     transcript_appendizitis,
     transcript_autounfall_1_0,

@@ -32,7 +32,7 @@ async def langchain(model: LLModel, body: LangchainCompletionBody):
     return await langchainUtil.chat_completion(model, transcript)
 
 
-@langchainRouter.post("(test/")
+@langchainRouter.post("/test/")
 async def test():
     """Non-Streaming chat completion"""
     return await langchainUtil.test()

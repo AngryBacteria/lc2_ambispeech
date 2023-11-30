@@ -56,6 +56,7 @@ class AccuracyReport(TypedDict):
 
 
 def clean_string(input_text: str):
+    """Function to clean a string from unwanted patterns for WER analysis"""
     patterns_to_remove = [
         r"Sprecher \[[A-Z]\]:",
         r"Guest-\[[0-9]\]:",
@@ -90,7 +91,8 @@ def clean_string(input_text: str):
     return single_line_text
 
 
-def getWER(reference: str, hypothesis: str, make_lower: bool = True) -> AccuracyReport:
+def get_wer(reference: str, hypothesis: str, make_lower: bool = True) -> AccuracyReport:
+    """Function to clean a string from unwanted patterns for WER analysis"""
     if make_lower:
         reference = reference.lower()
         hypothesis = hypothesis.lower()

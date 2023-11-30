@@ -5,9 +5,9 @@ import wave
 
 import pandas as pd
 
-from app.model.references import medical_texts
+from app.data.references import medical_texts
 from app.utils.azure_util import AzureUtil
-from app.utils.general_util import getWER
+from app.utils.general_util import get_wer
 from app.utils.logging_util import logger
 from app.utils.whisper_util import WhisperUtil
 
@@ -106,7 +106,7 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
 
         # calculate data
         length = len(output)
-        report = getWER(test_file["transcript"], output)
+        report = get_wer(test_file["transcript"], output)
         exec_time = (end_time - start_time) * 1000
 
         new_row = [
