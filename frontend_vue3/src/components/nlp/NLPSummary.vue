@@ -1,12 +1,12 @@
 <template>
   <div class="layout">
-    <section v-for="symptom in computedSymptoms" :key="symptom.symptom" class="symptom">
+    <section v-for="symptom in data.symptoms" :key="symptom.symptom" class="symptom">
       <section class="title">
         <h1>{{ symptom.symptom }}</h1>
         <Tag
           @click="showSymptomContext(symptom.symptom, symptom.context)"
-          v-if="isInTranscript(symptom.context)"
-          severity="info"
+          v-if="symptom.isInTranscript"
+          severity="success"
           value="Im Transkript"
           style="cursor: pointer"
         ></Tag>
@@ -14,37 +14,64 @@
       </section>
       <p><b>Dauer:</b> {{ symptom.onset }}</p>
       <p><b>Position:</b> {{ symptom.location }}</p>
+
+      <SelectButton v-model="symptom.status" :options="statusOptions" aria-labelledby="basic" />
     </section>
   </div>
+  <Button @click="sendToKIS">Daten an KIS senden</Button>
 </template>
 
 <script setup lang="ts">
 import _NLPData from '@/data/mockExtraction.json';
-import type { NLPData } from '@/model/interfaces';
+import type { NLPData, NLPStatus } from '@/model/interfaces';
 import { useUserStore } from '@/stores/user';
 import { useDialog } from 'primevue/usedialog';
 import ContextConfirmDialog from './ContextConfirmDialog.vue';
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useLocalStorage } from '@vueuse/core';
 
+// Get store data
 const store = useUserStore();
+const { transcriptionText } = storeToRefs(store);
 
-const data = _NLPData as NLPData;
+// Get NLP-Data and initialize it
+const data = useLocalStorage('nlpSummaryDataTest', _NLPData as NLPData);
+data.value.symptoms = data.value.symptoms.map((symptom) => {
+  if (!symptom.status) {
+    return {
+      ...symptom,
+      status: 'preliminary'
+    };
+  } else {
+    return symptom;
+  }
+});
+const statusOptions = ref<NLPStatus[]>(['amended', 'preliminary', 'entered-in-error']);
 
-/**
- * Determines if the context is present in the transcript or not
- */
+//Start watching the NLPData and update if it is in the transcript
 function isInTranscript(toFind: string) {
+  console.log('GO');
   return store.transcriptionText.includes(toFind);
 }
-const computedSymptoms = computed(() => {
-  return data.symptoms.map((symptom) => ({
-    ...symptom,
-    isInTranscript: isInTranscript(symptom.context)
-  }));
-});
+watch(
+  transcriptionText,
+  () => {
+    data.value.symptoms = data.value.symptoms.map((symptom) => ({
+      ...symptom,
+      isInTranscript: isInTranscript(symptom.context)
+    }));
+  },
+  { immediate: true }
+);
 
+//TODO: into fhir?
+async function sendToKIS() {
+  console.log(data.value);
+}
+
+//Dialog
 const dialog = useDialog();
-
 const showSymptomContext = (symptomText: string, symptomContext: string) => {
   dialog.open(ContextConfirmDialog, {
     data: {
@@ -76,6 +103,7 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 750px) {

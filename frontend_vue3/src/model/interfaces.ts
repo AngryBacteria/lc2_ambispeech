@@ -106,21 +106,27 @@ export interface NLPData {
   findings: Finding[];
 }
 
-export interface Finding {
-  finding: string;
+//https://build.fhir.org/valueset-observation-status.html
+export type NLPStatus = 'amended' | 'preliminary' | 'entered-in-error';
+
+export interface NLPEntry {
   context: string;
+  isInTranscript?: boolean;
+  status: NLPStatus;
+}
+
+export interface Finding extends NLPEntry {
+  finding: string;
   value: string;
 }
 
-export interface Medication {
+export interface Medication extends NLPEntry {
   name: string;
   dosage: string;
-  context: string;
 }
 
-export interface Symptom {
+export interface Symptom extends NLPEntry {
   symptom: string;
   onset: string;
   location: string;
-  context: string;
 }

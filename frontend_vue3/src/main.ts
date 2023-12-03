@@ -38,6 +38,7 @@ import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Tag from 'primevue/tag';
 import DynamicDialog from 'primevue/dynamicdialog';
+import SelectButton from 'primevue/selectbutton';
 
 app.use(PrimeVue);
 app.use(ToastService);
@@ -58,5 +59,6 @@ app.component('Dialog', Dialog);
 app.component('InputText', InputText);
 app.component('Tag', Tag);
 app.component('DynamicDialog', DynamicDialog);
+app.component('SelectButton', SelectButton);
 
 app.mount('#app');
