@@ -21,12 +21,12 @@ def convert_to_array(embedding_str):
 
 
 class EmbeddingUtil(object):
-    """Singleton util class to create embeddings and search for keywords in the icd10 and loin catalog"""
+    """Singleton util class to create embeddings and search for keywords in the icd10 catalog"""
 
     _instance = None
     icd10: DataFrame
-    loinc: DataFrame
     embedding_model: str = "text-embedding-ada-002"
+    embedding_column: str = "ada_embedding"
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -43,23 +43,13 @@ class EmbeddingUtil(object):
             openai.api_key = os.getenv("OPENAI_KEY")
             self.icd10 = pd.read_csv("../data/catalogs/icd10gm_symptoms.csv", sep=",")
             # if the embeddings exist already, convert them back into an ndArray
-            if "ada_embedding" in self.icd10.columns:
-                self.icd10["ada_embedding"] = self.icd10["ada_embedding"].apply(
+            if self.embedding_column in self.icd10.columns:
+                self.icd10[self.embedding_column] = self.icd10[self.embedding_column].apply(
                     convert_to_array
                 )
             else:
                 logger.warning("icd10 file has no embeddings, the search wont work")
 
-            self.loinc = pd.read_csv(
-                "../data/catalogs/loinc_german_shortened.csv", sep=","
-            )
-            if "ada_embedding" in self.loinc.columns:
-                self.loinc["ada_embedding"] = self.loinc["ada_embedding"].apply(
-                    convert_to_array
-                )
-            else:
-                logger.warning("loinc file has no embeddings, the search wont work")
-            self._initialized = True
             logger.info("Created EmbeddingUtil")
 
     def get_embedding(self, text):
@@ -70,18 +60,18 @@ class EmbeddingUtil(object):
         )
 
     def create_icd10_embeddings(self):
-        self.icd10["ada_embedding"] = self.icd10["V9"].apply(
+        self.icd10[self.embedding_column] = self.icd10["V9"].apply(
             lambda x: self.get_embedding(x)
         )
         self.icd10.to_csv("../data/catalogs/icd10gm_embeddings.csv")
 
     def search_functions(self, df, text, n=10):
-        if "ada_embedding" not in df.columns:
+        if self.embedding_column not in df.columns:
             raise Exception(
-                "Dataframe has no embeddings (column ada_embedding), please create them first"
+                f"Dataframe has no embeddings (column {self.embedding_column}), please create them first"
             )
         embedding = self.get_embedding(text)
-        df["similarities"] = df.ada_embedding.apply(
+        df["similarities"] = df[self.embedding_column].apply(
             lambda x: cosine_similarity(np.array(x), embedding)
         )
 

@@ -12,8 +12,8 @@ openai==0.28.1
 
 # s2t dependencies
 azure-cognitiveservices-speech==1.32.1
-faster-whisper==0.9.0
-ctranslate2==3.20.0
+faster-whisper==0.10.0
+ctranslate2==3.22.0
 jiwer==3.0.3
 
 # general dependencies

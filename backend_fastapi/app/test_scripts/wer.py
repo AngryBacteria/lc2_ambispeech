@@ -13,7 +13,7 @@ from app.utils.whisper_util import WhisperUtil
 
 file_base_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\testfiles"
 excel_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\LC2_Resultate_S2T.xlsx"
-service = "whisper"
+service = "azure"
 
 
 # helper function for later
@@ -80,6 +80,7 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
                 "wer",
                 "mer",
                 "wil",
+                "wip",
                 "output",
             ]
         )
@@ -123,6 +124,7 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
             report.get("wer"),
             report.get("mer"),
             report.get("wil"),
+            report.get("wip"),
             output,
         ]
         df.loc[len(df)] = new_row
@@ -135,4 +137,4 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
         df.to_excel(excel_path, "data", index=False)
 
 
-test_all_files(False, True)
+test_all_files(True, False)
