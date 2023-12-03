@@ -14,14 +14,13 @@ from app.utils.logging_util import logger
 
 
 class OpenAIHelper:
-    """Singleton util class to handle various llm related operations with langchain"""
 
     _instance = None
     llm: BaseLanguageModel = None
     config = None
 
     class OpenaiLangchainConfig(BaseModel):
-        submodule: OpenAIModel = "gpt-3.5-turbo"
+        submodule: OpenAIModel = "gpt-4-32k"
         max_tokens: int = 20
         temperature: float = 1
 

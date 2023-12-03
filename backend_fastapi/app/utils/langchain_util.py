@@ -5,6 +5,7 @@ from enum import Enum
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
+from app.langchain.gpt4all_helper import GPT4AllHelper
 from app.langchain.openai_helper import OpenAIHelper
 
 from dotenv import load_dotenv
@@ -27,6 +28,7 @@ class LangchainUtil:
             
             „Symptome“: [„Symptom1“, „Symptom2“, …],
             „Medikamente“: [„Medikament1“, „Medikament2“, …]
+            
              """,
     )
 
@@ -42,15 +44,13 @@ class LangchainUtil:
         logger.info("Created LangchainUtil")
         self._initialized = True
 
-    # does not work anymore
-    async def hello_chat_completion(self):
-        """Async Hello World chat completion example for openai"""
-        response = (
-            ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI)
-            .get_llm()
-            .call("Hello World")
-        )
-        return response
+    async def test(self, model, message):
+        return ModelHelperMapper.get_helper_for_model(model).get_llm().predict(message)
+
+    async def hello_chat_completion(self, model):
+        """Async Hello World chat completion example for llm with langchain"""
+        llm = ModelHelperMapper.get_helper_for_model(model).get_llm()
+        return llm.predict("Hello World")
 
     async def chat_completion(self, model, transcript):
         helper = ModelHelperMapper.get_helper_for_model(model)
@@ -61,20 +61,19 @@ class LangchainUtil:
 
         return chain.run(transcript)
 
-    async def test(self):
-        return ModelHelperMapper.get_helper_for_model(LLModel.ChatOpenAI)
-
 
 class LLModel(str, Enum):
     """Enum for all supported Large Language models"""
 
     ChatOpenAI = "chat-open-ai"
     Llama = "llama-cpp"
+    GPT4All = "gpt-4-all"
 
 
 class ModelHelperMapper:
     _mapping = {
-        LLModel.ChatOpenAI: OpenAIHelper()
+        LLModel.ChatOpenAI: OpenAIHelper(),
+        LLModel.GPT4All: GPT4AllHelper()
         # LLModel.Llama: LlamaHelper()
     }
 
