@@ -106,12 +106,12 @@ def get_wer(reference: str, hypothesis: str, make_lower: bool = True) -> Accurac
         reference = reference.replace(removable, "")
         hypothesis = hypothesis.replace(removable, "")
 
-    output_dict: AccuracyReport = {
-        "wer": jiwer.wer(reference, hypothesis),
-        "mer": jiwer.mer(reference, hypothesis),
-        "wil": jiwer.wil(reference, hypothesis),
-    }
-
     output = jiwer.process_words(reference, hypothesis)
     print(jiwer.visualize_alignment(output))
+
+    output_dict: AccuracyReport = {
+        "wer": output.wer,
+        "mer": output.mer,
+        "wil": output.wil,
+    }
     return output_dict
