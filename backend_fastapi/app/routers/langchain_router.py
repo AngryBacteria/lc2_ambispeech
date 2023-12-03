@@ -1,7 +1,4 @@
-from typing import Literal
-
 from fastapi import APIRouter
-
 from pydantic import BaseModel
 
 from app.utils.langchain_util import LangchainUtil, LLModel
@@ -14,15 +11,14 @@ langchainRouter = APIRouter(
 langchainUtil = LangchainUtil()
 
 
-# TODO not used, should be deleted, if not reimplemented
-class OpenaiCompletionMessage(BaseModel):
-    role: Literal["system", "user"]
-    content: str
-
-
 class LangchainCompletionBody(BaseModel):
     message: str
-    llm: LLModel
+
+
+@langchainRouter.post("/hello/{model}")
+async def hello(model: LLModel):
+    """Hello World example for large language models with langchain"""
+    return await langchainUtil.hello_chat_completion(model)
 
 
 @langchainRouter.post("/complete/{model}")
@@ -32,7 +28,7 @@ async def langchain(model: LLModel, body: LangchainCompletionBody):
     return await langchainUtil.chat_completion(model, transcript)
 
 
-@langchainRouter.post("/test/")
-async def test():
+@langchainRouter.post("/test/{model}")
+async def test(model: LLModel, body: LangchainCompletionBody):
     """Non-Streaming chat completion"""
-    return await langchainUtil.test()
+    return await langchainUtil.test(model, body.message)
