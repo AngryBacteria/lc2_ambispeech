@@ -79,6 +79,7 @@ class OpenAIUtil:
 class OpenaiModel(str, Enum):
     """Enum for all supported OpenAI models"""
 
+    GPT_4_TURBO = "gpt-4-1106-preview"
     GPT_4 = "gpt-4"
     GPT_4_32k = "gpt-4-32k"
     GPT_3_TURBO = "gpt-3.5-turbo"
