@@ -1,32 +1,38 @@
 import ast
 import os
 
-import openai
 from dotenv import load_dotenv
-from openai.embeddings_utils import cosine_similarity
+from numpy import dot
+from numpy.linalg import norm
 from pandas import DataFrame
 import numpy as np
 import pandas as pd
 
 from app.utils.logging_util import logger
+from app.utils.openai_util import OpenAIUtil
 
 
 def convert_to_array(embedding_str):
+    """Used to convert a string from the csv back into a np array"""
     try:
-        # Convert the string representation of the embedding back to a numpy array
         return np.array(ast.literal_eval(embedding_str))
     except:
         print("Malformed DATA!!")
         return np.zeros(768)
 
 
+def get_cosine_similarity(a, b):
+    """Calculates the cosine similarity for embedding search"""
+    return dot(a, b) / (norm(a) * norm(b))
+
+
 class EmbeddingUtil(object):
     """Singleton util class to create embeddings and search for keywords in the icd10 catalog"""
 
     _instance = None
-    icd10: DataFrame
-    embedding_model: str = "text-embedding-ada-002"
+    icd10_symptoms: DataFrame
     embedding_column: str = "ada_embedding"
+    openai_util: OpenAIUtil = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -40,39 +46,36 @@ class EmbeddingUtil(object):
         if os.getenv("OPENAI_KEY") is None:
             raise EnvironmentError(".env file is missing the OPENAI_KEY")
         else:
-            openai.api_key = os.getenv("OPENAI_KEY")
-            self.icd10 = pd.read_csv("../data/catalogs/icd10gm_symptoms.csv", sep=",")
+            self.openai_util = OpenAIUtil()
+            self.icd10_symptoms = pd.read_csv(
+                "../data/catalogs/icd10gm_symptoms.csv", sep=","
+            )
             # if the embeddings exist already, convert them back into an ndArray
-            if self.embedding_column in self.icd10.columns:
-                self.icd10[self.embedding_column] = self.icd10[self.embedding_column].apply(
-                    convert_to_array
-                )
+            if self.embedding_column in self.icd10_symptoms.columns:
+                self.icd10_symptoms[self.embedding_column] = self.icd10_symptoms[
+                    self.embedding_column
+                ].apply(convert_to_array)
             else:
                 logger.warning("icd10 file has no embeddings, the search wont work")
 
             logger.info("Created EmbeddingUtil")
 
-    def get_embedding(self, text):
-        return (
-            openai.Embedding.create(input=[text], model=self.embedding_model)
-            .data[0]
-            .embedding
-        )
-
     def create_icd10_embeddings(self):
-        self.icd10[self.embedding_column] = self.icd10["V9"].apply(
-            lambda x: self.get_embedding(x)
+        """Creates the embeddings and saves them into the original csv"""
+        self.icd10_symptoms[self.embedding_column] = self.icd10_symptoms["V9"].apply(
+            lambda x: self.openai_util.get_embedding(x)
         )
-        self.icd10.to_csv("../data/catalogs/icd10gm_embeddings.csv")
+        self.icd10_symptoms.to_csv("../data/catalogs/icd10gm_symptoms.csv")
 
-    def search_functions(self, df, text, n=10):
+    def search(self, df: DataFrame, text: str, n=10):
+        """Generic function to search a dataframe that has an embeddings column"""
         if self.embedding_column not in df.columns:
             raise Exception(
                 f"Dataframe has no embeddings (column {self.embedding_column}), please create them first"
             )
-        embedding = self.get_embedding(text)
+        embedding = self.openai_util.get_embedding(text)
         df["similarities"] = df[self.embedding_column].apply(
-            lambda x: cosine_similarity(np.array(x), embedding)
+            lambda x: get_cosine_similarity(np.array(x), embedding)
         )
 
         res = df.sort_values("similarities", ascending=False).head(n)

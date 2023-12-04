@@ -14,7 +14,6 @@ from app.utils.logging_util import logger
 
 
 class OpenAIHelper:
-
     _instance = None
     llm: BaseLanguageModel = None
     config = None

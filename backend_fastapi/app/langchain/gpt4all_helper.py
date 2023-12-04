@@ -10,10 +10,9 @@ from app.utils.logging_util import logger
 
 
 class GPT4AllHelper:
-
     _instance = None
     llm: BaseLanguageModel = None
-    #local_path = "E:\\LLM\\gpt4all_model\\gpt4all-13b-snoozy-q4_0.gguf"
+    # local_path = "E:\\LLM\\gpt4all_model\\gpt4all-13b-snoozy-q4_0.gguf"
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -26,8 +25,10 @@ class GPT4AllHelper:
         load_dotenv()
         model_path = os.getenv("GPT4ALL_MODEL_PATH")
         if os.getenv("GPT4ALL_MODEL_PATH") is None:
-            logger.warning(f"Model path not found: {model_path}. The GPT4All LLM will not be functional until a valid path is "
-                           f"provided in .env File.")
+            logger.warning(
+                f"Model path not found: {model_path}. The GPT4All LLM will not be functional until a valid path is "
+                f"provided in .env File."
+            )
         else:
             self.llm = GPT4All(model=os.getenv("GPT4ALL_MODEL_PATH"))
             logger.info("Created GPT4AllHelper")
@@ -36,5 +37,7 @@ class GPT4AllHelper:
 
     def get_llm(self):
         if self.llm is None:
-            raise RuntimeError("GPT4All LLM is not properly initialized. Please check the model path.")
+            raise RuntimeError(
+                "GPT4All LLM is not properly initialized. Please check the model path."
+            )
         return self.llm

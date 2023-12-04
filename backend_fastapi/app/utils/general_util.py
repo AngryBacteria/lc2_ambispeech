@@ -114,6 +114,6 @@ def get_wer(reference: str, hypothesis: str, make_lower: bool = True) -> Accurac
         "wer": output.wer,
         "mer": output.mer,
         "wil": output.wil,
-        "wip": output.wip
+        "wip": output.wip,
     }
     return output_dict
