@@ -1,30 +1,25 @@
-import os
+import requests
 
-import openai
-import pandas as pd
-from dotenv import load_dotenv
-from openai.embeddings_utils import get_embedding
+from app.data.transcripts import transcript_appendizitis
 
-load_dotenv()
-openai.app_info = os.getenv("OPENAI_API_KEY")
+# URL for the API endpoint
+url = 'http://127.0.0.1:8000/api/nlp/analyze/'
 
-datafile_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\natural_language_processing\\kataloge\\LOINC_German_shortened.csv"
+# Headers for the request
+headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json'
+}
 
-df = pd.read_csv(datafile_path)
-df = df.head(10)
-df["combined"] = (
-    "LOINC_NUM: "
-    + str(df.LOINC_NUM).strip()
-    + "; COMPONENT: "
-    + str(df.COMPONENT).strip()
-    + "; LONG_COMMON_NAME: "
-    + str(df.LONG_COMMON_NAME).strip()
-    + "; RELATEDNAMES2: "
-    + str(df.RELATEDNAMES2).strip()
-)
+# Data to be sent in JSON format
+data = {
+    'text': transcript_appendizitis,
+    'service': 'openai'
+}
 
-df["embedding"] = df.combined.apply(
-    lambda x: get_embedding(x, engine="text-embedding-ada-002")
-)
+# Making the POST request
+response = requests.post(url, json=data, headers=headers)
 
-df.to_csv("test_embedding.csv")
+# Optional: Handling the response
+print(response.status_code)
+print(response.json())

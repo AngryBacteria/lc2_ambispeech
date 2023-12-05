@@ -43,7 +43,7 @@ class OpenAIUtil:
             self.clientAsync = AsyncOpenAI(
                 api_key=os.getenv("OPENAI_KEY"),
             )
-            self.openai_model = OpenaiModel.GPT_3_TURBO
+            self.openai_model = OpenaiModel.GPT_3_TURBO_16k
         logger.info("Created OpenAIUtil")
         self._initialized = True
 
@@ -106,6 +106,7 @@ class OpenAIUtil:
 
 
 class OpenaiCompletionConfig(BaseModel):
+    """Config object for openai chat completion requests"""
     frequency_penalty: float = 0
     max_tokens: int = 10
     presence_penalty: float = 0
@@ -115,10 +116,12 @@ class OpenaiCompletionConfig(BaseModel):
 
 
 class OpenaiResponseFormat(TypedDict):
+    """Response format for openai chat completion requests. The newest models support JSON"""
     type: Literal["json_object", "text"]
 
 
 class OpenaiCompletionBody(BaseModel):
+    """Body to pass in FastAPI router when handling openai requests"""
     messages: list[ChatCompletionSystemMessageParam | ChatCompletionUserMessageParam]
     config: OpenaiCompletionConfig
 
@@ -131,3 +134,4 @@ class OpenaiModel(str, Enum):
     GPT_4_32k = "gpt-4-32k"
     GPT_3_TURBO = "gpt-3.5-turbo"
     GPT_3_TURBO_16k = "gpt-3.5-turbo-16k"
+    GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"
