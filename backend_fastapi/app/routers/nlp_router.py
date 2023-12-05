@@ -93,8 +93,8 @@ async def analyze(body: AnalyzeBody):
         output = await openaiUtil.chat_completion(
             prompt.messages,
             OpenaiCompletionConfig(
-                max_tokens=10,
-                response_format={"type": "JSON"}
+                max_tokens=4096,
+                response_format={"type": "json_object"}
             )
         )
         return parse_json_from_string(output)
