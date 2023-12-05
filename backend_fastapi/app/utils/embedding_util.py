@@ -60,8 +60,8 @@ class EmbeddingUtil(object):
 
             logger.info("Created EmbeddingUtil")
 
-    def create_icd10_embeddings(self):
-        """Creates the embeddings and saves them into the original csv"""
+    def create_icd10_symptoms_embeddings(self):
+        """Creates the embeddings for the symptoms (category R) and saves them into the original csv"""
         self.icd10_symptoms[self.embedding_column] = self.icd10_symptoms["V9"].apply(
             lambda x: self.openai_util.get_embedding(x)
         )

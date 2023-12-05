@@ -1,10 +1,5 @@
-from typing import Literal
-
 from fastapi import APIRouter
-
-from pydantic import BaseModel
 from starlette.responses import StreamingResponse
-
 from app.utils.openai_util import (
     OpenAIUtil,
     OpenaiModel,
