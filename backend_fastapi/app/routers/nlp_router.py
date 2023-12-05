@@ -8,8 +8,8 @@ from app.utils.openai_util import (
 )
 
 llmRouter = APIRouter(
-    prefix="/api/llm",
-    tags=["llm"],
+    prefix="/api/nlp",
+    tags=["nlp"],
 )
 
 llmUtil = OpenAIUtil()

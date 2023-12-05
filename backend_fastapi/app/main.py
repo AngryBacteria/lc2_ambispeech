@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.langchain_router import langchainRouter
-from app.routers.llm_router import llmRouter
+from app.routers.nlp_router import llmRouter
 from app.routers.transcribe_router import transcribeRouter
 from app.utils.azure_util import AzureUtil
 from app.utils.langchain_util import LangchainUtil

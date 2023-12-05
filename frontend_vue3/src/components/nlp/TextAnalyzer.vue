@@ -39,7 +39,7 @@ import { ref } from 'vue';
 import NLPSummary from '@/components/nlp/NLPSummary.vue';
 
 const store = useUserStore();
-let llmApiUrl = 'http://localhost:8000/api/llm/openai/gpt-3.5-turbo';
+let llmApiUrl = 'http://localhost:8000/api/nlp/openai/gpt-3.5-turbo';
 
 const analysisError = ref('');
 
