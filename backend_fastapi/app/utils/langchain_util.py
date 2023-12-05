@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
+from langchain.output_parsers.json import SimpleJsonOutputParser
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
@@ -45,7 +46,11 @@ class LangchainUtil:
         self._initialized = True
 
     async def test(self, model, message):
-        return ModelHelperMapper.get_helper_for_model(model).get_llm().predict(message)
+
+        json_chain = (self.prompt_template | ModelHelperMapper.get_helper_for_model(model).get_llm() |
+                      SimpleJsonOutputParser())
+
+        return json_chain.invoke({"transcript": message})
 
     async def hello_chat_completion(self, model):
         """Async Hello World chat completion example for llm with langchain"""
@@ -59,7 +64,7 @@ class LangchainUtil:
 
         chain = LLMChain(llm=helper.get_llm(), prompt=self.prompt_template)
 
-        return chain.run(transcript)
+        return await chain.arun(transcript)
 
 
 class LLModel(str, Enum):
