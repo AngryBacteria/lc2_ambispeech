@@ -143,7 +143,7 @@ const openAiSettings = [
 ] as const;
 </script>
 
-<style>
+<style scoped>
 .settings-wrapper {
   padding-left: 2rem;
   padding-right: 2rem;

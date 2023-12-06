@@ -1,3 +1,4 @@
+import json
 import re
 from typing import TypedDict
 
@@ -117,3 +118,27 @@ def get_wer(reference: str, hypothesis: str, make_lower: bool = True) -> Accurac
         "wip": output.wip,
     }
     return output_dict
+
+
+def parse_json_from_string(input_string):
+    """Function to parse a JSON from a string. The JSON can be at any position in the string. If no JSON could be parsed
+    it returns the string 'parsing_error' instead"""
+    start_index = input_string.find('{')
+    if start_index == -1:
+        start_index = input_string.find('[')
+        if start_index == -1:
+            return "parsing_error"
+
+    end_index = input_string.rfind('}')
+    if end_index == -1:
+        end_index = input_string.rfind(']')
+        if end_index == -1:
+            return "parsing_error"
+
+    json_string = input_string[start_index:end_index + 1]
+
+    try:
+        parsed_json = json.loads(json_string)
+        return parsed_json
+    except json.JSONDecodeError:
+        return "parsing_error"

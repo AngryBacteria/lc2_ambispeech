@@ -42,4 +42,4 @@ function yearsSince(dateString: string) {
   return Math.floor(differenceInYears);
 }
 </script>
-<style></style>
+<style scoped></style>

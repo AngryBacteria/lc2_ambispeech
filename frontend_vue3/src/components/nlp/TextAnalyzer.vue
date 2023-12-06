@@ -1,35 +1,38 @@
 <template>
   <section class="component-wrapper">
-    <Accordion>
-      <AccordionTab>
-        <template #header>
-          <section style="display: flex; align-items: center; width: 100%">
-            <div>Extrahierte Informationen</div>
-            <Button
-              @click="
-                $event.stopPropagation();
-                analyzeText(store.transcriptionText);
-              "
-              :label="store.isMobile ? '' : 'Analyse starten'"
-              icon="pi pi-eye"
-              size="small"
-              :loading="store.analysisIsLoading"
-              :class="{
-                hidden: store.transcriptionText.length <= 0 || store.transcriptionIsLoading
-              }"
-              style="margin-left: auto"
-            />
-          </section>
-        </template>
-        <p v-if="store.analysisIsLoading">Am Analysieren...</p>
-        <p v-if="analysisError">{{ analysisError }}</p>
+    <section>
+      <SlimProgressBar :is-error="analysisError.length > 0" :value="0" />
+      <Accordion>
+        <AccordionTab>
+          <template #header>
+            <section style="display: flex; align-items: center; width: 100%">
+              <div>Extrahierte Informationen</div>
+              <Button
+                @click="
+                  $event.stopPropagation();
+                  analyzeText(store.transcriptionText);
+                "
+                :label="store.isMobile ? '' : 'Analyse starten'"
+                icon="pi pi-eye"
+                size="small"
+                :loading="store.analysisIsLoading"
+                :class="{
+                  hidden: store.transcriptionText.length <= 0 || store.transcriptionIsLoading
+                }"
+                style="margin-left: auto"
+              />
+            </section>
+          </template>
+          <p v-if="store.analysisIsLoading">Am Analysieren...</p>
+          <p v-if="analysisError">{{ analysisError }}</p>
 
-        <section v-if="!analysisError && !store.analysisIsLoading">
-          <p>{{ store.extractedInfo }}</p>
-          <NLPSummary />
-        </section>
-      </AccordionTab>
-    </Accordion>
+          <section v-if="!analysisError && !store.analysisIsLoading">
+            <p>{{ store.extractedInfo }}</p>
+            <NLPSummary />
+          </section>
+        </AccordionTab>
+      </Accordion>
+    </section>
   </section>
 </template>
 
@@ -37,6 +40,7 @@
 import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 import NLPSummary from '@/components/nlp/NLPSummary.vue';
+import SlimProgressBar from '@/components/general/SlimProgressBar.vue';
 
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/nlp/openai/gpt-3.5-turbo';
@@ -115,8 +119,12 @@ async function analyzeText(text: string) {
 }
 </script>
 
-<style>
+<style scoped>
 .p-inputtextarea {
   width: 100%;
+}
+:deep(.p-accordion .p-accordion-header .p-accordion-header-link) {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 }
 </style>

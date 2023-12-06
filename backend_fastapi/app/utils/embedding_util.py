@@ -43,8 +43,8 @@ class EmbeddingUtil(object):
         if hasattr(self, "_initialized"):
             return
         load_dotenv()
-        if os.getenv("OPENAI_KEY") is None:
-            raise EnvironmentError(".env file is missing the OPENAI_KEY")
+        if os.getenv("OPENAI_API_KEY") is None:
+            raise EnvironmentError(".env file is missing the OPENAI_API_KEY")
         else:
             self.openai_util = OpenAIUtil()
             self.icd10_symptoms = pd.read_csv(

@@ -1,7 +1,6 @@
 <template>
   <section class="upload-wrapper">
-    <ProgressBar v-if="!transcriptionError" :value="uploadProgress"></ProgressBar>
-    <ProgressBar v-else style="background-color: var(--danger)"></ProgressBar>
+    <SlimProgressBar :isError="transcriptionError.length > 0" :value="uploadProgress" />
     <div class="file-wrapper">
       <FileUpload
         :disabled="transcriptionIsLoading"
@@ -24,6 +23,7 @@
 import { getHumanFileSize } from '@/composables/util';
 import { type FileTranscriptionProps } from '@/model/interfaces';
 import { ref } from 'vue';
+import SlimProgressBar from '../general/SlimProgressBar.vue';
 /**
  * With this component a user can upload a file to the web-application.
  * This file can then be passed to the transcriber component, that uploads it to the backend
@@ -76,19 +76,5 @@ function handleUpload(files: File[]) {
 
 .file-wrapper p {
   word-break: break-all;
-}
-
-.p-progressbar-determinate .p-progressbar-value-animate {
-  transition: width 0.1s ease-in-out;
-}
-
-.p-progressbar {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  height: 8px;
-}
-
-:deep(.p-progressbar-label) {
-  display: none;
 }
 </style>

@@ -32,7 +32,7 @@ export const useUserStore = defineStore('user', () => {
     serializer: StorageSerializers.object
   });
 
-  // Transcription state
+  // NLP State
   /**
    * Information (Data) that was extracted from the transcript with NLP
    */
@@ -42,7 +42,7 @@ export const useUserStore = defineStore('user', () => {
    */
   const analysisIsLoading = ref(false);
 
-  // NLP State
+  // Transcription state
   /**
    * Text that was transcribed from audio
    */

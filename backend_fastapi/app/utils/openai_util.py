@@ -34,14 +34,14 @@ class OpenAIUtil:
         if hasattr(self, "_initialized"):
             return
         load_dotenv()
-        if os.getenv("OPENAI_KEY") is None:
-            raise EnvironmentError(".env file is missing the OPENAI_KEY")
+        if os.getenv("OPENAI_API_KEY") is None:
+            raise EnvironmentError(".env file is missing the OPENAI_API_KEY")
         else:
             self.client = OpenAI(
-                api_key=os.getenv("OPENAI_KEY"),
+                api_key=os.getenv("OPENAI_API_KEY"),
             )
             self.clientAsync = AsyncOpenAI(
-                api_key=os.getenv("OPENAI_KEY"),
+                api_key=os.getenv("OPENAI_API_KEY"),
             )
             self.openai_model = OpenaiModel.GPT_3_TURBO_16k
         logger.info("Created OpenAIUtil")
@@ -128,7 +128,6 @@ class OpenaiCompletionBody(BaseModel):
 
 class OpenaiModel(str, Enum):
     """Enum for all supported OpenAI models"""
-
     GPT_4_TURBO = "gpt-4-1106-preview"
     GPT_4 = "gpt-4"
     GPT_4_32k = "gpt-4-32k"

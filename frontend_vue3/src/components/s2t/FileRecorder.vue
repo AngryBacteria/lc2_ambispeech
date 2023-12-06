@@ -1,7 +1,6 @@
 <template>
   <section class="recorder-wrapper">
-    <ProgressBar v-if="!transcriptionError" :value="uploadProgress"></ProgressBar>
-    <ProgressBar v-else style="background-color: var(--danger)"></ProgressBar>
+    <SlimProgressBar :is-error="transcriptionError.length > 1" :value="uploadProgress" />
     <section class="action-row">
       <Button
         @click="startRecording()"
@@ -37,6 +36,7 @@ import { useUserStore } from '@/stores/user';
 import { type FileTranscriptionProps } from '@/model/interfaces';
 import { getHumanFileSize } from '@/composables/util';
 import { useToast } from 'primevue/usetoast';
+import SlimProgressBar from '../general/SlimProgressBar.vue';
 
 enum RecordingStateFlag {
   START,
@@ -191,20 +191,6 @@ function setState(state: RecordingStateFlag) {
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
-}
-
-.p-progressbar-determinate .p-progressbar-value-animate {
-  transition: width 0.1s ease-in-out;
-}
-
-.p-progressbar {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  height: 8px;
-}
-
-:deep(.p-progressbar-label) {
-  display: none;
 }
 
 .centered-p {

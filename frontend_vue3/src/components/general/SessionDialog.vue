@@ -78,7 +78,7 @@ const isVisible = computed(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .account-input {
   display: flex;
   flex-direction: column;
