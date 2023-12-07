@@ -106,7 +106,7 @@ class AzureUtil(object):
         done = False
 
         def yield_event(event: speechsdk.SpeechRecognitionEventArgs):
-            logger.info(f"{event}")
+            logger.debug(f"{event}")
             if event.result.reason == speechsdk.ResultReason.RecognizedSpeech:
                 recognized_queue.put_nowait(event)
             elif event.result.reason == speechsdk.ResultReason.Canceled:

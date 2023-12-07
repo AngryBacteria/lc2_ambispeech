@@ -48,7 +48,7 @@ class EmbeddingUtil(object):
         else:
             self.openai_util = OpenAIUtil()
             self.icd10_symptoms = pd.read_csv(
-                "../data/catalogs/icd10gm_symptoms.csv", sep=","
+                "app/data/catalogs/icd10gm_symptoms.csv", sep=","
             )
             # if the embeddings exist already, convert them back into an ndArray
             if self.embedding_column in self.icd10_symptoms.columns:
@@ -65,7 +65,7 @@ class EmbeddingUtil(object):
         self.icd10_symptoms[self.embedding_column] = self.icd10_symptoms["V9"].apply(
             lambda x: self.openai_util.get_embedding(x)
         )
-        self.icd10_symptoms.to_csv("../data/catalogs/icd10gm_symptoms.csv")
+        self.icd10_symptoms.to_csv("app/data/catalogs/icd10gm_symptoms.csv")
 
     def search(self, df: DataFrame, text: str, n=10):
         """Generic function to search a dataframe that has an embeddings column"""
