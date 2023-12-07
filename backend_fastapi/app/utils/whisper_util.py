@@ -28,7 +28,7 @@ def get_whisper_language(language: AzureLanguageCode):
 
 class WhisperUtil:
     _instance = None
-    model_size = "medium"
+    model_size = "tiny"
     model_folder = "models"
 
     model_GPU: WhisperModel = None

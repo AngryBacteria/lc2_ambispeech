@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from starlette.responses import StreamingResponse
 from fastapi import Response, status
 
-from app.data.prompts_verions import prompts
 from app.utils.general_util import parse_json_from_string
 from app.utils.openai_util import (
     OpenAIUtil,
@@ -32,6 +31,10 @@ llmRouter = APIRouter(
 )
 
 openaiUtil = OpenAIUtil()
+# TODO think about if those paths will be the same no matter where you start the app. For other paths relevant too
+# TODO maybe move into general util?
+with open("app/data/lc2_data.json", 'r', encoding='utf-8') as file:
+    data = json.load(file)
 
 
 @llmRouter.post("/hello/{model}")
@@ -61,8 +64,8 @@ async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
 @llmRouter.post("/analyze")
 async def analyze(body: AnalyzeBody, response: Response):
     """Endpoint for analyzing a conversation between a doctor and his patient. All configurations done"""
-    prompt = prompts[0]
-    for message in prompt.messages:
+    prompt = data["prompting"]["prompts"][0]
+    for message in prompt["messages"]:
         if "<PLACEHOLDER>" in message["content"]:
             message["content"] = message["content"].replace("<PLACEHOLDER>", body.text)
 
@@ -72,7 +75,7 @@ async def analyze(body: AnalyzeBody, response: Response):
 
         # TODO: tokens anpassen? und error falls kein json
         output = await openaiUtil.chat_completion(
-            prompt.messages,
+            prompt["messages"],
             OpenaiCompletionConfig(
                 max_tokens=4096,
                 response_format={"type": "json_object"}

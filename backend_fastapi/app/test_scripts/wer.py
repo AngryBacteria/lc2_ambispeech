@@ -1,11 +1,11 @@
 import asyncio
+import json
 import os
 import time
 import wave
 
 import pandas as pd
 
-from app.data.audio_files import medical_texts
 from app.utils.azure_util import AzureUtil
 from app.utils.general_util import get_wer
 from app.utils.logging_util import logger
@@ -13,6 +13,7 @@ from app.utils.whisper_util import WhisperUtil
 
 file_base_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\testfiles"
 excel_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\LC2_Resultate_S2T.xlsx"
+test_file_path = "C:\\Users\\nicog\\Downloads\\whatstheweatherlike.wav"
 service = "azure"
 
 
@@ -34,7 +35,6 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
     # init whisper
     if service == "whisper":
         whisper = WhisperUtil()
-        test_file_path = "C:\\Users\\nicog\\Downloads\\whatstheweatherlike.wav"
         # let it run once, that way the models are loaded into memory
         with open(test_file_path, "rb") as file:
             data = file.read()
@@ -86,6 +86,9 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
         )
 
     # iterate over all files
+    # TODO: implement throw error if path not existing
+    with open("../data/lc2_data.json", 'r', encoding='utf-8') as file:
+        medical_texts = json.load(file)
     for test_file in medical_texts["files"]:
         audio_wav_path = os.path.join(
             file_base_path, test_file["folder"], test_file["name"]

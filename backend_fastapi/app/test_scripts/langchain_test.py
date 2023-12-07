@@ -1,10 +1,13 @@
 import asyncio
+import json
 
 from app.utils.langchain_util import LangchainUtil
-from app.data import transcripts
+
+with open("../data/lc2_data.json", 'r', encoding='utf-8') as file:
+    medical_texts = json.load(file)
 
 util = LangchainUtil()
-transcript = transcripts.transcript_appendizitis
+transcript = medical_texts["files"][0]["transcript"]
 
 res = asyncio.run(util.test("chat-open-ai", transcript))
 print(res)
