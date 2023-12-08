@@ -107,6 +107,7 @@ class OpenAIUtil:
 
 class OpenaiCompletionConfig(BaseModel):
     """Config object for openai chat completion requests"""
+
     frequency_penalty: float = 0
     max_tokens: int = 10
     presence_penalty: float = 0
@@ -117,17 +118,20 @@ class OpenaiCompletionConfig(BaseModel):
 
 class OpenaiResponseFormat(TypedDict):
     """Response format for openai chat completion requests. The newest models support JSON"""
+
     type: Literal["json_object", "text"]
 
 
 class OpenaiCompletionBody(BaseModel):
     """Body to pass in FastAPI router when handling openai requests"""
+
     messages: list[ChatCompletionSystemMessageParam | ChatCompletionUserMessageParam]
     config: OpenaiCompletionConfig
 
 
 class OpenaiModel(str, Enum):
     """Enum for all supported OpenAI models"""
+
     GPT_4_TURBO = "gpt-4-1106-preview"
     GPT_4 = "gpt-4"
     GPT_4_32k = "gpt-4-32k"

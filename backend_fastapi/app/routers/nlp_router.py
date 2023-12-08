@@ -20,17 +20,20 @@ from app.utils.openai_util import (
 
 class AnalyzeService(str, Enum):
     """Enum for all supported NLP analyze services"""
+
     OPENAI = "openai"
 
 
 class AnalyzeBody(BaseModel):
     """Body for an /analyze request"""
+
     text: str
     service: AnalyzeService
 
 
 class EmbeddingBody(BaseModel):
     """Body for an /embedding request"""
+
     text: str
     amount: int = 10
 
@@ -72,8 +75,8 @@ async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
 @llmRouter.post("/embedding")
 async def getEmbedding(body: EmbeddingBody):
     res = embedUtil.search(embedUtil.icd10_symptoms, body.text, body.amount)
-    output = res[["V8", "V9"]].rename(columns={'V8': 'code', 'V9': 'text'})
-    return output.to_dict(orient='records')
+    output = res[["V8", "V9"]].rename(columns={"V8": "code", "V9": "text"})
+    return output.to_dict(orient="records")
 
 
 @llmRouter.post("/analyze")
@@ -94,9 +97,8 @@ async def analyze(body: AnalyzeBody, response: Response):
         output = await openaiUtil.chat_completion(
             prompt["messages"],
             OpenaiCompletionConfig(
-                max_tokens=4096,
-                response_format={"type": "json_object"}
-            )
+                max_tokens=4096, response_format={"type": "json_object"}
+            ),
         )
     parsed = parse_json_from_string(output)
     if parsed == "parsing_error":

@@ -52,7 +52,7 @@ async def post_file(
             data = await file.read()
             await file.close()
             return StreamingResponse(
-                whisper_util.transcribe(data, language),
+                whisper_util.transcribe(data),
                 media_type="application/text",
             )
         else:

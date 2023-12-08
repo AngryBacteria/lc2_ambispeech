@@ -87,7 +87,7 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
 
     # iterate over all files
     # TODO: implement throw error if path not existing
-    with open("../data/lc2_data.json", 'r', encoding='utf-8') as file:
+    with open("../data/lc2_data.json", "r", encoding="utf-8") as file:
         medical_texts = json.load(file)
     for test_file in medical_texts["files"]:
         audio_wav_path = os.path.join(

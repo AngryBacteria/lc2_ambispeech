@@ -46,9 +46,11 @@ class LangchainUtil:
         self._initialized = True
 
     async def test(self, model, message):
-
-        json_chain = (self.prompt_template | ModelHelperMapper.get_helper_for_model(model).get_llm() |
-                      SimpleJsonOutputParser())
+        json_chain = (
+            self.prompt_template
+            | ModelHelperMapper.get_helper_for_model(model).get_llm()
+            | SimpleJsonOutputParser()
+        )
 
         return json_chain.invoke({"transcript": message})
 

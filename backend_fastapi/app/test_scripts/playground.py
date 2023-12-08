@@ -1,5 +1,6 @@
 import json
 
+
 import requests
 
 from app.utils.embedding_util import EmbeddingUtil
@@ -30,10 +31,19 @@ ARZT: Diese Symptome scheinen mit Ihrem Hydrozephalus zusammenzuhängen. Wir mü
 PATIENT: In Ordnung, danke, Dr. Schmidt. 
 ARZT: Bitte, Herr Meier. Mein Team und ich sind hier, um Ihnen zu helfen. Wir halten Sie auf dem Laufenden."""
 
-    body = {
-        "text": user_input,
-        "service": "openai"
-    }
+    body = {"text": user_input, "service": "openai"}
     json_data = json.dumps(body)
-    response = requests.post("http://127.0.0.1:8000/api/nlp/analyze", data=json_data, headers={'Content-Type': 'application/json'})
+    response = requests.post(
+        "http://127.0.0.1:8000/api/nlp/analyze",
+        data=json_data,
+        headers={"Content-Type": "application/json"},
+    )
     print(response.json())
+
+
+def test_embeddings():
+    embed_util = EmbeddingUtil(
+        csv_folder_path="X:/Programming/Web/lc2_ambispeech/backend_fastapi/app/data/catalogs"
+    )
+    data = embed_util.search(embed_util.icd10_symptoms, "Kopfschmerzen")
+    print(data)

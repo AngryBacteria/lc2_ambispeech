@@ -6,24 +6,7 @@ import os
 import ctranslate2
 from faster_whisper import WhisperModel, download_model
 
-from app.utils.azure_util import AzureLanguageCode
 from app.utils.logging_util import logger
-
-
-def get_whisper_language(language: AzureLanguageCode):
-    match language:
-        case AzureLanguageCode.DE_CH:
-            return "de"
-        case AzureLanguageCode.DE_AT:
-            return "de"
-        case AzureLanguageCode.DE_DE:
-            return "de"
-        case AzureLanguageCode.EN_GB:
-            return "en"
-        case AzureLanguageCode.EN_US:
-            return "en"
-        case _:
-            return "de"
 
 
 class WhisperUtil:
@@ -34,7 +17,6 @@ class WhisperUtil:
     model_GPU: WhisperModel = None
     model_CPU: WhisperModel = None
 
-    language: AzureLanguageCode = None
     cpu_threads: int = None
     beam_size = 5
     useVad: bool = True
@@ -45,10 +27,17 @@ class WhisperUtil:
             cls._instance = super(WhisperUtil, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, language_code: AzureLanguageCode = AzureLanguageCode.DE_CH):
+    def __init__(self, model_folder: str = "models"):
         if hasattr(self, "_initialized"):
             return
-        self.language = language_code
+
+        # Check if the whisper models folder path exists
+        self.model_folder = model_folder
+        if not os.path.exists(os.path.join(self.model_folder)):
+            raise EnvironmentError(
+                f"Whisper models folder does not exist: {self.model_folder}"
+            )
+
         # set amount of cpu cores to use
         cpu_count = os.cpu_count()
         self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 4
@@ -58,7 +47,7 @@ class WhisperUtil:
         if ctranslate2.get_cuda_device_count() >= 1 and self.useGPU:
             try:
                 self.model_GPU = WhisperModel(
-                    f"models/{self.model_size}", device="cuda"
+                    os.path.join(self.model_folder, self.model_size), device="cuda"
                 )
                 logger.debug("Created Whisper GPU-Model")
             except Exception as error:
@@ -66,7 +55,9 @@ class WhisperUtil:
         # Load the CPU model
         try:
             self.model_CPU = WhisperModel(
-                f"models/{self.model_size}", device="cpu", cpu_threads=self.cpu_threads
+                os.path.join(self.model_folder, self.model_size),
+                device="cpu",
+                cpu_threads=self.cpu_threads,
             )
             logger.debug("Created Whisper CPU-Model")
         except Exception as error:
@@ -74,10 +65,10 @@ class WhisperUtil:
             if self.model_GPU is None:
                 raise error
 
-        logger.info(f"Created WhisperUtil [lang={self.language}, useVad={self.useVad}]")
+        logger.info(f"Created WhisperUtil [useVad={self.useVad}]")
         self._initialized = True
 
-    def transcribe(self, data: bytes, language_code: AzureLanguageCode = None):
+    def transcribe(self, data: bytes):
         segments = info = None  # Initialize variables
         gpu_failed = True
         # Try to transcribe with GPU model
@@ -122,7 +113,11 @@ class WhisperUtil:
 
     def downloadModels(self):
         # Check if the model already exists. Download only if not
-        if not os.path.exists(f"models/{self.model_size}/model.bin"):
-            os.makedirs(f"models/{self.model_size}")
-            path = download_model(self.model_size, f"models/{self.model_size}")
+        potential_bin_path = os.path.join(
+            self.model_folder, self.model_size, "model.bin"
+        )
+        if not os.path.exists(potential_bin_path):
+            potential_model_path = os.path.join("models", self.model_size)
+            os.makedirs(potential_model_path)
+            path = download_model(self.model_size, potential_model_path)
             logger.info(f"Downloaded the Whisper model into: {path}")
