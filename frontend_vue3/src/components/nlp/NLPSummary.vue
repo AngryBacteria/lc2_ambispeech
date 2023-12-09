@@ -1,11 +1,11 @@
 <template>
-  <div class="layout">
-    <section v-for="symptom in data.symptoms" :key="symptom.symptom" class="symptom">
+  <div class="layout" v-if="extractedInfoObject">
+    <section v-for="symptom in extractedInfoObject.symptoms" :key="symptom.symptom" class="symptom">
       <section class="title">
         <h1>{{ symptom.symptom }}</h1>
         <Tag
           @click="showSymptomContext(symptom.symptom, symptom.context)"
-          v-if="symptom.isInTranscript"
+          v-if="symptom?.isInTranscript"
           severity="success"
           value="Im Transkript"
           style="cursor: pointer"
@@ -22,42 +22,54 @@
 </template>
 
 <script setup lang="ts">
-import _NLPData from '@/data/mockExtraction.json';
-import type { NLPData, NLPStatus } from '@/model/interfaces';
+import type { NLPStatus } from '@/model/interfaces';
 import { useUserStore } from '@/stores/user';
 import { useDialog } from 'primevue/usedialog';
 import ContextConfirmDialog from './ContextConfirmDialog.vue';
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useLocalStorage } from '@vueuse/core';
 
 // Get store data
 const store = useUserStore();
-const { transcriptionText } = storeToRefs(store);
+const { transcriptionText, extractedInfoObject } = storeToRefs(store);
 
 // Get NLP-Data and initialize it
-const data = useLocalStorage('nlpSummaryDataTest', _NLPData as NLPData);
-data.value.symptoms = data.value.symptoms.map((symptom) => {
-  if (!symptom.status) {
-    return {
-      ...symptom,
-      status: 'preliminary'
-    };
-  } else {
-    return symptom;
-  }
-});
+watch(
+  extractedInfoObject,
+  () => {
+    console.log('GO DATA');
+    if (!extractedInfoObject.value) {
+      return;
+    }
+
+    extractedInfoObject.value.symptoms = extractedInfoObject.value.symptoms.map((symptom) => {
+      if (!symptom.status) {
+        return {
+          ...symptom,
+          status: 'preliminary'
+        };
+      } else {
+        return symptom;
+      }
+    });
+  },
+  { immediate: true }
+);
 const statusOptions = ref<NLPStatus[]>(['amended', 'preliminary', 'entered-in-error']);
 
 //Start watching the NLPData and update if it is in the transcript
 function isInTranscript(toFind: string) {
-  console.log('GO');
-  return store.transcriptionText.includes(toFind);
+  let found = store.transcriptionText.toLowerCase().includes(toFind.toLowerCase());
+  return found;
 }
 watch(
   transcriptionText,
   () => {
-    data.value.symptoms = data.value.symptoms.map((symptom) => ({
+    console.log('GO isInTranscript');
+    if (!extractedInfoObject.value) {
+      return;
+    }
+    extractedInfoObject.value.symptoms = extractedInfoObject.value.symptoms.map((symptom) => ({
       ...symptom,
       isInTranscript: isInTranscript(symptom.context)
     }));
@@ -67,7 +79,7 @@ watch(
 
 //TODO: into fhir?
 async function sendToKIS() {
-  console.log(data.value);
+  console.log(extractedInfoObject.value);
 }
 
 //Dialog

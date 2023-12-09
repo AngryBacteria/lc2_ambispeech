@@ -106,6 +106,10 @@ export interface NLPData {
   findings: Finding[];
 }
 
+export interface SymptomData {
+  symptoms: Symptom[];
+}
+
 //https://build.fhir.org/valueset-observation-status.html
 export type NLPStatus = 'amended' | 'preliminary' | 'entered-in-error';
 

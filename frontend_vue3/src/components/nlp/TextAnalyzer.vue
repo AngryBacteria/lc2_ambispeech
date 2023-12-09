@@ -26,9 +26,20 @@
           <p v-if="store.analysisIsLoading">Am Analysieren...</p>
           <p v-if="analysisError">{{ analysisError }}</p>
 
-          <section v-if="!analysisError && !store.analysisIsLoading">
-            <p>{{ store.extractedInfo }}</p>
-            <NLPSummary />
+          <section
+            v-if="
+              !analysisError &&
+              !store.analysisIsLoading &&
+              (store.extractedInfoObject || store.extractedInfoText)
+            "
+          >
+            <section v-if="store.extractedInfoText && !store.extractedInfoObject">
+              <p>{{ store.extractedInfoText }}</p>
+            </section>
+            <section v-else>
+              <p>{{ JSON.stringify(store.extractedInfoObject) }}</p>
+              <NLPSummary />
+            </section>
           </section>
         </AccordionTab>
       </Accordion>
@@ -43,57 +54,19 @@ import NLPSummary from '@/components/nlp/NLPSummary.vue';
 import SlimProgressBar from '@/components/general/SlimProgressBar.vue';
 
 const store = useUserStore();
-let llmApiUrl = 'http://localhost:8000/api/nlp/openai/gpt-3.5-turbo';
+let llmApiUrl = 'http://localhost:8000/api/nlp/analyze';
 
 const analysisError = ref('');
 
 async function analyzeText(text: string) {
   store.analysisIsLoading = true;
   analysisError.value = '';
+  store.extractedInfoObject = null;
+  store.extractedInfoText = '';
 
-  let prev_messages = [
-    {
-      role: 'system',
-      content:
-        'Du bist ein System, das aus einem Transkript eines gesprochenen Dialogs in einem medizinischen Kontext die Symptome und Medikamente des Patienten extrahiert und in einem JSON-Format zurückgibt.'
-    },
-    {
-      role: 'user',
-      content:
-        'Das ist Franz Feldmann, 66 Jahre. Hat vernichtende Brustschmerzen seit etwa 30 Minuten. Strahlen aus in den linken Arm. Hat etwas Dyspnö, ist nicht synkopiert. Keine KHK bekannt. Hat noch Hypertonus, kennt aber seine Medis nicht. Vitalparameter waren Blutdruck 145 zu 90, Puls 95, Sauerstoffsättigung 93% an Raumluft. Haben mal 4 Liter Sauerstoff und 2mg Morphin gegeben. Das EKG hatten wir Euch schon per Mail geschickt. Da hat es Senkungen in V2 bis V4. Wir haben mit Heparin noch gewartet, weil er nicht sicher war, ob er auch was zur Blutverdünnung nimmt. Ich nehme Tabletten für meinen Bluthochdruck, aber den Namen weiß ich nicht.'
-    },
-    {
-      role: 'system',
-      content: JSON.stringify({
-        Symptome: ['halbstündige Brustschmerzen', 'leichte Dyspnö', 'Hypertonus'],
-        Medikamente: ['Bluthochdruckmedikamente']
-      })
-    }
-  ];
-
-  //Load prompt and insert transcript
-  let prompt = store.openAiPrompt.replace('<PLACEHOLDER>', text);
-
-  //TODO handling too large file
-  //TODO relocate max tokens into backend
-
-  let { temperature, presence_penalty, top_p, frequency_penalty } = store.openAiConfig;
-
-  let requestBody = {
-    messages: [
-      ...prev_messages,
-      {
-        role: 'user',
-        content: prompt
-      }
-    ],
-    config: {
-      max_tokens: 50,
-      temperature,
-      presence_penalty,
-      top_p,
-      frequency_penalty
-    }
+  const requestBody = {
+    text: text,
+    service: 'openai'
   };
 
   try {
@@ -103,12 +76,18 @@ async function analyzeText(text: string) {
       body: JSON.stringify(requestBody)
     });
 
-    const answer = await response.json();
-    console.log(answer);
-    if (answer.length > 1) {
-      store.extractedInfo = answer;
-    } else {
-      analysisError.value = 'Keine Informationen konnten herausgezogen werden.';
+    if (response.status == 200) {
+      const answer = await response.json();
+      store.extractedInfoObject = answer;
+      store.extractedInfoText = '';
+    }
+    if (response.status == 206) {
+      const answer = await response.text();
+      store.extractedInfoObject = null;
+      store.extractedInfoText = answer;
+    }
+    if (!response.ok) {
+      analysisError.value = 'Während dem Analysieren geschah ein Fehler. Versuche erneut.';
     }
   } catch (error) {
     console.error('Error:', error);

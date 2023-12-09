@@ -1,3 +1,4 @@
+import copy
 import json
 from enum import Enum
 
@@ -83,15 +84,16 @@ async def getEmbedding(body: EmbeddingBody):
 async def analyze(body: AnalyzeBody, response: Response):
     """Endpoint for analyzing a conversation between a doctor and his patient.
     Returns an HTTP-206 code if no valid JSON was parsed"""
-    prompt = nlp_data["prompting"]["prompts"][0]
+    nlp_data_copy = copy.deepcopy(nlp_data)
+    prompt = nlp_data_copy["prompting"]["prompts"][0]
     # replace the placeholder from the prompt with the message from the user
     for message in prompt["messages"]:
-        if nlp_data["prompting"]["userinput_placeholder"] in message["content"]:
+        if nlp_data_copy["prompting"]["userinput_placeholder"] in message["content"]:
             message["content"] = message["content"].replace("<PLACEHOLDER>", body.text)
 
     output = ""
     if body.service is AnalyzeService.OPENAI:
-        openaiUtil.openai_model = OpenaiModel.GPT_4_TURBO
+        openaiUtil.openai_model = OpenaiModel.GPT_3_TURBO_1106
 
         # TODO: tokens anpassen? und error falls kein json
         output = await openaiUtil.chat_completion(

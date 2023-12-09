@@ -132,9 +132,9 @@ class OpenaiCompletionBody(BaseModel):
 class OpenaiModel(str, Enum):
     """Enum for all supported OpenAI models"""
 
-    GPT_4_TURBO = "gpt-4-1106-preview"
+    GPT_4_TURBO = "gpt-4-1106-preview"  # newest gpt 4 turbo model
     GPT_4 = "gpt-4"
-    GPT_4_32k = "gpt-4-32k"
+    GPT_4_32k = "gpt-4-32k"  # gpt 4 model with the biggest context size
     GPT_3_TURBO = "gpt-3.5-turbo"
     GPT_3_TURBO_16k = "gpt-3.5-turbo-16k"
-    GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"
+    GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"  # newest gpt 3.5 model

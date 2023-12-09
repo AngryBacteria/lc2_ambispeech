@@ -7,7 +7,13 @@ import {
   useToggle,
   useWindowSize
 } from '@vueuse/core';
-import type { BufferSize, Patient, Practitioner, TranscriptionLanguage } from '@/model/interfaces';
+import type {
+  BufferSize,
+  Patient,
+  Practitioner,
+  SymptomData,
+  TranscriptionLanguage
+} from '@/model/interfaces';
 import { computed, ref } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
@@ -36,7 +42,10 @@ export const useUserStore = defineStore('user', () => {
   /**
    * Information (Data) that was extracted from the transcript with NLP
    */
-  const extractedInfo = useSessionStorage('extractedInfo', '');
+  const extractedInfoText = useSessionStorage('extractedInfoText', '');
+  const extractedInfoObject = useSessionStorage<SymptomData | null>('extractedInfoObject', null, {
+    serializer: StorageSerializers.object
+  });
   /**
    * If a transcription is currently loading or not
    */
@@ -109,15 +118,6 @@ export const useUserStore = defineStore('user', () => {
     useCloudS2T.value = true;
   }
 
-  const openAiPrompt = useLocalStorage(
-    'openAiPrompt',
-    `
-    Bitte extrahiere spezifische Informationen über Symptome und Medikamente aus diesem Transkript:
-
-    <PLACEHOLDER>    
-  `
-  );
-
   //Maybe interesting
   //https://vueuse.org/core/useWebNotification/
   //https://vueuse.org/core/useDevicesList/
@@ -133,7 +133,6 @@ export const useUserStore = defineStore('user', () => {
     bufferSize,
     openAiConfig,
     resetSettings,
-    openAiPrompt,
     downloadRecording,
     transcriptionLanguage,
     useDiarization,
@@ -145,7 +144,8 @@ export const useUserStore = defineStore('user', () => {
     patient,
     transcriptionIsLoading,
     isMobile,
-    extractedInfo,
+    extractedInfoText,
+    extractedInfoObject,
     analysisIsLoading
   };
 });

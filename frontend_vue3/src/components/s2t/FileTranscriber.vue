@@ -185,7 +185,8 @@ function setState(state: StateFlag, error: string = '') {
       store.transcriptionText = '';
       break;
     case StateFlag.INITIAL:
-      store.extractedInfo = '';
+      store.extractedInfoText = '';
+      store.extractedInfoObject = null;
       store.analysisIsLoading = false;
       store.transcriptionIsLoading = true;
       transcriptionError.value = '';
