@@ -42,7 +42,7 @@ class LangchainUtil:
         logger.info("Created LangchainUtil")
         self._initialized = True
 
-    async def test(self, model: LLMService, message):
+    def test(self, model: LLMService, message):
         json_chain = (
             self.prompt_template
             | get_helper_from_model(model).get_llm()
@@ -52,7 +52,7 @@ class LangchainUtil:
         return json_chain.invoke({"transcript": message})
 
     def hello_chat_completion(self, model: LLMService):
-        """Async Hello World chat completion example for llm with langchain"""
+        """Hello World chat completion example for llm with langchain"""
         llm = get_helper_from_model(model).get_llm()
         return llm.invoke("Hello World")
 

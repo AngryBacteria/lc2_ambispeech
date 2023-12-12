@@ -2,9 +2,9 @@ import json
 import os
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Union
 
-from langchain_core.language_models import BaseLanguageModel
+from langchain_core.language_models import BaseLLM, BaseChatModel
 from pydantic import BaseModel
 
 
@@ -36,6 +36,7 @@ class Extraction(BaseModel):
 
 class AudioData(BaseModel):
     """Class for the data of the audio files. Includes optional extraction data."""
+
     folder: str
     name: str
     transcript: str
@@ -47,18 +48,21 @@ class AudioData(BaseModel):
 # LLM data models
 class GenericMessage(BaseModel):
     """Generic message for prompting llm models"""
+
     content: str
     role: Literal["user", "system"]
 
 
 class GenericPrompt(BaseModel):
     """Generic prompt for prompting llm models"""
+
     messages: List[GenericMessage]
     placeholder_index: int
 
 
 class PromptData(BaseModel):
     """Prompt data that is available in the json file"""
+
     prompts: List[GenericPrompt]
     userinput_placeholder: str
     jsonexample_placeholder: str
@@ -79,13 +83,15 @@ class OpenaiModel(str, Enum):
 
 class GenericLangChainModel(ABC):
     """Interface for all of our supported langchain models"""
+
     @abstractmethod
-    def get_llm(self) -> BaseLanguageModel:
+    def get_llm(self) -> Union[BaseChatModel, BaseLLM]:
         pass
 
 
 class LLMService(str, Enum):
     """All supported langchain services"""
+
     OPENAI = "openai"
     GPT4ALL = "gpt4all"
 

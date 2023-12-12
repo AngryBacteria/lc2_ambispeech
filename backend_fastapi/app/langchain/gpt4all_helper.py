@@ -12,7 +12,7 @@ from app.utils.logging_util import logger
 
 class GPT4AllHelper(GenericLangChainModel):
     _instance = None
-    llm: BaseLanguageModel = None
+    llm = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
