@@ -1,11 +1,11 @@
 import asyncio
-import json
 import os
 import time
 import wave
 
 import pandas as pd
 
+from app.data.data import audio_file_data
 from app.utils.azure_util import AzureUtil
 from app.utils.general_util import get_wer
 from app.utils.logging_util import logger
@@ -14,7 +14,7 @@ from app.utils.whisper_util import WhisperUtil
 file_base_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\testfiles"
 excel_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\LC2_Resultate_S2T.xlsx"
 test_file_path = "C:\\Users\\nicog\\Downloads\\whatstheweatherlike.wav"
-service = "azure"
+service = "whisper"
 
 
 # helper function for later
@@ -86,12 +86,9 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
         )
 
     # iterate over all files
-    # TODO: implement throw error if path not existing
-    with open("../data/lc2_data.json", "r", encoding="utf-8") as file:
-        medical_texts = json.load(file)
-    for test_file in medical_texts["files"]:
+    for test_file in audio_file_data:
         audio_wav_path = os.path.join(
-            file_base_path, test_file["folder"], test_file["name"]
+            file_base_path, test_file.folder, test_file.name
         )
 
         with open(audio_wav_path, "rb") as file:
@@ -110,7 +107,7 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
 
         # calculate data
         length = len(output)
-        report = get_wer(test_file["transcript"], output)
+        report = get_wer(test_file.transcript, output)
         exec_time = (end_time - start_time) * 1000
 
         new_row = [
@@ -119,9 +116,9 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
             cpu,
             gpu,
             params,
-            test_file["name"],
-            test_file["synthetic"],
-            test_file["noise"],
+            test_file.name,
+            test_file.synthetic,
+            test_file.noise,
             round(exec_time),
             length,
             report.get("wer"),
@@ -140,4 +137,4 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
         df.to_excel(excel_path, "data", index=False)
 
 
-test_all_files(True, False)
+test_all_files(False, True)

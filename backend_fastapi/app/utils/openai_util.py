@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import os
-from enum import Enum
 from typing import Literal
 
 from dotenv import load_dotenv
 from openai import AsyncOpenAI, OpenAI
-
 from openai.types.chat import (
     ChatCompletionSystemMessageParam,
     ChatCompletionUserMessageParam,
@@ -14,6 +12,7 @@ from openai.types.chat import (
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
+from app.data.data import OpenaiModel
 from app.utils.logging_util import logger
 
 
@@ -127,14 +126,3 @@ class OpenaiCompletionBody(BaseModel):
 
     messages: list[ChatCompletionSystemMessageParam | ChatCompletionUserMessageParam]
     config: OpenaiCompletionConfig
-
-
-class OpenaiModel(str, Enum):
-    """Enum for all supported OpenAI models"""
-
-    GPT_4_TURBO = "gpt-4-1106-preview"  # newest gpt 4 turbo model
-    GPT_4 = "gpt-4"
-    GPT_4_32k = "gpt-4-32k"  # gpt 4 model with the biggest context size
-    GPT_3_TURBO = "gpt-3.5-turbo"
-    GPT_3_TURBO_16k = "gpt-3.5-turbo-16k"
-    GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"  # newest gpt 3.5 model

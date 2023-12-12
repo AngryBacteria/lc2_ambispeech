@@ -1,19 +1,16 @@
 import copy
-import json
 from enum import Enum
 
 from fastapi import APIRouter
+from fastapi import Response, status
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
-from fastapi import Response, status
 
-from app.data import nlp_data
+from app.data.data import prompt_data, OpenaiModel
 from app.utils.embedding_util import EmbeddingUtil
 from app.utils.general_util import parse_json_from_string
-from app.utils.logging_util import logger
 from app.utils.openai_util import (
     OpenAIUtil,
-    OpenaiModel,
     OpenaiCompletionConfig,
     OpenaiCompletionBody,
 )
@@ -84,20 +81,20 @@ async def getEmbedding(body: EmbeddingBody):
 async def analyze(body: AnalyzeBody, response: Response):
     """Endpoint for analyzing a conversation between a doctor and his patient.
     Returns an HTTP-206 code if no valid JSON was parsed"""
-    nlp_data_copy = copy.deepcopy(nlp_data)
-    prompt = nlp_data_copy["prompting"]["prompts"][0]
+
+    prompt_data_copy = copy.deepcopy(prompt_data)
+    prompt = prompt_data_copy.prompts[0]
     # replace the placeholder from the prompt with the message from the user
-    for message in prompt["messages"]:
-        if nlp_data_copy["prompting"]["userinput_placeholder"] in message["content"]:
-            message["content"] = message["content"].replace("<PLACEHOLDER>", body.text)
+    for message in prompt.messages:
+        if prompt_data_copy.userinput_placeholder in message.content:
+            message.content = message.content.replace("<PLACEHOLDER>", body.text)
 
     output = ""
     if body.service is AnalyzeService.OPENAI:
         openaiUtil.openai_model = OpenaiModel.GPT_3_TURBO_1106
 
-        # TODO: tokens anpassen? und error falls kein json
         output = await openaiUtil.chat_completion(
-            prompt["messages"],
+            prompt.messages,
             OpenaiCompletionConfig(
                 max_tokens=4096, response_format={"type": "json_object"}
             ),
