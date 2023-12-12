@@ -87,9 +87,7 @@ def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
 
     # iterate over all files
     for test_file in audio_file_data:
-        audio_wav_path = os.path.join(
-            file_base_path, test_file.folder, test_file.name
-        )
+        audio_wav_path = os.path.join(file_base_path, test_file.folder, test_file.name)
 
         with open(audio_wav_path, "rb") as file:
             data = file.read()

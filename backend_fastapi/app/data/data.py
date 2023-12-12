@@ -1,8 +1,10 @@
 import json
 import os
+from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List, Optional, Literal
 
+from langchain_core.language_models import BaseLanguageModel
 from pydantic import BaseModel
 
 
@@ -33,6 +35,7 @@ class Extraction(BaseModel):
 
 
 class AudioData(BaseModel):
+    """Class for the data of the audio files. Includes optional extraction data."""
     folder: str
     name: str
     transcript: str
@@ -42,18 +45,21 @@ class AudioData(BaseModel):
 
 
 # LLM data models
-class LLMBaseMessage(BaseModel):
+class GenericMessage(BaseModel):
+    """Generic message for prompting llm models"""
     content: str
     role: Literal["user", "system"]
 
 
-class BasePrompt(BaseModel):
-    messages: List[LLMBaseMessage]
+class GenericPrompt(BaseModel):
+    """Generic prompt for prompting llm models"""
+    messages: List[GenericMessage]
     placeholder_index: int
 
 
 class PromptData(BaseModel):
-    prompts: List[BasePrompt]
+    """Prompt data that is available in the json file"""
+    prompts: List[GenericPrompt]
     userinput_placeholder: str
     jsonexample_placeholder: str
     textexample_placeholder: str
@@ -69,6 +75,19 @@ class OpenaiModel(str, Enum):
     GPT_3_TURBO = "gpt-3.5-turbo"
     GPT_3_TURBO_16k = "gpt-3.5-turbo-16k"
     GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"  # newest gpt 3.5 model (supports json_mode)
+
+
+class GenericLangChainModel(ABC):
+    """Interface for all of our supported langchain models"""
+    @abstractmethod
+    def get_llm(self) -> BaseLanguageModel:
+        pass
+
+
+class LLMService(str, Enum):
+    """All supported langchain services"""
+    OPENAI = "openai"
+    GPT4ALL = "gpt4all"
 
 
 _dir_path = os.path.dirname(os.path.realpath(__file__))

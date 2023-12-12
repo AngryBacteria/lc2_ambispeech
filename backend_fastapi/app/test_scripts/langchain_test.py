@@ -1,13 +1,11 @@
-import asyncio
-import json
-
+from app.data.data import LLMService
 from app.utils.langchain_util import LangchainUtil
 
-with open("../data/lc2_data.json", "r", encoding="utf-8") as file:
-    medical_texts = json.load(file)
+langchain_util = LangchainUtil()
 
-util = LangchainUtil()
-transcript = medical_texts["files"][0]["transcript"]
+hello = langchain_util.hello_chat_completion(LLMService.OPENAI)
 
-res = asyncio.run(util.test("chat-open-ai", transcript))
-print(res)
+print(hello)
+
+# hello2 = langchain_util.chat_completion(LLMService.OPENAI, "Hello World")
+# print(hello2)

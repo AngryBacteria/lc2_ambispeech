@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.utils.langchain_util import LangchainUtil, LLModel
+from app.data.data import LLMService
+from app.utils.langchain_util import LangchainUtil
 
 langchainRouter = APIRouter(
     prefix="/api/langchain",
@@ -16,19 +17,19 @@ class LangchainCompletionBody(BaseModel):
 
 
 @langchainRouter.post("/hello/{model}")
-async def hello(model: LLModel):
+def hello(model: LLMService):
     """Hello World example for large language models with langchain"""
-    return await langchainUtil.hello_chat_completion(model)
+    return langchainUtil.hello_chat_completion(model)
 
 
 @langchainRouter.post("/complete/{model}")
-async def langchain(model: LLModel, body: LangchainCompletionBody):
+def langchain(model: LLMService, body: LangchainCompletionBody):
     """Non-Streaming chat completion"""
     transcript = body.message
-    return await langchainUtil.chat_completion(model, transcript)
+    return langchainUtil.chat_completion(model, transcript)
 
 
 @langchainRouter.post("/test/{model}")
-async def test(model: LLModel, body: LangchainCompletionBody):
+def test(model: LLMService, body: LangchainCompletionBody):
     """Non-Streaming chat completion"""
-    return await langchainUtil.test(model, body.message)
+    return langchainUtil.test(model, body.message)

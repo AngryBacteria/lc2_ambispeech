@@ -3,16 +3,16 @@ from __future__ import annotations
 import os
 
 from dotenv import load_dotenv
-from langchain.llms import GPT4All
-from langchain.schema.language_model import BaseLanguageModel
+from langchain.llms.gpt4all import GPT4All
+from langchain_core.language_models import BaseLanguageModel
 
+from app.data.data import GenericLangChainModel
 from app.utils.logging_util import logger
 
 
-class GPT4AllHelper:
+class GPT4AllHelper(GenericLangChainModel):
     _instance = None
     llm: BaseLanguageModel = None
-    # local_path = "E:\\LLM\\gpt4all_model\\gpt4all-13b-snoozy-q4_0.gguf"
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:

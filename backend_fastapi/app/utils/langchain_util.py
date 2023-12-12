@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-from enum import Enum
-
+from dotenv import load_dotenv
+from langchain.chains import LLMChain
 from langchain.output_parsers.json import SimpleJsonOutputParser
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
 
+from app.data.data import LLMService, GenericLangChainModel
 from app.langchain.gpt4all_helper import GPT4AllHelper
 from app.langchain.openai_helper import OpenAIHelper
-
-from dotenv import load_dotenv
-
 from app.utils.logging_util import logger
 
 
@@ -45,45 +42,33 @@ class LangchainUtil:
         logger.info("Created LangchainUtil")
         self._initialized = True
 
-    async def test(self, model, message):
+    async def test(self, model: LLMService, message):
         json_chain = (
             self.prompt_template
-            | ModelHelperMapper.get_helper_for_model(model).get_llm()
+            | get_helper_from_model(model).get_llm()
             | SimpleJsonOutputParser()
         )
 
         return json_chain.invoke({"transcript": message})
 
-    async def hello_chat_completion(self, model):
+    def hello_chat_completion(self, model: LLMService):
         """Async Hello World chat completion example for llm with langchain"""
-        llm = ModelHelperMapper.get_helper_for_model(model).get_llm()
-        return llm.predict("Hello World")
+        llm = get_helper_from_model(model).get_llm()
+        return llm.invoke("Hello World")
 
-    async def chat_completion(self, model, transcript):
-        helper = ModelHelperMapper.get_helper_for_model(model)
+    def chat_completion(self, model: LLMService, transcript):
+        helper = get_helper_from_model(model)
         if not helper:
             raise ValueError(f"Unsupported model: {model}")
 
         chain = LLMChain(llm=helper.get_llm(), prompt=self.prompt_template)
 
-        return await chain.arun(transcript)
+        return chain.run(transcript)
 
 
-class LLModel(str, Enum):
-    """Enum for all supported Large Language models"""
-
-    ChatOpenAI = "chat-open-ai"
-    Llama = "llama-cpp"
-    GPT4All = "gpt-4-all"
-
-
-class ModelHelperMapper:
-    _mapping = {
-        LLModel.ChatOpenAI: OpenAIHelper(),
-        LLModel.GPT4All: GPT4AllHelper()
-        # LLModel.Llama: LlamaHelper()
-    }
-
-    @classmethod
-    def get_helper_for_model(cls, model: LLModel):
-        return cls._mapping.get(model)
+def get_helper_from_model(model: LLMService) -> GenericLangChainModel:
+    match model:
+        case model.GPT4ALL:
+            return GPT4AllHelper()
+        case model.OPENAI:
+            return OpenAIHelper()
