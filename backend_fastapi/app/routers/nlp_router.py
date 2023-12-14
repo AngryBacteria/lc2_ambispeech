@@ -77,6 +77,9 @@ async def getEmbedding(body: EmbeddingBody):
     return output.to_dict(orient="records")
 
 
+# todo: implement possibility to add embeddings to the output
+
+# todo: implment type check with pydantic
 @llmRouter.post("/analyze")
 async def analyze(body: AnalyzeBody, response: Response):
     """Endpoint for analyzing a conversation between a doctor and his patient.

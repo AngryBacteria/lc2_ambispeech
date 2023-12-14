@@ -10,6 +10,8 @@ from pydantic import BaseModel
 
 # Audio File data models
 class Symptom(BaseModel):
+    """Class for the data of a symptom"""
+
     symptom: str
     onset: str
     location: str
@@ -17,25 +19,31 @@ class Symptom(BaseModel):
 
 
 class Medication(BaseModel):
+    """Class for the data of a medication"""
+
     name: str
     dosage: str
     context: str
 
 
 class Finding(BaseModel):
+    """Class for the data of a finding"""
+
     finding: str
     context: str
     value: str
 
 
 class Extraction(BaseModel):
+    """Class for the data of the extraction"""
+
     symptoms: List[Symptom]
     medications: List[Medication]
     findings: List[Finding]
 
 
 class AudioData(BaseModel):
-    """Class for the data of the audio files. Includes optional extraction data."""
+    """Class for the data of the audio files. Includes the optional extraction data."""
 
     folder: str
     name: str
@@ -98,6 +106,7 @@ class LLMService(str, Enum):
 
 _dir_path = os.path.dirname(os.path.realpath(__file__))
 _json_file_path = os.path.join(_dir_path, "lc2_data.json")
+"""Parses the data from the json file and makes it available in the whole app"""
 with open(_json_file_path, "r", encoding="utf-8") as file:
     _nlp_data = json.load(file)
 

@@ -26,12 +26,16 @@ def get_cosine_similarity(a, b):
     return dot(a, b) / (norm(a) * norm(b))
 
 
+# todo: add support for multiple embeddings per file. For that multiple columns and functions to get embeddings is
+#  required
+
+# todo use pickle (pk1 files) to save the embeddings instead of csv. Keeps data types and is faster
 class EmbeddingUtil(object):
     """Singleton util class to create embeddings and search for keywords in the icd10 catalog"""
 
     _instance = None
     icd10_symptoms: DataFrame
-    embedding_column: str = "ada_embedding"
+    embedding_column: str = "openai_embedding"
     openai_util: OpenAIUtil = None
     # path to the icd-10 csv files. Can be set or left blank
     csv_folder_path: str
@@ -79,14 +83,15 @@ class EmbeddingUtil(object):
             lambda x: self.openai_util.get_embedding(x)
         )
         self.icd10_symptoms.to_csv(
-            os.path.join(self.csv_folder_path, "icd10gm_symptoms.csv")
+            os.path.join(self.csv_folder_path, "icd10gm_symptoms.csv"),
+            index=False,
         )
 
     def search(self, df: DataFrame, text: str, n=10):
         """Generic function to search a dataframe that has an embeddings column"""
         if self.embedding_column not in df.columns:
             raise Exception(
-                f"Dataframe has no embeddings (column {self.embedding_column}), please create them first"
+                f"Dataframe has no embeddings (column {self.embedding_column}), please create embeddings first"
             )
         embedding = self.openai_util.get_embedding(text)
         df["similarities"] = df[self.embedding_column].apply(

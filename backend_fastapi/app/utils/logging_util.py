@@ -5,8 +5,6 @@ import logging
 def set_log_level(level_name):
     """
     Change the debug level for the logger and its handlers.
-
-    Args:
     level_name (str): The level name as a string, e.g., 'DEBUG', 'INFO', etc.
     """
     level = getattr(logging, level_name.upper(), None)

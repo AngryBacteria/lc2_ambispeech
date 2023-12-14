@@ -11,14 +11,20 @@ from app.utils.general_util import get_wer
 from app.utils.logging_util import logger
 from app.utils.whisper_util import WhisperUtil
 
+"""Test Script to evaluate the WER of the different speech to text models
+The output is saved into a excel file for further analysis. If the file already exists, the data is appended to it.
+Right now the script works with whisper or azure. To change the service, change the service variable to either whisper or azure.
+"""
+
 file_base_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\testfiles"
 excel_path = "F:\\OneDrive - Berner Fachhochschule\\Dokumente\\UNI\\Semester 5\\LC2\\speech_to_text\\LC2_Resultate_S2T.xlsx"
 test_file_path = "C:\\Users\\nicog\\Downloads\\whatstheweatherlike.wav"
-service = "whisper"
+service = "whisper"  # "whisper" or "azure"
 
 
 # helper function for later
 async def transcribe_audio_with_azure(azure: AzureUtil, _data, _audio_params):
+    """Helper function to transcribe audio with azure and return the output as a string"""
     return "".join(
         [
             text
@@ -30,6 +36,7 @@ async def transcribe_audio_with_azure(azure: AzureUtil, _data, _audio_params):
 
 
 def test_all_files(save_to_excel: bool = True, only_one_file: bool = False):
+    """Test all files in the testfiles folder and save the results to an Excel file"""
     whisper = None
     azure = None
     # init whisper
