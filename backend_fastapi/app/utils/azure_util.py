@@ -60,15 +60,6 @@ class AzureUtil(object):
         logger.info("Created AzureUtil")
         self._initialized = True
 
-    def azure_short_s2t(self, file_path: str):
-        """Azure single-shot recognition for an existing audio file. Max length is 15 seconds"""
-        audio_config = speechsdk.AudioConfig(filename=file_path)
-        speech_recognizer = speechsdk.SpeechRecognizer(
-            speech_config=self.speech_config, audio_config=audio_config
-        )
-        result = speech_recognizer.recognize_once_async().get()
-        return result
-
     async def transcribe_with_push_stream(
         self,
         data: bytes,

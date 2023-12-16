@@ -19,28 +19,10 @@ class Symptom(BaseModel):
     context: str
 
 
-class Medication(BaseModel):
-    """Class for the data of a medication"""
-
-    name: str
-    dosage: str
-    context: str
-
-
-class Finding(BaseModel):
-    """Class for the data of a finding"""
-
-    finding: str
-    context: str
-    value: str
-
-
 class Extraction(BaseModel):
     """Class for the data of the extraction"""
 
     symptoms: List[Symptom]
-    medications: List[Medication]
-    findings: List[Finding]
 
 
 class AudioData(BaseModel):

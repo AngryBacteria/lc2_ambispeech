@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia';
 import {
   StorageSerializers,
-  useDark,
   useLocalStorage,
   useSessionStorage,
-  useToggle,
   useWindowSize
 } from '@vueuse/core';
 import type {
@@ -14,7 +12,7 @@ import type {
   SymptomData,
   TranscriptionLanguage
 } from '@/model/interfaces';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
   // General app state
@@ -22,10 +20,8 @@ export const useUserStore = defineStore('user', () => {
    * Indicates if the app is in debug mode.
    * This enables manually editing state that shouldnt be editable normally
    */
-  const isDebug = ref(true);
+  const isDebug = ref(false);
   const { width, height } = useWindowSize();
-  const isDark = useDark();
-  const toggleDark = useToggle(isDark);
   const isMobile = computed(() => {
     return width.value < 750;
   });
@@ -36,6 +32,15 @@ export const useUserStore = defineStore('user', () => {
   });
   const patient = useSessionStorage<Patient | null>('patient', null, {
     serializer: StorageSerializers.object
+  });
+
+  /**
+   * Resets the state if the practitioner or patient changes
+   */
+  watch([practitioner, patient], ([newPractitioner, newPatient], [oldPractitioner, oldPatient]) => {
+    if (newPractitioner?.id !== oldPractitioner?.id || newPatient?.id !== oldPatient?.id) {
+      resetAnalyzeState();
+    }
   });
 
   // NLP State
@@ -60,6 +65,14 @@ export const useUserStore = defineStore('user', () => {
    * If a transcription is currently loading or not
    */
   const transcriptionIsLoading = ref(false);
+
+  function resetAnalyzeState() {
+    extractedInfoObject.value = null;
+    extractedInfoText.value = '';
+    analysisIsLoading.value = false;
+    transcriptionText.value = '';
+    transcriptionIsLoading.value = false;
+  }
 
   // Settings-State
   /**
@@ -93,23 +106,7 @@ export const useUserStore = defineStore('user', () => {
    */
   const useCloudLLM = useLocalStorage<boolean>('useCloudLLM', true);
 
-  /**
-   * Parameters for the openai completion requests
-   */
-  const openAiConfig = useLocalStorage('openAiConfig', {
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    temperature: 1,
-    top_p: 1
-  });
-
   function resetSettings() {
-    openAiConfig.value = {
-      frequency_penalty: 0,
-      presence_penalty: 0,
-      temperature: 1,
-      top_p: 1
-    };
     bufferSize.value = 4096;
     downloadRecording.value = false;
     transcriptionLanguage.value = 'de-CH';
@@ -118,20 +115,10 @@ export const useUserStore = defineStore('user', () => {
     useCloudS2T.value = true;
   }
 
-  //Maybe interesting
-  //https://vueuse.org/core/useWebNotification/
-  //https://vueuse.org/core/useDevicesList/
-  //https://vueuse.org/core/useOnline/
-  //https://vueuse.org/core/useWebSocket/
-  //https://vueuse.org/core/useConfirmDialog/
-
   return {
     width,
     height,
-    isDark,
-    toggleDark,
     bufferSize,
-    openAiConfig,
     resetSettings,
     downloadRecording,
     transcriptionLanguage,

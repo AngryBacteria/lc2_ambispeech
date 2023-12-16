@@ -4,7 +4,6 @@ from enum import Enum
 from fastapi import APIRouter
 from fastapi import Response, status
 from pydantic import BaseModel
-from starlette.responses import StreamingResponse
 
 from app.data.data import prompt_data, OpenaiModel
 from app.utils.embedding_util import EmbeddingUtil
@@ -60,18 +59,8 @@ async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
     return await openaiUtil.chat_completion(body.messages, body.config)
 
 
-@llmRouter.post("/openaistream/{model}")
-async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
-    """Streaming OpenAI chat completion"""
-    openaiUtil.openai_model = model
-    return StreamingResponse(
-        openaiUtil.stream_chat_completion(body.messages, body.config),
-        media_type="text/event-stream",
-    )
-
-
 @llmRouter.post("/embedding")
-async def getEmbedding(body: EmbeddingBody):
+def getEmbedding(body: EmbeddingBody):
     res = embedUtil.search(embedUtil.icd10_symptoms, body.text, body.amount)
     output = res[["schlüsselnummer_mit_punkt", "klassentitel"]].rename(
         columns={"schlüsselnummer_mit_punkt": "code", "klassentitel": "text"}
@@ -80,8 +69,6 @@ async def getEmbedding(body: EmbeddingBody):
 
 
 # todo: implement possibility to add embeddings to the output
-
-
 # todo: implment type check with pydantic
 @llmRouter.post("/analyze")
 async def analyze(body: AnalyzeBody, response: Response):
@@ -93,7 +80,9 @@ async def analyze(body: AnalyzeBody, response: Response):
     # replace the placeholder from the prompt with the message from the user
     for message in prompt.messages:
         if prompt_data_copy.userinput_placeholder in message.content:
-            message.content = message.content.replace("<PLACEHOLDER>", body.text)
+            message.content = message.content.replace(
+                prompt_data_copy.userinput_placeholder, body.text
+            )
 
     output = ""
     if body.service is AnalyzeService.OPENAI:

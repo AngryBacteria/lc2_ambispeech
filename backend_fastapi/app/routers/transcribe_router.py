@@ -1,7 +1,7 @@
 import wave
 from enum import Enum
 
-from fastapi import APIRouter, UploadFile, HTTPException, BackgroundTasks
+from fastapi import APIRouter, UploadFile, HTTPException
 from starlette.responses import StreamingResponse
 
 from app.utils.azure_util import AzureUtil, AzureLanguageCode
@@ -23,7 +23,6 @@ class TranscribeService(str, Enum):
 
 @transcribeRouter.post("/file/{service}")
 async def post_file(
-    background_tasks: BackgroundTasks,
     file: UploadFile,
     service: TranscribeService,
     diarization: bool = False,

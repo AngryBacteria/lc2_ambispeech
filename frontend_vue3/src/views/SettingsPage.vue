@@ -67,30 +67,6 @@
           placeholder="Transkribierungssprache"
         />
       </section>
-      <section class="setting">
-        <h2>OpenAI</h2>
-        <p>OpenAI ermöglicht es den Output etwas anzupassen mithilfe von Parametern.</p>
-        <section class="sliders">
-          <div v-for="slider in openAiSettings" :key="slider.label" style="width: 300px">
-            <p style="margin: 0">{{ slider.label }}</p>
-            <InputNumber
-              v-model.number="store.openAiConfig[slider.label]"
-              :max="slider.max"
-              :min="slider.min"
-              :maxFractionDigits="1"
-              :step="0.1"
-              style="width: 100%"
-            />
-            <Slider
-              v-model="store.openAiConfig[slider.label]"
-              :max="slider.max"
-              :min="slider.min"
-              :step="0.1"
-              style="width: 100%"
-            />
-          </div>
-        </section>
-      </section>
     </section>
   </section>
 </template>
@@ -118,29 +94,6 @@ const transcriptionLanguages = ref([
   { name: 'Englisch (England)', code: 'en-GB' },
   { name: 'Englisch (USA)', code: 'en-US' }
 ]);
-
-const openAiSettings = [
-  {
-    label: 'frequency_penalty',
-    min: -2,
-    max: 2
-  },
-  {
-    label: 'presence_penalty',
-    min: -2,
-    max: 2
-  },
-  {
-    label: 'temperature',
-    min: 0,
-    max: 2
-  },
-  {
-    label: 'top_p',
-    min: 0,
-    max: 2
-  }
-] as const;
 </script>
 
 <style scoped>
@@ -168,12 +121,5 @@ const openAiSettings = [
   background-color: var(--surface-card);
   padding: 1rem;
   border-radius: var(--custom-border-radius);
-}
-
-.sliders {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
-  flex-wrap: wrap;
 }
 </style>

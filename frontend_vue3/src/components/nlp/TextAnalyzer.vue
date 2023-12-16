@@ -23,7 +23,7 @@
               />
             </section>
           </template>
-          <p v-if="store.analysisIsLoading">Am Analysieren...</p>
+          <h2 v-if="store.analysisIsLoading">Am Analysieren...</h2>
           <p v-if="analysisError">{{ analysisError }}</p>
 
           <section
@@ -34,12 +34,24 @@
             "
           >
             <section v-if="store.extractedInfoText && !store.extractedInfoObject">
+              <h2>Die Analyse konnte nicht vollständig durchgeführt werden</h2>
               <p>{{ store.extractedInfoText }}</p>
             </section>
+
             <section v-else>
-              <p>{{ JSON.stringify(store.extractedInfoObject) }}</p>
               <NLPSummary />
             </section>
+          </section>
+
+          <section
+            v-if="
+              !analysisError &&
+              !store.analysisIsLoading &&
+              !store.extractedInfoObject &&
+              !store.extractedInfoText
+            "
+          >
+            <h2>Es sind noch keine Daten verfügbar</h2>
           </section>
         </AccordionTab>
       </Accordion>
@@ -92,6 +104,8 @@ async function analyzeText(text: string) {
   } catch (error) {
     console.error('Error:', error);
     analysisError.value = 'Während dem Analysieren geschah ein Fehler. Versuche erneut.';
+    store.extractedInfoObject = null;
+    store.extractedInfoText = '';
   } finally {
     store.analysisIsLoading = false;
   }

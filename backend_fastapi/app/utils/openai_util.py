@@ -72,22 +72,6 @@ class OpenAIUtil:
         )
         return chat_completion_resp.choices[0].message.content
 
-    async def stream_chat_completion(self, messages, config: OpenaiCompletionConfig):
-        """Async Streaming OpenAI chat completion function"""
-        stream = await self.clientAsync.chat.completions.create(
-            model=self.openai_model.value,
-            messages=messages,
-            frequency_penalty=config.frequency_penalty,
-            max_tokens=config.max_tokens,
-            presence_penalty=config.presence_penalty,
-            temperature=config.temperature,
-            top_p=config.top_p,
-            stream=True,
-        )
-        async for chunk in stream:
-            if chunk.choices[0].delta.content is not None:
-                yield chunk.choices[0].delta.content
-
     def get_embedding(self, text: str):
         """Calculates the embedding vector for a string input"""
         return (

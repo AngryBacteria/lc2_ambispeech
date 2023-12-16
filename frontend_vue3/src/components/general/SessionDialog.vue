@@ -7,12 +7,17 @@
     :style="{ width: '50rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
   >
-    <section class="account-input" v-if="!store.practitioner">
+    <section class="account-input" v-if="!store.practitioner?.id">
       <InputText type="text" placeholder="Benutzername" @keydown.enter="loginPractitioner()" />
       <InputText type="text" placeholder="Passwort" @keydown.enter="loginPractitioner()" />
-      <Button @click="loginPractitioner()" label="Anmelden" severity="success" />
+      <Button
+        @keyup.enter="loginPractitioner()"
+        @click="loginPractitioner()"
+        label="Anmelden"
+        severity="success"
+      />
     </section>
-    <section class="patient-input" v-if="!store.patient && store.practitioner">
+    <section class="patient-input" v-if="!store.patient?.id && store.practitioner?.id">
       <Dropdown
         v-model="localPatient"
         filter
@@ -21,13 +26,13 @@
         placeholder="Patient*in suchen"
       />
     </section>
-    <section v-if="localPatient">
+    <section v-if="localPatient?.id && store.practitioner?.id">
       <PatientSummary :localPatient="localPatient" />
       <Button
         @click="loginPatient()"
         label="Bestätigen"
         severity="success"
-        @keydown.enter="loginPatient()"
+        @keyup.enter="loginPatient()"
       />
     </section>
   </Dialog>
