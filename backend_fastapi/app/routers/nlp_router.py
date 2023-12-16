@@ -73,11 +73,14 @@ async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
 @llmRouter.post("/embedding")
 async def getEmbedding(body: EmbeddingBody):
     res = embedUtil.search(embedUtil.icd10_symptoms, body.text, body.amount)
-    output = res[["V8", "V9"]].rename(columns={"V8": "code", "V9": "text"})
+    output = res[["schlüsselnummer_mit_punkt", "klassentitel"]].rename(
+        columns={"schlüsselnummer_mit_punkt": "code", "klassentitel": "text"}
+    )
     return output.to_dict(orient="records")
 
 
 # todo: implement possibility to add embeddings to the output
+
 
 # todo: implment type check with pydantic
 @llmRouter.post("/analyze")

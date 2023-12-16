@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List, Optional, Literal, Union
 
+import pandas
 from langchain_core.language_models import BaseLLM, BaseChatModel
 from pydantic import BaseModel
 
@@ -118,3 +119,84 @@ with open(_json_file_path, "r", encoding="utf-8") as file:
 
     # parse prompt data
     prompt_data = PromptData(**_nlp_data["prompting"])
+
+
+def transform_icd10_csv(onlyR: bool = True):
+    """Transforms the icd10 csv file into a pandas dataframe and
+    removes all rows that contain "Nicht belegte Schlüsselnummer"""
+    column_names = [
+        "klassifikationsebene",
+        "schlüsselnummer_ort",
+        "vier_fuenfsteller_art",
+        "kapitelnummer",
+        "erster_dreisteller",
+        "schlüsselnummer_ohne_kreuz",
+        "schlüsselnummer_mit_punkt",
+        "schlüsselnummer",
+        "klassentitel",
+        "dreisteller_titel",
+        "viersteller_titel",
+        "fuenfsteller_titel",
+        "schlüsselnummer_verwendung_paragraph295",
+        "schlüsselnummer_verwendung_paragraph301",
+        "mortalitätsliste1_bezug",
+        "mortalitätsliste2_bezug",
+        "mortalitätsliste3_bezug",
+        "mortalitätsliste4_bezug",
+        "morbiditätsliste_bezug",
+        "geschlechtsbezug_schlüsselnummer",
+        "fehler_geschlechtsbezug",
+        "untere_altersgrenze",
+        "obere_altersgrenze",
+        "fehler_altersbezug",
+        "seltenheit_mitteleuropa",
+        "schlüsselnummer_inhalt_belegt",
+        "ifsg_meldung",
+        "ifsg_labor",
+    ]
+    column_types = {
+        "klassifikationsebene": str,
+        "schlüsselnummer_ort": str,
+        "vier_fuenfsteller_art": str,
+        "kapitelnummer": str,
+        "erster_dreisteller": str,
+        "schlüsselnummer_ohne_kreuz": str,
+        "schlüsselnummer_mit_punkt": str,
+        "schlüsselnummer": str,
+        "klassentitel": str,
+        "dreisteller_titel": str,
+        "viersteller_titel": str,
+        "fuenfsteller_titel": str,
+        "schlüsselnummer_verwendung_paragraph295": str,
+        "schlüsselnummer_verwendung_paragraph301": str,
+        "mortalitätsliste1_bezug": str,
+        "mortalitätsliste2_bezug": str,
+        "mortalitätsliste3_bezug": str,
+        "mortalitätsliste4_bezug": str,
+        "morbiditätsliste_bezug": str,
+        "geschlechtsbezug_schlüsselnummer": str,
+        "fehler_geschlechtsbezug": str,
+        "untere_altersgrenze": str,
+        "obere_altersgrenze": str,
+        "fehler_altersbezug": str,
+        "seltenheit_mitteleuropa": str,
+        "schlüsselnummer_inhalt_belegt": str,
+        "ifsg_meldung": str,
+        "ifsg_labor": str,
+    }
+    df = pandas.read_csv(
+        "catalogs/icd10gm.txt", sep=";", names=column_names, dtype=column_types
+    )
+
+    # remove rows that contain "Nicht belegte Schlüsselnummer"
+    df = df[
+        ~df["klassentitel"].str.contains(
+            "Nicht belegte Schlüsselnummer", na=False, case=False
+        )
+    ]
+
+    if onlyR:
+        # remove all rows that are not in the category R
+        df = df[df["erster_dreisteller"].str.contains("R", na=False, case=False)]
+
+    return df
