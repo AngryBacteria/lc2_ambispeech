@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import io
 import os
+from typing import Iterable, Union
 
 import ctranslate2
 from faster_whisper import WhisperModel, download_model
+from faster_whisper.transcribe import TranscriptionInfo, Segment
 
 from app.utils.logging_util import logger
 
@@ -69,7 +71,8 @@ class WhisperUtil:
         self._initialized = True
 
     def transcribe(self, data: bytes):
-        segments = info = None  # Initialize variables
+        segments: Union[None, Iterable[Segment]] = None
+        info: Union[None, TranscriptionInfo] = None
         gpu_failed = True
         # Try to transcribe with GPU model
         if self.useGPU and self.model_GPU is not None:

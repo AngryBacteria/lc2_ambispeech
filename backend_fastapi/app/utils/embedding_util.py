@@ -101,5 +101,4 @@ class EmbeddingUtil(object):
             lambda x: get_cosine_similarity(np.array(x), embedding)
         )
 
-        res = df.sort_values("similarities", ascending=False).head(n)
-        return res
+        return df.nlargest(n, "similarities")

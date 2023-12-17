@@ -4,7 +4,8 @@ from enum import Enum
 from fastapi import APIRouter, UploadFile, HTTPException
 from starlette.responses import StreamingResponse
 
-from app.utils.azure_util import AzureUtil, AzureLanguageCode
+from app.data.data import AzureLanguageCode
+from app.utils.azure_util import AzureUtil
 from app.utils.whisper_util import WhisperUtil
 
 transcribeRouter = APIRouter(
@@ -17,16 +18,17 @@ whisper_util = WhisperUtil()
 
 
 class TranscribeService(str, Enum):
-    whisper = "whisper"
-    azure = "azure"
+    WHISPER = "whisper"
+    AZURE = "azure"
 
 
+# todo: whisper not async, problem? If azure is non-async it does not stop on client abort.
 @transcribeRouter.post("/file/{service}")
 async def post_file(
     file: UploadFile,
     service: TranscribeService,
     diarization: bool = False,
-    language: AzureLanguageCode = "de-CH",
+    language: AzureLanguageCode = AzureLanguageCode.DE_CH,
 ):
     """
     Transcribes a file. Either with whisper locally or azure on the cloud.
@@ -47,7 +49,7 @@ async def post_file(
 
     # try to transcribe the wav
     try:
-        if service.name.lower() == "whisper":
+        if service == TranscribeService.WHISPER:
             data = await file.read()
             await file.close()
             return StreamingResponse(

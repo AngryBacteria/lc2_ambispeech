@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import Literal
 
 from dotenv import load_dotenv
 from openai import AsyncOpenAI, OpenAI
@@ -10,9 +9,8 @@ from openai.types.chat import (
     ChatCompletionUserMessageParam,
 )
 from pydantic import BaseModel
-from typing_extensions import TypedDict
 
-from app.data.data import OpenaiModel
+from app.data.data import OpenaiModel, OpenaiCompletionConfig
 from app.utils.logging_util import logger
 
 
@@ -20,7 +18,6 @@ class OpenAIUtil:
     """Singleton util class to handle various llm related operations with openai"""
 
     _instance = None
-    openai_model: OpenaiModel = None
     client: OpenAI = None
     clientAsync: AsyncOpenAI = None
 
@@ -42,15 +39,16 @@ class OpenAIUtil:
             self.clientAsync = AsyncOpenAI(
                 api_key=os.getenv("OPENAI_API_KEY"),
             )
-            self.openai_model = OpenaiModel.GPT_3_TURBO_16k
         logger.info("Created OpenAIUtil")
         self._initialized = True
 
-    async def hello_chat_completion(self, config: OpenaiCompletionConfig):
+    async def hello_chat_completion(
+        self, config: OpenaiCompletionConfig, model: OpenaiModel
+    ):
         """Async Hello World chat completion example for openai"""
         chat_completion = await self.clientAsync.chat.completions.create(
             messages=[{"role": "user", "content": "Hello world"}],
-            model=self.openai_model.value,
+            model=model,
             frequency_penalty=config.frequency_penalty,
             max_tokens=config.max_tokens,
             presence_penalty=config.presence_penalty,
@@ -59,10 +57,12 @@ class OpenAIUtil:
         )
         return chat_completion.choices[0].message.content
 
-    async def chat_completion(self, messages, config: OpenaiCompletionConfig):
+    async def chat_completion(
+        self, messages, config: OpenaiCompletionConfig, model: OpenaiModel
+    ):
         """Async Non-Streaming OpenAI chat completion function"""
         chat_completion_resp = await self.clientAsync.chat.completions.create(
-            model=self.openai_model.value,
+            model=model,
             messages=messages,
             frequency_penalty=config.frequency_penalty,
             max_tokens=config.max_tokens,
@@ -88,23 +88,7 @@ class OpenAIUtil:
         return emb.data[0].embedding
 
 
-class OpenaiCompletionConfig(BaseModel):
-    """Config object for openai chat completion requests"""
-
-    frequency_penalty: float = 0
-    max_tokens: int = 10
-    presence_penalty: float = 0
-    temperature: float = 1
-    top_p: float = 1
-    response_format: OpenaiResponseFormat = {"type": "text"}
-
-
-class OpenaiResponseFormat(TypedDict):
-    """Response format for openai chat completion requests. The newest models support JSON"""
-
-    type: Literal["json_object", "text"]
-
-
+# todo: replace by GenericMessage Interface
 class OpenaiCompletionBody(BaseModel):
     """Body to pass in FastAPI router when handling openai requests"""
 

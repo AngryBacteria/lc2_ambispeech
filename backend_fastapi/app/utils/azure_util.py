@@ -2,24 +2,15 @@ from __future__ import annotations
 
 import asyncio
 import os
-from enum import Enum
 
+import anyio
 import azure.cognitiveservices.speech as speechsdk
 from azure.cognitiveservices.speech import SpeechConfig
 from azure.cognitiveservices.speech.audio import AudioStreamFormat
 from dotenv import load_dotenv
 
+from app.data.data import AzureLanguageCode
 from app.utils.logging_util import logger
-
-
-class AzureLanguageCode(str, Enum):
-    """Enum for all supported Azure languages"""
-
-    DE_CH = "de-CH"
-    DE_DE = "de-DE"
-    DE_AT = "de-AT"
-    EN_GB = "en-GB"
-    EN_US = "en-US"
 
 
 class AzureUtil(object):
@@ -149,7 +140,7 @@ class AzureUtil(object):
                         yield f"{getattr(item.result, 'speaker_id', '')}: {text}\n"
                     else:
                         yield f"{text} "
-                await asyncio.sleep(0.1)
+                await anyio.sleep(0.1)
         finally:
             # stop recognition/diarization and clean up
             logger.info(

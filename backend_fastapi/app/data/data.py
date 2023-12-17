@@ -3,8 +3,10 @@ import os
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List, Optional, Literal, Union
+from typing_extensions import TypedDict
 
 import pandas
+from anyio import Lock
 from langchain_core.language_models import BaseLLM, BaseChatModel
 from pydantic import BaseModel
 
@@ -60,7 +62,7 @@ class PromptData(BaseModel):
     textexample_placeholder: str
 
 
-# "Interfaces" that can be used in the whole app
+# OpenAI data models
 class OpenaiModel(str, Enum):
     """Enum for all supported OpenAI models"""
 
@@ -72,6 +74,24 @@ class OpenaiModel(str, Enum):
     GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"  # newest gpt 3.5 model (supports json_mode)
 
 
+class OpenaiResponseFormat(TypedDict):
+    """Response format for openai chat completion requests. The newest models support JSON"""
+
+    type: Literal["json_object", "text"]
+
+
+class OpenaiCompletionConfig(BaseModel):
+    """Config object for openai chat completion requests"""
+
+    frequency_penalty: float = 0
+    max_tokens: int = 10
+    presence_penalty: float = 0
+    temperature: float = 1
+    top_p: float = 1
+    response_format: OpenaiResponseFormat = {"type": "text"}
+
+
+# Language Chain data models
 class GenericLangChainModel(ABC):
     """Interface for all of our supported langchain models"""
 
@@ -85,6 +105,16 @@ class LLMService(str, Enum):
 
     OPENAI = "openai"
     GPT4ALL = "gpt4all"
+
+
+class AzureLanguageCode(str, Enum):
+    """Enum for all supported languages (Azure)"""
+
+    DE_CH = "de-CH"
+    DE_DE = "de-DE"
+    DE_AT = "de-AT"
+    EN_GB = "en-GB"
+    EN_US = "en-US"
 
 
 _dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -102,8 +132,11 @@ with open(_json_file_path, "r", encoding="utf-8") as file:
     # parse prompt data
     prompt_data = PromptData(**_nlp_data["prompting"])
 
+# Lock for operations on the data in this file and in the catalogs folder
+lock = Lock()
 
-def transform_icd10_csv(onlyR: bool = True):
+
+def transform_icd10_csv(only_r: bool = True):
     """Transforms the icd10 csv file into a pandas dataframe and
     removes all rows that contain "Nicht belegte Schlüsselnummer"""
     column_names = [
@@ -177,7 +210,7 @@ def transform_icd10_csv(onlyR: bool = True):
         )
     ]
 
-    if onlyR:
+    if only_r:
         # remove all rows that are not in the category R
         df = df[df["erster_dreisteller"].str.contains("R", na=False, case=False)]
 
