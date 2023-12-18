@@ -22,11 +22,6 @@ def get_cosine_similarity(a, b):
     return dot(a, b) / (norm(a) * norm(b))
 
 
-# todo: add support for multiple embeddings per file. For that multiple columns and functions to get embeddings is
-#  required
-
-
-# todo use pickle (pk1 files) to save the embeddings instead of csv. Keeps data types and is faster
 class EmbeddingUtil(object):
     """Singleton util class to create embeddings and search for keywords in the icd10 catalog"""
 

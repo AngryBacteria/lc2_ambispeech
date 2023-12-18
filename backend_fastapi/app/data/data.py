@@ -12,19 +12,36 @@ from pydantic import BaseModel
 
 
 # Audio File data models
-class Symptom(BaseModel):
-    """Class for the data of a symptom"""
+class SymptomICD10(BaseModel):
+    """Class for the data of a symptom. ICD10 codes are required"""
 
     symptom: str
     onset: str
     location: str
     context: str
+    icd10: str
+
+
+class Symptom(BaseModel):
+    """Class for the data of a symptom. ICD10 codes are optional"""
+
+    symptom: str
+    onset: str
+    location: str
+    context: str
+    icd10: Optional[str] = None
 
 
 class Extraction(BaseModel):
-    """Class for the data of the extraction"""
+    """Class for the data of the extraction. ICD10 codes for symptoms are optional"""
 
     symptoms: List[Symptom]
+
+
+class ExtractionICD10(BaseModel):
+    """Class for the data of the extraction. ICD10 codes for symptoms are required"""
+
+    symptoms: List[SymptomICD10]
 
 
 class AudioData(BaseModel):
@@ -46,17 +63,30 @@ class GenericMessage(BaseModel):
     role: Literal["user", "system"]
 
 
-class GenericPrompt(BaseModel):
-    """Generic prompt for prompting llm models"""
+class PromptIdentifier(str, Enum):
+    """Enum for all supported prompt identifiers"""
+
+    SYMPTOM_EXTRACT_JSON = (
+        "symptom_extract_json"  # Should return symptoms without icd-10 codes
+    )
+    SYMPTOM_EXTRACT_JSON_ICD10 = (
+        "symptom_extract_json_icd10"  # Should return symptoms with icd-10 codes
+    )
+
+
+class MedicalDataPrompt(BaseModel):
+    """Prompt for instructing a llm to extract medical data from a text"""
 
     messages: List[GenericMessage]
     placeholder_index: int
+    identifier: PromptIdentifier
+    description: str
 
 
 class PromptData(BaseModel):
     """Prompt data that is available in the json file"""
 
-    prompts: List[GenericPrompt]
+    prompts: List[MedicalDataPrompt]
     userinput_placeholder: str
     jsonexample_placeholder: str
     textexample_placeholder: str
