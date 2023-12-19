@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 upload_files/
 models/
+app/data/catalogs/icd10gm.pkl
 __pycache__/
 *.py[cod]
 *$py.class
