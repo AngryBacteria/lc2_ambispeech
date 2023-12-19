@@ -1,13 +1,13 @@
 import copy
-from enum import Enum
-from typing import List, Dict, TypedDict, Union
+from typing import List, Union
 
 from asyncer import asyncify
 from fastapi import APIRouter
 from fastapi import Response, status
 from pydantic import BaseModel, ValidationError
 
-from app.data.data import prompt_data, OpenaiModel, lock, Extraction, PromptIdentifier, MedicalDataPrompt
+from app.data.data import prompt_data, OpenaiModel, lock, Extraction, PromptIdentifier, MedicalDataPrompt, Symptom, \
+    SymptomICD10, ExtractionICD10
 from app.utils.embedding_util import EmbeddingUtil
 from app.utils.general_util import parse_json_from_string
 from app.utils.openai_util import (
@@ -74,7 +74,7 @@ async def getEmbedding(body: EmbeddingBody) -> List[EmbeddingEndpointOutput]:
 # TODO: add logic for using embeddings or not using then
 # TODO: add logic for summary of patient history/symptoms as freetext
 @llmRouter.post("/analyze")
-async def analyze(body: AnalyzeBody, response: Response) -> Union[Extraction, str]:
+async def analyze(body: AnalyzeBody, response: Response) -> Union[ExtractionICD10, str]:
     """Endpoint for analyzing a conversation between a doctor and his patient.
     Returns an HTTP-206 code if no valid JSON was parsed"""
     # get the prompt for the analyze request
@@ -89,7 +89,7 @@ async def analyze(body: AnalyzeBody, response: Response) -> Union[Extraction, st
         OpenaiCompletionConfig(
             max_tokens=4096, response_format={"type": "json_object"}
         ),
-        OpenaiModel.GPT_4,
+        OpenaiModel.GPT_3_TURBO_1106,
     )
 
     # parse output and validate
@@ -97,25 +97,33 @@ async def analyze(body: AnalyzeBody, response: Response) -> Union[Extraction, st
     try:
         validated = Extraction.model_validate(parsed)
         # add icd10 codes to extraction
-        await add_icd10_codes(validated)
-        return validated
+        extraction_with_codes = ExtractionICD10(symptoms=await get_icd10_symptoms(validated.symptoms))
+        return extraction_with_codes
     except ValidationError:
         response.status_code = status.HTTP_206_PARTIAL_CONTENT
         return output
 
 
-async def add_icd10_codes(extraction: Extraction):
-    """Adds icd10 codes to an extraction object"""
+async def get_icd10_symptoms(symptoms: List[Symptom]) -> List[SymptomICD10]:
+    output = []
     async with lock:
-        for extraction in extraction.symptoms:
+        for symptom in symptoms:
             res = await asyncify(embedUtil.search)(
-                embedUtil.icd10_symptoms, extraction.context, 1
+                embedUtil.icd10_symptoms, symptom.context, 1
             )
-            extraction.icd10 = (
-                res["schlüsselnummer_mit_punkt"].iloc[0]
-                + " "
-                + res["klassentitel"].iloc[0]
+            icd10_string = (
+                    res["schlüsselnummer_mit_punkt"].iloc[0]
+                    + " - "
+                    + res["klassentitel"].iloc[0]
             )
+            output.append(SymptomICD10(
+                icd10=icd10_string,
+                context=symptom.context,
+                location=symptom.location,
+                symptom=symptom.symptom,
+                onset=symptom.onset,
+            ))
+    return output
 
 
 async def get_prompt(text: str, identifier: PromptIdentifier) -> MedicalDataPrompt | None:

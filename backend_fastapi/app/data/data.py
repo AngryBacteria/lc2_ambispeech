@@ -23,13 +23,12 @@ class SymptomICD10(BaseModel):
 
 
 class Symptom(BaseModel):
-    """Class for the data of a symptom. ICD10 codes are optional"""
+    """Class for the data of a symptom"""
 
     symptom: str
     onset: str
     location: str
     context: str
-    icd10: Optional[str] = None
 
 
 class Extraction(BaseModel):
@@ -39,7 +38,7 @@ class Extraction(BaseModel):
 
 
 class ExtractionICD10(BaseModel):
-    """Class for the data of the extraction. ICD10 codes for symptoms are required"""
+    """Class for the data of the extraction"""
 
     symptoms: List[SymptomICD10]
 
