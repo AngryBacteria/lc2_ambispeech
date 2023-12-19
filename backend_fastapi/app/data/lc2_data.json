@@ -10,31 +10,43 @@
                         "symptom": "Bauchschmerzen",
                         "onset": "Ein Tag",
                         "location": "Bauch",
-                        "context": "Ich habe seit etwa gestern Mittag starke Bauchschmerzen"
+                        "context": "Ich habe seit etwa gestern Mittag starke Bauchschmerzen",
+                        "icd10": "R10 - Bauch- und Beckenschmerzen"
                     },
                     {
                         "symptom": "Erbrechen",
                         "onset": "Ein Tag",
                         "location": "Gastrointestinaltrakt",
-                        "context": "habe einmal erbrochen und auch Durchfall gehabt"
+                        "context": "habe einmal erbrochen und auch Durchfall gehabt",
+                        "icd10": "R11 - Übelkeit und Erbrechen"
                     },
                     {
                         "symptom": "Durchfall",
                         "onset": "Ein Tag",
                         "location": "Gastrointestinaltrakt",
-                        "context": "habe einmal erbrochen und auch Durchfall gehabt"
+                        "context": "habe einmal erbrochen und auch Durchfall gehabt",
+                        "icd10": "K59 - Sonstige funktionelle Darmstörungen"
                     },
                     {
                         "symptom": "Schlaflosigkeit",
                         "onset": "Ein Tag",
                         "location": "Allgemein",
-                        "context": "In der Nacht konnte ich kaum schlafen"
+                        "context": "In der Nacht konnte ich kaum schlafen",
+                        "icd10": "G47 - Schlafstörungen"
                     },
                     {
                         "symptom": "Übelkeit",
                         "onset": "KA",
                         "location": "Allgemein",
-                        "context": "Mir war ziemlich übel, daher das Erbrechen"
+                        "context": "Mir war ziemlich übel, daher das Erbrechen",
+                        "icd10": "R11 - Übelkeit und Erbrechen"
+                    },
+                    {
+                        "symptom": "Fieber",
+                        "onset": "KA",
+                        "location": "Allgemein",
+                        "context": "Hier haben wir 38.1 Grad gemessen",
+                        "icd10": "R50 - Fieber sonstiger und unbekannter Ursache"
                     }
                 ]
             },
@@ -51,31 +63,43 @@
                         "symptom": "Bauchschmerzen",
                         "onset": "Ein Tag",
                         "location": "Bauch",
-                        "context": "Ich habe seit etwa gestern Mittag starke Bauchschmerzen"
+                        "context": "Ich habe seit etwa gestern Mittag starke Bauchschmerzen",
+                        "icd10": "R10 - Bauch- und Beckenschmerzen"
                     },
                     {
                         "symptom": "Erbrechen",
                         "onset": "Ein Tag",
                         "location": "Gastrointestinaltrakt",
-                        "context": "habe einmal erbrochen und auch Durchfall gehabt"
+                        "context": "habe einmal erbrochen und auch Durchfall gehabt",
+                        "icd10": "R11 - Übelkeit und Erbrechen"
                     },
                     {
                         "symptom": "Durchfall",
                         "onset": "Ein Tag",
                         "location": "Gastrointestinaltrakt",
-                        "context": "habe einmal erbrochen und auch Durchfall gehabt"
+                        "context": "habe einmal erbrochen und auch Durchfall gehabt",
+                        "icd10": "K59 - Sonstige funktionelle Darmstörungen"
                     },
                     {
                         "symptom": "Schlaflosigkeit",
                         "onset": "Ein Tag",
                         "location": "Allgemein",
-                        "context": "In der Nacht konnte ich kaum schlafen"
+                        "context": "In der Nacht konnte ich kaum schlafen",
+                        "icd10": "G47 - Schlafstörungen"
                     },
                     {
                         "symptom": "Übelkeit",
                         "onset": "KA",
                         "location": "Allgemein",
-                        "context": "Mir war ziemlich übel, daher das Erbrechen"
+                        "context": "Mir war ziemlich übel, daher das Erbrechen",
+                        "icd10": "R11 - Übelkeit und Erbrechen"
+                    },
+                    {
+                        "symptom": "Fieber",
+                        "onset": "KA",
+                        "location": "Allgemein",
+                        "context": "Hier haben wir 38.1 Grad gemessen",
+                        "icd10": "R50 - Fieber sonstiger und unbekannter Ursache"
                     }
                 ]
             },
@@ -204,25 +228,36 @@
                         "symptom": "Brustschmerzen",
                         "onset": "30 Minuten",
                         "location": "Brust",
-                        "context": "Hat vernichtende Brustschmerzen seit etwa 30 Minuten"
+                        "context": "Hat vernichtende Brustschmerzen seit etwa 30 Minuten",
+                        "icd10": "R07 - Hals- und Brustschmerzen"
+                    },
+                    {
+                        "symptom": "Hypertonie",
+                        "onset": "KA",
+                        "location": "Allgemein",
+                        "context": "Hat noch Hypertonus",
+                        "icd10": "I10 - Essentielle (primäre) Hypertonie"
                     },
                     {
                         "symptom": "Dyspnö",
                         "onset": "KA",
                         "location": "Lunge",
-                        "context": "Hat etwas Dyspnö"
+                        "context": "Hat etwas Dyspnö",
+                        "icd10": "R06 - Störungen der Atmung"
                     },
                     {
                         "symptom": "Schmerzen im Arm",
                         "onset": "ein paar Monate",
                         "location": "linker Arm",
-                        "context": "Ja, der linke Arm tut weh"
+                        "context": "Ja, der linke Arm tut weh",
+                        "icd10": "M79 - Sonstige Krankheiten des Weichteilgewebes, anderenorts nicht klassifiziert"
                     },
                     {
                         "symptom": "Kieferschmerzen",
                         "onset": "ein paar Monate",
                         "location": "Kiefer",
-                        "context": "linke Arm tut weh und der Kiefer schmerzt"
+                        "context": "linke Arm tut weh und der Kiefer schmerzt",
+                        "icd10": "K08 - Sonstige Krankheiten der Zähne und des Zahnhalteapparates"
                     }
                 ]
             },
@@ -239,25 +274,36 @@
                         "symptom": "Brustschmerzen",
                         "onset": "30 Minuten",
                         "location": "Brust",
-                        "context": "Hat vernichtende Brustschmerzen seit etwa 30 Minuten"
+                        "context": "Hat vernichtende Brustschmerzen seit etwa 30 Minuten",
+                        "icd10": "R07 - Hals- und Brustschmerzen"
+                    },
+                    {
+                        "symptom": "Hypertonie",
+                        "onset": "KA",
+                        "location": "Allgemein",
+                        "context": "Hat noch Hypertonus",
+                        "icd10": "I10 - Essentielle (primäre) Hypertonie"
                     },
                     {
                         "symptom": "Dyspnö",
                         "onset": "KA",
                         "location": "Lunge",
-                        "context": "Hat etwas Dyspnö"
+                        "context": "Hat etwas Dyspnö",
+                        "icd10": "R06 - Störungen der Atmung"
                     },
                     {
                         "symptom": "Schmerzen im Arm",
                         "onset": "ein paar Monate",
                         "location": "linker Arm",
-                        "context": "Ja, der linke Arm tut weh"
+                        "context": "Ja, der linke Arm tut weh",
+                        "icd10": "M79 - Sonstige Krankheiten des Weichteilgewebes, anderenorts nicht klassifiziert"
                     },
                     {
                         "symptom": "Kieferschmerzen",
                         "onset": "ein paar Monate",
                         "location": "Kiefer",
-                        "context": "linke Arm tut weh und der Kiefer schmerzt"
+                        "context": "linke Arm tut weh und der Kiefer schmerzt",
+                        "icd10": "K08 - Sonstige Krankheiten der Zähne und des Zahnhalteapparates"
                     }
                 ]
             },

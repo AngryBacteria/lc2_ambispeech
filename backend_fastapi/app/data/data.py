@@ -51,7 +51,7 @@ class AudioData(BaseModel):
     transcript: str
     synthetic: bool
     noise: bool
-    extraction: Optional[Extraction] = None
+    extraction: Optional[ExtractionICD10] = None
 
 
 # LLM data models
