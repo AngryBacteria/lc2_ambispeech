@@ -83,7 +83,19 @@ async def analyze(body: AnalyzeBody, response: Response) -> Union[ExtractionICD1
         response.status_code = status.HTTP_404_NOT_FOUND
         return f"No prompt found for identifier"
 
-    # query the model to get Medical Data
+    extraction = await get_extraction(prompt)
+    # TODO: hier logik einbauen um noch die anamnese zu extrahieren
+    if isinstance(extraction, ExtractionICD10):
+        return extraction
+    if isinstance(extraction, str):
+        response.status_code = status.HTTP_206_PARTIAL_CONTENT
+        return extraction
+    else:
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return "No medical data could be extracted"
+
+
+async def get_extraction(prompt: MedicalDataPrompt):
     output = await openaiUtil.chat_completion(
         prompt.messages,
         OpenaiCompletionConfig(
@@ -95,12 +107,12 @@ async def analyze(body: AnalyzeBody, response: Response) -> Union[ExtractionICD1
     # parse output and validate
     parsed = parse_json_from_string(output)
     try:
+        # TODO: hier einbauen, dass auch direkt icd10 annotierte daten returniertwerden ohne embeddings nur mit prompt
         validated = Extraction.model_validate(parsed)
         # add icd10 codes to extraction
         extraction_with_codes = ExtractionICD10(symptoms=await get_icd10_symptoms(validated.symptoms))
         return extraction_with_codes
     except ValidationError:
-        response.status_code = status.HTTP_206_PARTIAL_CONTENT
         return output
 
 

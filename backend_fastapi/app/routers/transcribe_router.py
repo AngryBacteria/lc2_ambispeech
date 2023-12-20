@@ -22,7 +22,6 @@ class TranscribeService(str, Enum):
     AZURE = "azure"
 
 
-# todo: whisper not async, problem? If azure is non-async it does not stop on client abort.
 @transcribeRouter.post("/file/{service}")
 async def post_file(
     file: UploadFile,

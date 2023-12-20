@@ -113,7 +113,7 @@ def parse_json_from_string(input_string):
         if end_index == -1:
             return "parsing_error"
 
-    json_string = input_string[start_index : end_index + 1]
+    json_string = input_string[start_index: end_index + 1]
 
     try:
         parsed_json = json.loads(json_string)
