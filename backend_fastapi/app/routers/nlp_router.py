@@ -95,7 +95,7 @@ async def analyze(body: AnalyzeBody, response: Response) -> Union[ExtractionICD1
         return "No medical data could be extracted"
 
 
-async def get_extraction(prompt: MedicalDataPrompt):
+async def get_extraction(prompt: MedicalDataPrompt, use_embeddings: bool = True):
     output = await openaiUtil.chat_completion(
         prompt.messages,
         OpenaiCompletionConfig(
@@ -103,17 +103,19 @@ async def get_extraction(prompt: MedicalDataPrompt):
         ),
         OpenaiModel.GPT_3_TURBO_1106,
     )
-
-    # parse output and validate
-    parsed = parse_json_from_string(output)
-    try:
+    if use_embeddings:
+        # parse output and validate
+        parsed = parse_json_from_string(output)
+        try:
+            validated = Extraction.model_validate(parsed)
+            # add icd10 codes to extraction
+            extraction_with_codes = ExtractionICD10(symptoms=await get_icd10_symptoms(validated.symptoms))
+            return extraction_with_codes
+        except ValidationError:
+            return output
+    else:
         # TODO: hier einbauen, dass auch direkt icd10 annotierte daten returniertwerden ohne embeddings nur mit prompt
-        validated = Extraction.model_validate(parsed)
-        # add icd10 codes to extraction
-        extraction_with_codes = ExtractionICD10(symptoms=await get_icd10_symptoms(validated.symptoms))
-        return extraction_with_codes
-    except ValidationError:
-        return output
+        raise NotImplementedError
 
 
 async def get_icd10_symptoms(symptoms: List[Symptom]) -> List[SymptomICD10]:
