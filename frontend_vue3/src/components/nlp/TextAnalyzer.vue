@@ -27,30 +27,12 @@
           <p v-if="analysisError">{{ analysisError }}</p>
 
           <section
-            v-if="
-              !analysisError &&
-              !store.analysisIsLoading &&
-              (store.extractedInfoObject || store.extractedInfoText)
-            "
+            v-if="!analysisError && !store.analysisIsLoading && store.extractedInfoObject?.symptoms"
           >
-            <section v-if="store.extractedInfoText && !store.extractedInfoObject">
-              <h2>Die Analyse konnte nicht vollständig durchgeführt werden</h2>
-              <p>{{ store.extractedInfoText }}</p>
-            </section>
-
-            <section v-else>
-              <NLPSummary />
-            </section>
+            <SymptomSummary />
           </section>
 
-          <section
-            v-if="
-              !analysisError &&
-              !store.analysisIsLoading &&
-              !store.extractedInfoObject &&
-              !store.extractedInfoText
-            "
-          >
+          <section v-if="!analysisError && !store.analysisIsLoading && !store.extractedInfoObject">
             <h2>Es sind noch keine Daten verfügbar</h2>
           </section>
         </AccordionTab>
@@ -62,8 +44,9 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
-import NLPSummary from '@/components/nlp/NLPSummary.vue';
+import SymptomSummary from '@/components/nlp/SymptomSummary.vue';
 import SlimProgressBar from '@/components/general/SlimProgressBar.vue';
+import { NLPDataSchema } from '@/model/interfaces';
 
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/nlp/analyze';
@@ -74,7 +57,6 @@ async function analyzeText(text: string) {
   store.analysisIsLoading = true;
   analysisError.value = '';
   store.extractedInfoObject = null;
-  store.extractedInfoText = '';
 
   const requestBody = {
     text: text,
@@ -90,14 +72,16 @@ async function analyzeText(text: string) {
 
     if (response.status == 200) {
       const answer = await response.json();
-      store.extractedInfoObject = answer;
-      store.extractedInfoText = '';
+      // check type with zod
+      let parsed = NLPDataSchema.safeParse(answer);
+      if (parsed.success) {
+        store.extractedInfoObject = parsed.data;
+      } else {
+        analysisError.value =
+          'Während dem Analysieren geschah ein Fehler. Versuche erneut: ' + parsed.error.message;
+      }
     }
-    if (response.status == 206) {
-      const answer = await response.text();
-      store.extractedInfoObject = null;
-      store.extractedInfoText = answer;
-    }
+
     if (!response.ok) {
       analysisError.value = 'Während dem Analysieren geschah ein Fehler. Versuche erneut.';
     }
@@ -105,7 +89,6 @@ async function analyzeText(text: string) {
     console.error('Error:', error);
     analysisError.value = 'Während dem Analysieren geschah ein Fehler. Versuche erneut.';
     store.extractedInfoObject = null;
-    store.extractedInfoText = '';
   } finally {
     store.analysisIsLoading = false;
   }
@@ -116,6 +99,7 @@ async function analyzeText(text: string) {
 .p-inputtextarea {
   width: 100%;
 }
+
 :deep(.p-accordion .p-accordion-header .p-accordion-header-link) {
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;

@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type FileTranscriptionProps = {
   transcriptionIsLoading: boolean;
   uploadProgress: number;
@@ -100,37 +102,23 @@ export interface Extension {
   valueCode: string;
 }
 
-export interface NLPData {
-  symptoms: Symptom[];
-  medications: Medication[];
-  findings: Finding[];
-}
+// ZOD
+export const SymptomSchema = z.object({
+  context: z.string(),
+  isInTranscript: z.boolean().optional().nullable(),
+  status: z.enum(['amended', 'preliminary', 'entered-in-error']).optional().nullable(),
+  symptom: z.string(),
+  onset: z.string(),
+  location: z.string(),
+  icd10: z.string()
+});
 
-export interface SymptomData {
-  symptoms: Symptom[];
-}
+export const NLPDataSchema = z.object({
+  symptoms: z.array(SymptomSchema).optional().nullable(),
+  amamnesis: z.string().optional().nullable()
+});
 
+export type NLPData = z.infer<typeof NLPDataSchema>;
+export type Symptom = z.infer<typeof SymptomSchema>;
 //https://build.fhir.org/valueset-observation-status.html
-export type NLPStatus = 'amended' | 'preliminary' | 'entered-in-error';
-
-export interface NLPEntry {
-  context: string;
-  isInTranscript?: boolean;
-  status: NLPStatus;
-}
-
-export interface Finding extends NLPEntry {
-  finding: string;
-  value: string;
-}
-
-export interface Medication extends NLPEntry {
-  name: string;
-  dosage: string;
-}
-
-export interface Symptom extends NLPEntry {
-  symptom: string;
-  onset: string;
-  location: string;
-}
+export type NLPStatus = Symptom['status'];

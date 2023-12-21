@@ -38,7 +38,7 @@ watch(
   extractedInfoObject,
   () => {
     console.log('GO DATA');
-    if (!extractedInfoObject.value) {
+    if (!extractedInfoObject.value?.symptoms) {
       return;
     }
 
@@ -66,7 +66,7 @@ watch(
   transcriptionText,
   () => {
     console.log('GO isInTranscript');
-    if (!extractedInfoObject.value) {
+    if (!extractedInfoObject.value?.symptoms) {
       return;
     }
     extractedInfoObject.value.symptoms = extractedInfoObject.value.symptoms.map((symptom) => ({

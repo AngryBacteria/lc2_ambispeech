@@ -7,9 +7,9 @@ import {
 } from '@vueuse/core';
 import type {
   BufferSize,
+  NLPData,
   Patient,
   Practitioner,
-  SymptomData,
   TranscriptionLanguage
 } from '@/model/interfaces';
 import { computed, ref, watch } from 'vue';
@@ -47,8 +47,7 @@ export const useUserStore = defineStore('user', () => {
   /**
    * Information (Data) that was extracted from the transcript with NLP
    */
-  const extractedInfoText = useSessionStorage('extractedInfoText', '');
-  const extractedInfoObject = useSessionStorage<SymptomData | null>('extractedInfoObject', null, {
+  const extractedInfoObject = useSessionStorage<NLPData | null>('extractedInfoObject', null, {
     serializer: StorageSerializers.object
   });
   /**
@@ -68,7 +67,6 @@ export const useUserStore = defineStore('user', () => {
 
   function resetAnalyzeState() {
     extractedInfoObject.value = null;
-    extractedInfoText.value = '';
     analysisIsLoading.value = false;
     transcriptionText.value = '';
     transcriptionIsLoading.value = false;
@@ -131,7 +129,6 @@ export const useUserStore = defineStore('user', () => {
     patient,
     transcriptionIsLoading,
     isMobile,
-    extractedInfoText,
     extractedInfoObject,
     analysisIsLoading
   };

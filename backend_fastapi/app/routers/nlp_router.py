@@ -1,13 +1,22 @@
 import copy
-from typing import List, Union
+from typing import List, Union, Optional
 
 from asyncer import asyncify
 from fastapi import APIRouter
 from fastapi import Response, status
 from pydantic import BaseModel, ValidationError
 
-from app.data.data import prompt_data, OpenaiModel, lock, Extraction, PromptIdentifier, MedicalDataPrompt, Symptom, \
-    SymptomICD10, ExtractionICD10
+from app.data.data import (
+    prompt_data,
+    OpenaiModel,
+    lock,
+    Extraction,
+    PromptIdentifier,
+    MedicalDataPrompt,
+    Symptom,
+    SymptomICD10,
+    ExtractionICD10,
+)
 from app.utils.embedding_util import EmbeddingUtil
 from app.utils.general_util import parse_json_from_string
 from app.utils.openai_util import (
@@ -21,6 +30,11 @@ class AnalyzeBody(BaseModel):
     """Body for an /analyze request"""
 
     text: str
+
+
+class AnalyzeEndpointOutput(BaseModel):
+    symptoms: Optional[List[SymptomICD10]] = None
+    anamnesis: Optional[str] = None
 
 
 class EmbeddingBody(BaseModel):
@@ -74,28 +88,50 @@ async def getEmbedding(body: EmbeddingBody) -> List[EmbeddingEndpointOutput]:
 # TODO: add logic for using embeddings or not using then
 # TODO: add logic for summary of patient history/symptoms as freetext
 @llmRouter.post("/analyze")
-async def analyze(body: AnalyzeBody, response: Response) -> Union[ExtractionICD10, str]:
+async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
     """Endpoint for analyzing a conversation between a doctor and his patient.
     Returns an HTTP-206 code if no valid JSON was parsed"""
-    # get the prompt for the analyze request
-    prompt = await get_prompt(body.text, PromptIdentifier.SYMPTOM_EXTRACT_JSON)
-    if prompt is None:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return f"No prompt found for identifier"
-
-    extraction = await get_extraction(prompt)
-    # TODO: hier logik einbauen um noch die anamnese zu extrahieren
+    # init output object
+    output = AnalyzeEndpointOutput()
+    # get the symptom extraction
+    extraction = await get_symptom_extraction(body.text)
     if isinstance(extraction, ExtractionICD10):
-        return extraction
-    if isinstance(extraction, str):
-        response.status_code = status.HTTP_206_PARTIAL_CONTENT
-        return extraction
-    else:
-        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        return "No medical data could be extracted"
+        output.symptoms = extraction.symptoms
+
+    # get the anamnesis
+    anamnesis = await get_anamnesis(body.text)
+    if anamnesis is not None:
+        output.anamnesis = anamnesis
+
+    # TODO: hier logik einbauen um noch die anamnese zu extrahieren
+    return output
 
 
-async def get_extraction(prompt: MedicalDataPrompt, use_embeddings: bool = True):
+async def get_anamnesis(text: str):
+    # get the prompt for the anamnesis extraction
+    prompt = await get_prompt(text, PromptIdentifier.ANAMNESIS_EXTRACT)
+    if prompt is None:
+        return None
+
+    # get the extraction from the llm
+    output = await openaiUtil.chat_completion(
+        prompt.messages,
+        OpenaiCompletionConfig(
+            max_tokens=4096, response_format={"type": "json_object"}
+        ),
+        OpenaiModel.GPT_3_TURBO_1106,
+    )
+    return output
+
+
+async def get_symptom_extraction(text: str, use_embeddings: bool = True):
+    """Returns an Extraction object with icd-10 annotated symptoms.
+    Either uses embeddings or the direct approach with prompting"""
+    # get the prompt for the symptom extraction
+    prompt = await get_prompt(text, PromptIdentifier.SYMPTOM_EXTRACT_JSON)
+    if prompt is None:
+        return None
+    # get the extraction from the llm
     output = await openaiUtil.chat_completion(
         prompt.messages,
         OpenaiCompletionConfig(
@@ -109,38 +145,45 @@ async def get_extraction(prompt: MedicalDataPrompt, use_embeddings: bool = True)
         try:
             validated = Extraction.model_validate(parsed)
             # add icd10 codes to extraction
-            extraction_with_codes = ExtractionICD10(symptoms=await get_icd10_symptoms(validated.symptoms))
+            extraction_with_codes = ExtractionICD10(
+                symptoms=await get_icd10_symptoms(validated.symptoms)
+            )
             return extraction_with_codes
         except ValidationError:
-            return output
+            return None
     else:
         # TODO: hier einbauen, dass auch direkt icd10 annotierte daten returniertwerden ohne embeddings nur mit prompt
         raise NotImplementedError
 
 
 async def get_icd10_symptoms(symptoms: List[Symptom]) -> List[SymptomICD10]:
+    """Takes a list of symptoms without icd-10 codes and adds them with embeddings"""
     output = []
     async with lock:
         for symptom in symptoms:
             res = await asyncify(embedUtil.search)(
-                embedUtil.icd10_symptoms, symptom.context, 1
+                embedUtil.icd10_symptoms, f"{symptom.context} {symptom.symptom}", 1
             )
             icd10_string = (
-                    res["schlüsselnummer_mit_punkt"].iloc[0]
-                    + " - "
-                    + res["klassentitel"].iloc[0]
+                res["schlüsselnummer_mit_punkt"].iloc[0]
+                + " - "
+                + res["klassentitel"].iloc[0]
             )
-            output.append(SymptomICD10(
-                icd10=icd10_string,
-                context=symptom.context,
-                location=symptom.location,
-                symptom=symptom.symptom,
-                onset=symptom.onset,
-            ))
+            output.append(
+                SymptomICD10(
+                    icd10=icd10_string,
+                    context=symptom.context,
+                    location=symptom.location,
+                    symptom=symptom.symptom,
+                    onset=symptom.onset,
+                )
+            )
     return output
 
 
-async def get_prompt(text: str, identifier: PromptIdentifier) -> MedicalDataPrompt | None:
+async def get_prompt(
+    text: str, identifier: PromptIdentifier
+) -> MedicalDataPrompt | None:
     """Returns a prompt for the given identifier. The placeholder for the userinput will be replaced with the text"""
     async with lock:
         prompt_data_copy = copy.deepcopy(prompt_data)

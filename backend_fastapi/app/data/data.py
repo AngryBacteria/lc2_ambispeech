@@ -71,6 +71,7 @@ class PromptIdentifier(str, Enum):
     SYMPTOM_EXTRACT_JSON_ICD10 = (
         "symptom_extract_json_icd10"  # Should return symptoms with icd-10 codes
     )
+    ANAMNESIS_EXTRACT = "anamnesis_extract"  # Should return anamnesis data as a string
 
 
 class MedicalDataPrompt(BaseModel):
@@ -160,6 +161,7 @@ with open(_json_file_path, "r", encoding="utf-8") as file:
 
     # parse prompt data
     prompt_data = PromptData(**_nlp_data["prompting"])
+
 
 # Lock for operations on the data in this file and in the catalogs folder
 lock = Lock()
