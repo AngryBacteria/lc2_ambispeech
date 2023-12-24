@@ -3,7 +3,6 @@ from typing import List, Union, Optional
 
 from asyncer import asyncify
 from fastapi import APIRouter
-from fastapi import Response, status
 from pydantic import BaseModel, ValidationError
 
 from app.data.data import (
@@ -94,16 +93,16 @@ async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
     # init output object
     output = AnalyzeEndpointOutput()
     # get the symptom extraction
-    extraction = await get_symptom_extraction(body.text)
-    if isinstance(extraction, ExtractionICD10):
+    extraction = await get_extraction(body.text)
+    if extraction is not None:
         output.symptoms = extraction.symptoms
 
     # get the anamnesis
+    # TODO: hier logik einbauen um noch die anamnese zu extrahieren
     anamnesis = await get_anamnesis(body.text)
     if anamnesis is not None:
         output.anamnesis = anamnesis
 
-    # TODO: hier logik einbauen um noch die anamnese zu extrahieren
     return output
 
 
@@ -124,7 +123,7 @@ async def get_anamnesis(text: str):
     return output
 
 
-async def get_symptom_extraction(text: str, use_embeddings: bool = True):
+async def get_extraction(text: str, use_embeddings: bool = True):
     """Returns an Extraction object with icd-10 annotated symptoms.
     Either uses embeddings or the direct approach with prompting"""
     # get the prompt for the symptom extraction
@@ -146,7 +145,7 @@ async def get_symptom_extraction(text: str, use_embeddings: bool = True):
             validated = Extraction.model_validate(parsed)
             # add icd10 codes to extraction
             extraction_with_codes = ExtractionICD10(
-                symptoms=await get_icd10_symptoms(validated.symptoms)
+                symptoms=await add_icd10_codes(validated.symptoms)
             )
             return extraction_with_codes
         except ValidationError:
@@ -156,13 +155,13 @@ async def get_symptom_extraction(text: str, use_embeddings: bool = True):
         raise NotImplementedError
 
 
-async def get_icd10_symptoms(symptoms: List[Symptom]) -> List[SymptomICD10]:
+async def add_icd10_codes(symptoms: List[Symptom]) -> List[SymptomICD10]:
     """Takes a list of symptoms without icd-10 codes and adds them with embeddings"""
     output = []
     async with lock:
         for symptom in symptoms:
             res = await asyncify(embedUtil.search)(
-                embedUtil.icd10_symptoms, f"{symptom.context} {symptom.symptom}", 1
+                embedUtil.icd10_symptoms, f"{symptom.symptom}. {symptom.context}", 1
             )
             icd10_string = (
                 res["schlüsselnummer_mit_punkt"].iloc[0]

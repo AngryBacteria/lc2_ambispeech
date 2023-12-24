@@ -78,7 +78,6 @@ class MedicalDataPrompt(BaseModel):
     """Prompt for instructing a llm to extract medical data from a text"""
 
     messages: List[GenericMessage]
-    placeholder_index: int
     identifier: PromptIdentifier
     description: str
 

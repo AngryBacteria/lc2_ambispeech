@@ -25,15 +25,20 @@
           </template>
           <h2 v-if="store.analysisIsLoading">Am Analysieren...</h2>
           <p v-if="analysisError">{{ analysisError }}</p>
-
-          <section
-            v-if="!analysisError && !store.analysisIsLoading && store.extractedInfoObject?.symptoms"
-          >
-            <SymptomSummary />
-          </section>
-
           <section v-if="!analysisError && !store.analysisIsLoading && !store.extractedInfoObject">
             <h2>Es sind noch keine Daten verfügbar</h2>
+          </section>
+
+          <section v-if="!analysisError && !store.analysisIsLoading">
+            <section v-if="store.extractedInfoObject?.anamnesis">
+              <h2>Zusammenfassung</h2>
+              <p>{{ store.extractedInfoObject.anamnesis }}</p>
+            </section>
+
+            <section v-if="store.extractedInfoObject?.symptoms">
+              <h2>Strukturierte Daten</h2>
+              <SymptomSummary />
+            </section>
           </section>
         </AccordionTab>
       </Accordion>
@@ -48,6 +53,7 @@ import SymptomSummary from '@/components/nlp/SymptomSummary.vue';
 import SlimProgressBar from '@/components/general/SlimProgressBar.vue';
 import { NLPDataSchema } from '@/model/interfaces';
 
+//TODO: gpt output refactor to text
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/nlp/analyze';
 
@@ -103,5 +109,9 @@ async function analyzeText(text: string) {
 :deep(.p-accordion .p-accordion-header .p-accordion-header-link) {
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
+}
+
+p {
+  white-space: pre-line;
 }
 </style>

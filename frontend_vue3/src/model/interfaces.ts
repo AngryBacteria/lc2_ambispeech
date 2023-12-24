@@ -115,7 +115,7 @@ export const SymptomSchema = z.object({
 
 export const NLPDataSchema = z.object({
   symptoms: z.array(SymptomSchema).optional().nullable(),
-  amamnesis: z.string().optional().nullable()
+  anamnesis: z.string().optional().nullable()
 });
 
 export type NLPData = z.infer<typeof NLPDataSchema>;
