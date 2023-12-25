@@ -32,7 +32,7 @@
           <section v-if="!analysisError && !store.analysisIsLoading">
             <section v-if="store.extractedInfoObject?.anamnesis">
               <h2>Zusammenfassung</h2>
-              <p>{{ store.extractedInfoObject.anamnesis }}</p>
+              <section v-html="markdown.render(store.extractedInfoObject.anamnesis)" />
             </section>
 
             <section v-if="store.extractedInfoObject?.symptoms">
@@ -52,10 +52,11 @@ import { ref } from 'vue';
 import SymptomSummary from '@/components/nlp/SymptomSummary.vue';
 import SlimProgressBar from '@/components/general/SlimProgressBar.vue';
 import { NLPDataSchema } from '@/model/interfaces';
+import MarkdownIt from "markdown-it";
 
-//TODO: gpt output refactor to text
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/nlp/analyze';
+const markdown = new MarkdownIt()
 
 const analysisError = ref('');
 
