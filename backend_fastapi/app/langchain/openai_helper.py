@@ -31,7 +31,5 @@ class OpenAIHelper(GenericLangChainModel):
         logger.info("Created OpenAIHelper")
         self._initialized = True
 
-    # TODO get_configurable_fields implementing
-
     def get_llm(self):
         return self.llm

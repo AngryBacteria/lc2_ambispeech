@@ -52,11 +52,11 @@ import { ref } from 'vue';
 import SymptomSummary from '@/components/nlp/SymptomSummary.vue';
 import SlimProgressBar from '@/components/general/SlimProgressBar.vue';
 import { NLPDataSchema } from '@/model/interfaces';
-import MarkdownIt from "markdown-it";
+import MarkdownIt from 'markdown-it';
 
 const store = useUserStore();
 let llmApiUrl = 'http://localhost:8000/api/nlp/analyze';
-const markdown = new MarkdownIt()
+const markdown = new MarkdownIt();
 
 const analysisError = ref('');
 

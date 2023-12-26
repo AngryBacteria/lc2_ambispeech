@@ -40,7 +40,6 @@ import { useUserStore } from './stores/user';
 
 const store = useUserStore();
 
-//TODO: im session menu möglichkeit geben die daten zurückzusetzen der app
 const items = ref([
   {
     label: 'Datei analysieren',

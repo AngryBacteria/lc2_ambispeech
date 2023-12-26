@@ -18,6 +18,7 @@ from app.data.data import (
 )
 from app.utils.embedding_util import EmbeddingUtil
 from app.utils.general_util import parse_json_from_string
+from app.utils.logging_util import logger
 from app.utils.openai_util import (
     OpenAIUtil,
     OpenaiCompletionConfig,
@@ -84,7 +85,6 @@ async def getEmbedding(body: EmbeddingBody) -> List[EmbeddingEndpointOutput]:
     return output.to_dict(orient="records")
 
 
-# TODO: add logic for using embeddings or not using then
 # TODO: add logic for summary of patient history/symptoms as freetext
 @llmRouter.post("/analyze")
 async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
@@ -98,7 +98,6 @@ async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
         output.symptoms = extraction.symptoms
 
     # get the anamnesis
-    # TODO: hier logik einbauen um noch die anamnese zu extrahieren
     anamnesis = await get_anamnesis(body.text)
     if anamnesis is not None:
         output.anamnesis = anamnesis
@@ -110,15 +109,14 @@ async def get_anamnesis(text: str):
     # get the prompt for the anamnesis extraction
     prompt = await get_prompt(text, PromptIdentifier.ANAMNESIS_EXTRACT)
     if prompt is None:
+        logger.error("No prompt found for anamnesis extraction")
         return None
 
     # get the extraction from the llm
     output = await openaiUtil.chat_completion(
         prompt.messages,
-        OpenaiCompletionConfig(
-            max_tokens=4096, response_format={"type": "json_object"}
-        ),
-        OpenaiModel.GPT_3_TURBO_1106,
+        OpenaiCompletionConfig(temperature=0, max_tokens=4096),
+        OpenaiModel.GPT_3_TURBO,
     )
     return output
 
@@ -129,14 +127,15 @@ async def get_extraction(text: str, use_embeddings: bool = True):
     # get the prompt for the symptom extraction
     prompt = await get_prompt(text, PromptIdentifier.SYMPTOM_EXTRACT_JSON)
     if prompt is None:
+        logger.error("No prompt found for symptom extraction")
         return None
     # get the extraction from the llm
     output = await openaiUtil.chat_completion(
         prompt.messages,
         OpenaiCompletionConfig(
-            max_tokens=4096, response_format={"type": "json_object"}
+            temperature=0, max_tokens=4096, response_format={"type": "json_object"}
         ),
-        OpenaiModel.GPT_3_TURBO_1106,
+        OpenaiModel.GPT_3_TURBO,
     )
     if use_embeddings:
         # parse output and validate
@@ -149,9 +148,12 @@ async def get_extraction(text: str, use_embeddings: bool = True):
             )
             return extraction_with_codes
         except ValidationError:
+            logger.error(
+                f"GPT Output could not be validated/parsed successfully: {output}"
+            )
             return None
     else:
-        # TODO: hier einbauen, dass auch direkt icd10 annotierte daten returniertwerden ohne embeddings nur mit prompt
+        # TODO: hier einbauen, dass auch direkt icd10 annotierte daten returniert werden ohne embeddings nur mit prompt
         raise NotImplementedError
 
 
@@ -168,6 +170,8 @@ async def add_icd10_codes(symptoms: List[Symptom]) -> List[SymptomICD10]:
                 + " - "
                 + res["klassentitel"].iloc[0]
             )
+            logger.debug("Embedding Input: " + f"{symptom.symptom}. {symptom.context}")
+            logger.debug("Embedding Output: " + f"{icd10_string}")
             output.append(
                 SymptomICD10(
                     icd10=icd10_string,

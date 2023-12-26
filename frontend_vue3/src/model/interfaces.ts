@@ -106,7 +106,7 @@ export interface Extension {
 export const SymptomSchema = z.object({
   context: z.string(),
   isInTranscript: z.boolean().optional().nullable(),
-  status: z.enum(['amended', 'preliminary', 'entered-in-error']).optional().nullable(),
+  status: z.enum(['confirmed', 'unconfirmed', 'entered-in-error']).optional().nullable(),
   symptom: z.string(),
   onset: z.string(),
   location: z.string(),
@@ -120,5 +120,4 @@ export const NLPDataSchema = z.object({
 
 export type NLPData = z.infer<typeof NLPDataSchema>;
 export type Symptom = z.infer<typeof SymptomSchema>;
-//https://build.fhir.org/valueset-observation-status.html
 export type NLPStatus = Symptom['status'];

@@ -97,10 +97,7 @@ class OpenaiModel(str, Enum):
 
     GPT_4_TURBO = "gpt-4-1106-preview"  # newest gpt 4 turbo model (supports json mode, huge context size)
     GPT_4 = "gpt-4"
-    GPT_4_32k = "gpt-4-32k"  # gpt 4 model with context size of 32k tokens
-    GPT_3_TURBO = "gpt-3.5-turbo"
-    GPT_3_TURBO_16k = "gpt-3.5-turbo-16k"
-    GPT_3_TURBO_1106 = "gpt-3.5-turbo-1106"  # newest gpt 3.5 model (supports json_mode)
+    GPT_3_TURBO = "gpt-3.5-turbo-1106"
 
 
 class OpenaiResponseFormat(TypedDict):

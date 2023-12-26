@@ -14,6 +14,7 @@
       </section>
       <p><b>Dauer:</b> {{ symptom.onset }}</p>
       <p><b>Position:</b> {{ symptom.location }}</p>
+      <p><b>ICD10-Code:</b> {{ symptom.icd10 }}</p>
 
       <SelectButton v-model="symptom.status" :options="statusOptions" aria-labelledby="basic" />
     </section>
@@ -46,7 +47,7 @@ watch(
       if (!symptom.status) {
         return {
           ...symptom,
-          status: 'preliminary'
+          status: 'unconfirmed'
         };
       } else {
         return symptom;
@@ -55,7 +56,7 @@ watch(
   },
   { immediate: true }
 );
-const statusOptions = ref<NLPStatus[]>(['amended', 'preliminary', 'entered-in-error']);
+const statusOptions = ref<NLPStatus[]>(['unconfirmed', 'confirmed', 'entered-in-error']);
 
 //Start watching the NLPData and update if it is in the transcript
 function isInTranscript(toFind: string) {
@@ -77,9 +78,58 @@ watch(
   { immediate: true }
 );
 
-//TODO: into fhir?
-async function sendToKIS() {
-  console.log(extractedInfoObject.value);
+function sendToKIS() {
+  let currentId = 1;
+  const fhirConditions = extractedInfoObject.value?.symptoms?.map((symptom) => {
+    return {
+      resourceType: 'Condition',
+      id: 'condition_' + currentId++,
+      clinicalStatus: {
+        coding: [
+          {
+            system: 'http://terminology.hl7.org/CodeSystem/condition-clinical',
+            code: 'active'
+          }
+        ]
+      },
+      verificationStatus: {
+        coding: [
+          {
+            system: 'http://terminology.hl7.org/CodeSystem/condition-ver-status',
+            code: symptom.status
+          }
+        ]
+      },
+      code: {
+        coding: [
+          {
+            system: 'http://fhir.de/CodeSystem/dimdi/icd-10-gm',
+            version: '2019',
+            code: symptom.icd10,
+            display: symptom.symptom
+          }
+        ],
+        text: symptom.symptom
+      },
+      subject: {
+        reference: `Patient/${store.patient?.id}`
+      },
+      onsetString: symptom.onset
+    };
+  });
+
+  console.log(fhirConditions);
+  const jsonString = JSON.stringify(fhirConditions, null, 2);
+  const fileToSave = new Blob([jsonString], {
+    type: 'application/json'
+  });
+  const fileDownloadUrl = URL.createObjectURL(fileToSave);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = fileDownloadUrl;
+  downloadLink.download = 'fhirConditions.json';
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 }
 
 //Dialog
