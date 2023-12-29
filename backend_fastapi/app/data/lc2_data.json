@@ -343,14 +343,64 @@
       "name": "STROKE_1_0_sprecher_4363D135.wav",
       "transcript": "SPRECHER D:Übergabe von Patient Herrn Baumann. Notfallmäßige Zuweisung mit der Ambulanz aufgrund des Verdachts auf ein zerebrovaskuläres Ereignis. Symptome bei Eintritt: Schwindel, verschwommene Sprache und Unsicherheit beim Bewegen mit einer Neigung nach rechts.\n\nSPRECHER B:Vielen Dank für die Übergabe.\n\nSPRECHER B:Guten Morgen, Herr Baumann. Würden Sie uns bitte erzählen, was genau passiert ist?\n\nSPRECHER A:Ich bin aufgewacht und alles hat sich gedreht. Beim Versuch, aufzustehen, musste ich mich wieder hinlegen. Meine Frau hat außerdem gesagt, meine Sprache wäre verschwommen.\n\nSPRECHER B:Was nehmen Sie für Medikamente ein?\n\nSPRECHER A:Ich nehme normalerweise Aspirin, aber das wurde vor einer Woche abgesetzt, da ich eine Darmspiegelung hatte. Zudem nehme ich einmal täglich Perindopril, die Dosierung ist mir gerade nicht genau bekannt.\n\nSPRECHER B:Verstanden, ich werde jetzt mit der körperlichen Untersuchung beginnen. Zuerst überprüfe ich Ihre Pupillen. \n\nSPRECHER B:Leichte Anisokorie rechts mehr als links. Direkte und indirekte Lichtreaktion sind beidseitig normal.\n\nSPRECHER B:Ich mache nun den Armhalteversuch und den Beinhalteversuch.\n\nSPRECHER B:Kein Absinken beim Arm- und Beinhalteversuch. Die Sensibilität ist ebenfalls normal.\n\nSPRECHER B:Kleine Sprachstörungen (Dysarthrie) sind erkennbar. Kein Neglect festgestellt.\n\nSPRECHER B:Wir müssen einige weitere Untersuchungen durchführen, dazu zählen EKG und Labortests. Frau Schmid, könnten Sie bitte diese Tests vorbereiten?\n\nSPRECHER C:Ja, welche Art von Labor möchten Sie durchführen?\n\nSPRECHER B:Ein vollständiges Labor wäre gut, insbesondere sollten wir uns das Profil der zerebrovaskulären Risikofaktoren ansehen.\n\nSPRECHER B:Herr Baumann, diese Tests dauern etwa eine Stunde. Darf ich Sie bitten, in der Zwischenzeit hier zu bleiben?\n\nSPRECHER A:Ja, kein Problem.\n\nSPRECHER B:Basierend auf Ihren Symptomen und den ersten Untersuchungen scheint es, dass Sie einen sogenannten \"Wake-up Stroke\" hatten, das ist ein Schlaganfall, der sich während des Schlafs ereignet. Im Speziellen haben wir den Verdacht, dass ein bestimmter Bereich Ihres Gehirns, der Kleinhirn, betroffen ist.\n\nSPRECHER A:Und was bedeutet das?\n\nSPRECHER B:Es bedeutet, dass eine Region in Ihrem Gehirn, der Kleinhirn, nicht ausreichend mit Blut versorgt wurde und dadurch Schaden genommen hat. Hierdurch können Symptome wie Schwindel, Schwierigkeiten bei der Aussprache und Instabilität beim Bewegen auftreten.\n\nSPRECHER B:Wir müssen noch weitere Untersuchungen durchführen, um die beste Behandlung für Sie zu bestimmen. In Ihrem Fall würden wir normalerweise Aspirin verabreichen, um das Blut zu verdünnen und das Risiko von weiteren Schlaganfällen zu verringern. Da Sie jedoch eine Darmspiegelung hatten und möglicherweise Magen-Darm-Probleme haben, werden wir das Aspirin vorerst nicht weitergeben.\n\nSPRECHER A:Was sind die nächsten Schritte?\n\nSPRECHER B:Wir werden Sie zur neurologischen Überwachung auf die Neuro-Intensivstation verlegen und Sie weiter überwachen. Zudem werden wir eine MRT-Untersuchung durchführen, um genauere Informationen über das Ausmaß des Schlaganfalls zu erhalten. Es ist wichtig, dass wir engmaschig ihren Gesundheitszustand überwachen und jegliche Veränderung schnell identifizieren können.\n\nSPRECHER B:Wir halten Sie weiter auf dem Laufenden und informieren Sie über alle weiteren Maßnahmen. Haben Sie weitere Fragen?\n\nSPRECHER A:Nein, vielen Dank für die Informationen.\n\nSPRECHER B:Wunderbar, wir sind für Sie da, Herr Baumann. und wir tun alles, was wir können, um Ihre Gesundheit zu sichern und zu verbessern.",
       "synthetic": true,
-      "noise": false
+      "noise": false,
+      "extraction": {
+        "symptoms": [
+          {
+            "symptom": "Schwindel",
+            "onset": "Heute Morgen",
+            "location": "Allgemein",
+            "context": "Ich bin aufgewacht und alles hat sich gedreht",
+            "icd10": "R42 - Schwindel und Taumel"
+          },
+          {
+            "symptom": "Verschwommene Sprache",
+            "onset": "Heute Morgen",
+            "location": "Allgemein",
+            "context": "Meine Frau hat außerdem gesagt, meine Sprache wäre verschwommen",
+            "icd10": "R47 - Sprech- und Sprachstörungen, anderenorts nicht klassifiziert"
+          },
+          {
+            "symptom": "Bewegungsunsicherheit",
+            "onset": "KA",
+            "location": "Allgemein",
+            "context": "Unsicherheit beim Bewegen mit einer Neigung nach rechts",
+            "icd10": "R26 - Störungen des Ganges und der Mobilität"
+          }
+        ]
+      }
     },
     {
       "folder": "with_ambient_noise",
       "name": "STROKE_1_0_sprecher_4363D135_BgndNoise.wav",
       "transcript": "SPRECHER D:Übergabe von Patient Herrn Baumann. Notfallmäßige Zuweisung mit der Ambulanz aufgrund des Verdachts auf ein zerebrovaskuläres Ereignis. Symptome bei Eintritt: Schwindel, verschwommene Sprache und Unsicherheit beim Bewegen mit einer Neigung nach rechts.\n\nSPRECHER B:Vielen Dank für die Übergabe.\n\nSPRECHER B:Guten Morgen, Herr Baumann. Würden Sie uns bitte erzählen, was genau passiert ist?\n\nSPRECHER A:Ich bin aufgewacht und alles hat sich gedreht. Beim Versuch, aufzustehen, musste ich mich wieder hinlegen. Meine Frau hat außerdem gesagt, meine Sprache wäre verschwommen.\n\nSPRECHER B:Was nehmen Sie für Medikamente ein?\n\nSPRECHER A:Ich nehme normalerweise Aspirin, aber das wurde vor einer Woche abgesetzt, da ich eine Darmspiegelung hatte. Zudem nehme ich einmal täglich Perindopril, die Dosierung ist mir gerade nicht genau bekannt.\n\nSPRECHER B:Verstanden, ich werde jetzt mit der körperlichen Untersuchung beginnen. Zuerst überprüfe ich Ihre Pupillen. \n\nSPRECHER B:Leichte Anisokorie rechts mehr als links. Direkte und indirekte Lichtreaktion sind beidseitig normal.\n\nSPRECHER B:Ich mache nun den Armhalteversuch und den Beinhalteversuch.\n\nSPRECHER B:Kein Absinken beim Arm- und Beinhalteversuch. Die Sensibilität ist ebenfalls normal.\n\nSPRECHER B:Kleine Sprachstörungen (Dysarthrie) sind erkennbar. Kein Neglect festgestellt.\n\nSPRECHER B:Wir müssen einige weitere Untersuchungen durchführen, dazu zählen EKG und Labortests. Frau Schmid, könnten Sie bitte diese Tests vorbereiten?\n\nSPRECHER C:Ja, welche Art von Labor möchten Sie durchführen?\n\nSPRECHER B:Ein vollständiges Labor wäre gut, insbesondere sollten wir uns das Profil der zerebrovaskulären Risikofaktoren ansehen.\n\nSPRECHER B:Herr Baumann, diese Tests dauern etwa eine Stunde. Darf ich Sie bitten, in der Zwischenzeit hier zu bleiben?\n\nSPRECHER A:Ja, kein Problem.\n\nSPRECHER B:Basierend auf Ihren Symptomen und den ersten Untersuchungen scheint es, dass Sie einen sogenannten \"Wake-up Stroke\" hatten, das ist ein Schlaganfall, der sich während des Schlafs ereignet. Im Speziellen haben wir den Verdacht, dass ein bestimmter Bereich Ihres Gehirns, der Kleinhirn, betroffen ist.\n\nSPRECHER A:Und was bedeutet das?\n\nSPRECHER B:Es bedeutet, dass eine Region in Ihrem Gehirn, der Kleinhirn, nicht ausreichend mit Blut versorgt wurde und dadurch Schaden genommen hat. Hierdurch können Symptome wie Schwindel, Schwierigkeiten bei der Aussprache und Instabilität beim Bewegen auftreten.\n\nSPRECHER B:Wir müssen noch weitere Untersuchungen durchführen, um die beste Behandlung für Sie zu bestimmen. In Ihrem Fall würden wir normalerweise Aspirin verabreichen, um das Blut zu verdünnen und das Risiko von weiteren Schlaganfällen zu verringern. Da Sie jedoch eine Darmspiegelung hatten und möglicherweise Magen-Darm-Probleme haben, werden wir das Aspirin vorerst nicht weitergeben.\n\nSPRECHER A:Was sind die nächsten Schritte?\n\nSPRECHER B:Wir werden Sie zur neurologischen Überwachung auf die Neuro-Intensivstation verlegen und Sie weiter überwachen. Zudem werden wir eine MRT-Untersuchung durchführen, um genauere Informationen über das Ausmaß des Schlaganfalls zu erhalten. Es ist wichtig, dass wir engmaschig ihren Gesundheitszustand überwachen und jegliche Veränderung schnell identifizieren können.\n\nSPRECHER B:Wir halten Sie weiter auf dem Laufenden und informieren Sie über alle weiteren Maßnahmen. Haben Sie weitere Fragen?\n\nSPRECHER A:Nein, vielen Dank für die Informationen.\n\nSPRECHER B:Wunderbar, wir sind für Sie da, Herr Baumann. und wir tun alles, was wir können, um Ihre Gesundheit zu sichern und zu verbessern.",
       "synthetic": true,
-      "noise": true
+      "noise": true,
+      "extraction": {
+        "symptoms": [
+          {
+            "symptom": "Schwindel",
+            "onset": "Heute Morgen",
+            "location": "Allgemein",
+            "context": "Ich bin aufgewacht und alles hat sich gedreht",
+            "icd10": "R42 - Schwindel und Taumel"
+          },
+          {
+            "symptom": "Verschwommene Sprache",
+            "onset": "Heute Morgen",
+            "location": "Allgemein",
+            "context": "Meine Frau hat außerdem gesagt, meine Sprache wäre verschwommen",
+            "icd10": "R47 - Sprech- und Sprachstörungen, anderenorts nicht klassifiziert"
+          },
+          {
+            "symptom": "Bewegungsunsicherheit",
+            "onset": "KA",
+            "location": "Allgemein",
+            "context": "Unsicherheit beim Bewegen mit einer Neigung nach rechts",
+            "icd10": "R26 - Störungen des Ganges und der Mobilität"
+          }
+        ]
+      }
     },
     {
       "folder": "without_ambient_noise",
@@ -385,11 +435,11 @@
       },
       {
         "identifier": "anamnesis_extract",
-        "description": "Extrracts an anamnesis from a medical conversation",
+        "description": "Extracts an anamnesis from a medical conversation",
         "messages": [
           {
             "role": "system",
-            "content": "<Anweisung>\nDu bist ein Algorithmus, der aus einem Gespräch zwischen einem Arzt und Patient eine Anamnese erstellt. Du wirst Transkripte von den Gesprächen erhalten und daraus wirst du eine Anamnese erstellen. Schreibe den Text so als wäre er vom behandelnden Arzt verfasst worden. Es soll ein Fliesstext mit Kapiteln werden und keine Auflistung oder Tabelle. \n\nDie Anamnese ist die systematische Erfassung von relevanten Informationen über die Krankheit und die Umstände eines Patienten zur Unterstützung einer genauen Diagnose und optimalen Behandlung. Eine Anamnese ist ein Text der folgende Informationen über den Patienten beinhaltet in einzelnen Kapiteln:\n- Die aktuellen Beschwerden \n- Die gesundheitliche Vorgeschichte, besondere Dispositionen (z.B. Allergien)\n- Die Lebensumstände\n\nUm dir zu helfen, deine Aufgabe besser zu verstehen, findest du nachfolgend einen fiktiven Beispieltext eines Arzt-Patient-Gesprächs und die daraus erstellte Anamnese. Halte dich an diesen Aufbau. Falls du alles richtig machst, gebe ich dir 200$ Trinkgeld.\n</Anweisung>\n\n<Beispiel>\nAnamnese für Patient Franz Feldmann\n\nAktuelle Beschwerden:\nHerr Feldmann, 66 Jahre alt, stellte sich mit akuten, vernichtenden Brustschmerzen vor, die seit etwa 30 Minuten andauern und in den linken Arm sowie den Kiefer ausstrahlen. Zusätzlich berichtete er über Dyspnoe, ohne jedoch synkopiert zu sein. Bei der Untersuchung wurden ein Blutdruck von 145/90 mmHg, ein Puls von 95 Schlägen pro Minute und eine Sauerstoffsättigung von 93% an Raumluft festgestellt. Unter der initialen Behandlung erhielt er 4 Liter Sauerstoff und 2mg Morphin. Im EKG zeigten sich ST-Senkungen in den Ableitungen V2 bis V4. Eine Heparin-Gabe wurde zunächst zurückgestellt, da Unsicherheit über eine mögliche Antikoagulation bestand.\n\nGesundheitliche Vorgeschichte:\nHerr Feldmann hat eine bekannte Hypertonie, kann jedoch die Namen seiner Medikamente nicht nennen. Er hat keine bekannte koronare Herzkrankheit (KHK), berichtete aber über ein leichtes Ziehen in der Brust in den letzten Monaten, das nun intensiver geworden ist. Er nimmt regelmäßig Blutdruckmedikamente ein, die ihm sein Hausarzt verschrieben hat, und holt diese ohne regelmäßige Kontrollen von der Apotheke. Zudem verwendet er gelegentlich Heparincreme aufgrund von Krampfadern. In seiner Familie gibt es eine Vorgeschichte von Herzerkrankungen; sein Vater erlitt in ähnlichem Alter einen Herzinfarkt. Rauchen und Alkoholkonsum wurden verneint.\n\nLebensumstände:\nÜber die Lebensumstände von Herrn Feldmann wurden keine weiteren Informationen erfasst. Es ist jedoch anzumerken, dass er verheiratet ist und seine Frau als Kontaktperson zur Verfügung steht, da er darum bat, sie nach der Koronarangiografie zu informieren. \n\nZusammenfassend präsentiert sich Herr Feldmann mit Symptomen, die auf ein akutes Koronarsyndrom hindeuten, und es ist eine umgehende Koronarangiografie geplant, um die Diagnose zu bestätigen und eine entsprechende Intervention durchzuführen.\n</Beispiel>"
+            "content": "<Anweisung>\nDu bist ein Algorithmus, der aus einem Gespräch zwischen einem Arzt und Patient eine Anamnese erstellt. Du wirst Transkripte von den Gesprächen erhalten und daraus wirst du eine Anamnese erstellen. Schreibe den Text so als wäre er vom behandelnden Arzt verfasst worden. Es soll ein Fliesstext mit Kapiteln werden und keine Auflistung oder Tabelle. \n\nDie Anamnese ist die systematische Erfassung von relevanten Informationen über die Krankheit und die Umstände eines Patienten zur Unterstützung einer genauen Diagnose und optimalen Behandlung. Eine Anamnese ist ein Text der folgende Informationen über den Patienten beinhaltet in einzelnen Kapiteln:\n- Die aktuellen Beschwerden \n- Die gesundheitliche Vorgeschichte, besondere Dispositionen (z.B. Allergien)\n- Die Lebensumstände\n\nUm dir zu helfen, deine Aufgabe besser zu verstehen, findest du nachfolgend einen fiktiven Beispieltext eines Arzt-Patient-Gesprächs und die daraus erstellte Anamnese. Halte dich an diesen Aufbau. Falls du alles richtig machst, gebe ich dir 200$ Trinkgeld.\n</Anweisung>\n\n<Beispiel>\nAktuelle Beschwerden:\nDer Patient stellte sich mit akuten, vernichtenden Brustschmerzen vor, die seit etwa 30 Minuten andauern und in den linken Arm sowie den Kiefer ausstrahlen. Zusätzlich berichtete er über Dyspnoe, ohne jedoch synkopiert zu sein. Bei der Untersuchung wurden ein Blutdruck von 145/90 mmHg, ein Puls von 95 Schlägen pro Minute und eine Sauerstoffsättigung von 93% an Raumluft festgestellt. Unter der initialen Behandlung erhielt er 4 Liter Sauerstoff und 2mg Morphin. Im EKG zeigten sich ST-Senkungen in den Ableitungen V2 bis V4. Eine Heparin-Gabe wurde zunächst zurückgestellt, da Unsicherheit über eine mögliche Antikoagulation bestand.\n\nGesundheitliche Vorgeschichte:\nDer Patient hat eine bekannte Hypertonie, kann jedoch die Namen seiner Medikamente nicht nennen. Er hat keine bekannte koronare Herzkrankheit (KHK), berichtete aber über ein leichtes Ziehen in der Brust in den letzten Monaten, das nun intensiver geworden ist. Er nimmt regelmäßig Blutdruckmedikamente ein, die ihm sein Hausarzt verschrieben hat, und holt diese ohne regelmäßige Kontrollen von der Apotheke. Zudem verwendet er gelegentlich Heparincreme aufgrund von Krampfadern. In seiner Familie gibt es eine Vorgeschichte von Herzerkrankungen; sein Vater erlitt in ähnlichem Alter einen Herzinfarkt. Rauchen und Alkoholkonsum wurden verneint.\n\nLebensumstände:\nÜber die Lebensumstände vom Patient wurden keine weiteren Informationen erfasst. Es ist jedoch anzumerken, dass er verheiratet ist und seine Frau als Kontaktperson zur Verfügung steht, da er darum bat, sie nach der Koronarangiografie zu informieren. \n\nZusammenfassend präsentiert sich der Patient mit Symptomen, die auf ein akutes Koronarsyndrom hindeuten, und es ist eine umgehende Koronarangiografie geplant, um die Diagnose zu bestätigen und eine entsprechende Intervention durchzuführen.\n</Beispiel>"
           },
           {
             "role": "user",
