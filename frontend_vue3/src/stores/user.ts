@@ -99,17 +99,11 @@ export const useUserStore = defineStore('user', () => {
    */
   const useCloudS2T = useLocalStorage<boolean>('useCloudS2T', true);
 
-  /**
-   * If cloud services should be used for natural langugae processing
-   */
-  const useCloudLLM = useLocalStorage<boolean>('useCloudLLM', true);
-
   function resetSettings() {
     bufferSize.value = 4096;
     downloadRecording.value = false;
     transcriptionLanguage.value = 'de-CH';
     useDiarization.value = false;
-    useCloudLLM.value = true;
     useCloudS2T.value = true;
   }
 
@@ -121,7 +115,6 @@ export const useUserStore = defineStore('user', () => {
     downloadRecording,
     transcriptionLanguage,
     useDiarization,
-    useCloudLLM,
     useCloudS2T,
     isDebug,
     transcriptionText,

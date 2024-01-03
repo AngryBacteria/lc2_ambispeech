@@ -5,6 +5,7 @@ import os
 from typing import Iterable, Union
 
 import ctranslate2
+from dotenv import load_dotenv
 from faster_whisper import WhisperModel, download_model
 from faster_whisper.transcribe import TranscriptionInfo, Segment
 
@@ -44,6 +45,10 @@ class WhisperUtil:
         cpu_count = os.cpu_count()
         self.cpu_threads = cpu_count if cpu_count and cpu_count > 0 else 4
         # download the model
+        load_dotenv()
+        if os.getenv("WHISPER_MODEL") is not None:
+            logger.info(f"Using model size preference from .env file [{os.getenv('WHISPER_MODEL')}]")
+            self.model_size = os.getenv("WHISPER_MODEL")
         self.downloadModels()
         # Load the GPU model if supported
         if ctranslate2.get_cuda_device_count() >= 1 and self.useGPU:

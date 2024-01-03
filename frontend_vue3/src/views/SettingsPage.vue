@@ -14,16 +14,6 @@
         />
       </section>
       <section class="setting">
-        <h2>Cloud Dienste verwenden für Natural Language Processing?</h2>
-        <ToggleButton
-          v-model="store.useCloudLLM"
-          onLabel="Ja"
-          offLabel="Nein"
-          onIcon="pi pi-check"
-          offIcon="pi pi-times"
-        />
-      </section>
-      <section class="setting">
         <h2>Sprecher-Erkennung (Diarization) aktivieren?</h2>
         <ToggleButton
           v-model="store.useDiarization"
