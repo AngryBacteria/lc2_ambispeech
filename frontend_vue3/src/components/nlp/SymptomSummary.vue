@@ -29,6 +29,7 @@ import { useDialog } from 'primevue/usedialog';
 import ContextConfirmDialog from './ContextConfirmDialog.vue';
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { v4 as uuidv4 } from 'uuid';
 
 // Get store data
 const store = useUserStore();
@@ -38,7 +39,6 @@ const { transcriptionText, extractedInfoObject } = storeToRefs(store);
 watch(
   extractedInfoObject,
   () => {
-    console.log('GO DATA');
     if (!extractedInfoObject.value?.symptoms) {
       return;
     }
@@ -66,7 +66,6 @@ function isInTranscript(toFind: string) {
 watch(
   transcriptionText,
   () => {
-    console.log('GO isInTranscript');
     if (!extractedInfoObject.value?.symptoms) {
       return;
     }
@@ -79,11 +78,14 @@ watch(
 );
 
 function sendToKIS() {
-  let currentId = 1;
-  const fhirConditions = extractedInfoObject.value?.symptoms?.map((symptom) => {
+  // Create conditions
+  if (!extractedInfoObject.value?.symptoms) {
+    return;
+  }
+  const fhirConditions = extractedInfoObject.value.symptoms.map((symptom) => {
     return {
       resourceType: 'Condition',
-      id: 'condition_' + currentId++,
+      id: 'condition_' + uuidv4(),
       clinicalStatus: {
         coding: [
           {
@@ -117,9 +119,76 @@ function sendToKIS() {
       onsetString: symptom.onset
     };
   });
+  console.log('Conditions: ', fhirConditions);
 
-  console.log(fhirConditions);
-  const jsonString = JSON.stringify(fhirConditions, null, 2);
+  // Create references
+  const fhirConditionsReferences = fhirConditions.map((condition) => {
+    return {
+      reference: {
+        identifier: condition.id
+      }
+    };
+  });
+  console.log('Condition References: ', fhirConditionsReferences);
+
+  // Create encounter
+  const fhirEncounter = {
+    resourceType: 'Encounter',
+    id: 'encounter_' + uuidv4(),
+    text: {
+      status: 'generated',
+      div: `<p xmlns="http://www.w3.org/1999/xhtml">${extractedInfoObject.value.anamnesis}</p>>`
+    },
+    status: 'in-progress',
+    class: [
+      {
+        coding: [
+          {
+            system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode',
+            code: 'EMER',
+            display: 'emergency'
+          }
+        ]
+      }
+    ],
+    reason: [
+      {
+        value: fhirConditionsReferences
+      }
+    ],
+    subject: {
+      reference: `Patient/${store.patient?.id}`
+    },
+    subjectStatus: {
+      coding: [
+        {
+          system: 'http://terminology.hl7.org/CodeSystem/encounter-subject-status',
+          code: 'receiving-care'
+        }
+      ]
+    }
+  };
+  console.log('Encounter: ', fhirEncounter);
+
+  // Create bundle
+  const fhirBundle = {
+    resourceType: 'Bundle',
+    id: 'bundle_' + uuidv4(),
+    type: 'collection',
+    entry: [
+      {
+        resource: fhirEncounter
+      },
+      ...fhirConditions.map((condition) => {
+        return {
+          resource: condition
+        };
+      })
+    ]
+  };
+  console.log('Bundle: ', fhirBundle);
+
+  const jsonString = JSON.stringify(fhirBundle, null, 2);
   const fileToSave = new Blob([jsonString], {
     type: 'application/json'
   });
