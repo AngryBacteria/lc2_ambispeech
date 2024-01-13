@@ -55,6 +55,11 @@ class OpenAIUtil:
             temperature=config.temperature,
             top_p=config.top_p,
         )
+        logger.debug(
+            f"""Prompt Token [{chat_completion.usage.prompt_tokens}]
+            Completion Tokens [{chat_completion.usage.completion_tokens}]
+            Total Tokens [{chat_completion.usage.total_tokens}]"""
+        )
         return chat_completion.choices[0].message.content
 
     async def chat_completion(
