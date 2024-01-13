@@ -14,7 +14,7 @@ from app.utils.logging_util import logger
 
 class WhisperUtil:
     _instance = None
-    model_size = "tiny"
+    model_size = "medium"
     model_folder = "models"
 
     model_GPU: WhisperModel = None
@@ -47,7 +47,9 @@ class WhisperUtil:
         # download the model
         load_dotenv()
         if os.getenv("WHISPER_MODEL") is not None:
-            logger.info(f"Using model size preference from .env file [{os.getenv('WHISPER_MODEL')}]")
+            logger.info(
+                f"Using model size preference from .env file [{os.getenv('WHISPER_MODEL')}]"
+            )
             self.model_size = os.getenv("WHISPER_MODEL")
         self.downloadModels()
         # Load the GPU model if supported

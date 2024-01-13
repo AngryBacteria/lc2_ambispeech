@@ -15,6 +15,7 @@
       <p><b>Dauer:</b> {{ symptom.onset }}</p>
       <p><b>Position:</b> {{ symptom.location }}</p>
       <p><b>ICD10-Code:</b> {{ symptom.icd10 }}</p>
+      <p><b>Kontext:</b> {{ symptom.context }}</p>
 
       <SelectButton v-model="symptom.status" :options="statusOptions" aria-labelledby="basic" />
     </section>

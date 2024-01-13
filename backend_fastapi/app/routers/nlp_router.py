@@ -1,3 +1,4 @@
+import asyncio
 import copy
 from typing import List, Union, Optional
 
@@ -92,13 +93,15 @@ async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
     Returns an HTTP-206 code if no valid JSON was parsed"""
     # init output object
     output = AnalyzeEndpointOutput()
+    # run both request in parallel
+    results = await asyncio.gather(get_extraction(body.text), get_anamnesis(body.text))
     # get the symptom extraction
-    extraction = await get_extraction(body.text)
+    extraction = results[0]
     if extraction is not None:
         output.symptoms = extraction.symptoms
 
     # get the anamnesis
-    anamnesis = await get_anamnesis(body.text)
+    anamnesis = results[1]
     if anamnesis is not None:
         output.anamnesis = anamnesis
 
