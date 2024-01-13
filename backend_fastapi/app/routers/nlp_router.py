@@ -60,13 +60,6 @@ openaiUtil = OpenAIUtil()
 embedUtil = EmbeddingUtil()
 
 
-@llmRouter.post("/hello/{model}")
-async def hello(model: OpenaiModel, config: OpenaiCompletionConfig):
-    """Hello World example for large language models"""
-    openaiUtil.openai_model = model
-    return await openaiUtil.hello_chat_completion(config, model)
-
-
 @llmRouter.post("/openai/{model}")
 async def openai(model: OpenaiModel, body: OpenaiCompletionBody):
     """Non-Streaming OpenAI chat completion"""
