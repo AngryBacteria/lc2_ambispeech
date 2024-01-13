@@ -79,18 +79,25 @@ class OpenAIUtil:
 
     def get_embedding(self, text: str):
         """Calculates the embedding vector for a string input"""
-        return (
-            self.client.embeddings.create(input=[text], model="text-embedding-ada-002")
-            .data[0]
-            .embedding
+        embedding_response = self.client.embeddings.create(
+            input=[text], model="text-embedding-ada-002"
         )
+        logger.debug(
+            f"""Prompt Token [{embedding_response.usage.prompt_tokens}]
+            Total Tokens [{embedding_response.usage.total_tokens}]"""
+        )
+        return embedding_response.data[0].embedding
 
     async def get_embedding_async(self, text: str):
         """Calculates the embedding vector for a string input asynchronously"""
-        emb = await self.clientAsync.embeddings.create(
+        embedding_response = await self.clientAsync.embeddings.create(
             input=[text], model="text-embedding-ada-002"
         )
-        return emb.data[0].embedding
+        logger.debug(
+            f"""Prompt Token [{embedding_response.usage.prompt_tokens}]
+            Total Tokens [{embedding_response.usage.total_tokens}]"""
+        )
+        return embedding_response.data[0].embedding
 
 
 # todo: replace by GenericMessage Interface
