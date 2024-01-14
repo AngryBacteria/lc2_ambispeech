@@ -32,6 +32,9 @@ class AnalyzeBody(BaseModel):
     """Body for an /analyze request"""
 
     text: str
+    use_embeddings: bool = True
+    do_summary: bool = False
+    do_anamnesis: bool = True
 
 
 class AnalyzeEndpointOutput(BaseModel):
@@ -82,21 +85,20 @@ async def getEmbedding(body: EmbeddingBody) -> List[EmbeddingEndpointOutput]:
 
 
 @llmRouter.post("/analyze")
-async def analyze(body: AnalyzeBody, do_summary: bool = True) \
-        -> Union[AnalyzeEndpointOutput, str]:
+async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
     """Endpoint for analyzing a conversation between a doctor and his patient.
     Returns an HTTP-206 code if no valid JSON was parsed"""
     # init output object
     output = AnalyzeEndpointOutput()
     # run both request in parallel
-    results = await asyncio.gather(get_extraction(body.text), get_anamnesis(body.text))
+    results = await asyncio.gather(get_extraction(body.text, body.use_embeddings), get_anamnesis(body.text, body.do_anamnesis))
     # get the symptom extraction
     extraction = results[0]
     if extraction is not None:
         output.symptoms = extraction.symptoms
 
         # get the summary
-        if do_summary:
+        if body.do_summary:
             summary = await get_summary(extraction.symptoms)
             if summary is not None:
                 output.summary = summary
@@ -109,7 +111,9 @@ async def analyze(body: AnalyzeBody, do_summary: bool = True) \
     return output
 
 
-async def get_anamnesis(text: str):
+async def get_anamnesis(text: str, do_anamnesis: bool = True):
+    if not do_anamnesis:
+        return None
     # get the prompt for the anamnesis extraction
     prompt = await get_prompt(text, PromptIdentifier.ANAMNESIS_EXTRACT)
     if prompt is None:
@@ -120,7 +124,7 @@ async def get_anamnesis(text: str):
     output = await openaiUtil.chat_completion(
         prompt.messages,
         OpenaiCompletionConfig(temperature=0, max_tokens=4096),
-        OpenaiModel.GPT_3_TURBO,
+        OpenaiModel.GPT_4_TURBO,
     )
     return output
 
@@ -139,7 +143,7 @@ async def get_summary(symptoms: List[SymptomICD10]):
     output = await openaiUtil.chat_completion(
         prompt.messages,
         OpenaiCompletionConfig(temperature=0, max_tokens=4096),
-        OpenaiModel.GPT_3_TURBO,
+        OpenaiModel.GPT_4_TURBO,
     )
     return output
 
@@ -160,7 +164,7 @@ async def get_extraction(text: str, use_embeddings: bool = True):
         OpenaiCompletionConfig(
             temperature=0, max_tokens=4096, response_format={"type": "json_object"}
         ),
-        OpenaiModel.GPT_3_TURBO,
+        OpenaiModel.GPT_4_TURBO,
     )
     # parse output
     parsed = parse_json_from_string(output)
