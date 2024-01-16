@@ -1,5 +1,13 @@
 # 1.0 How to install and run
-## 1.1 Whisper (with GPU acceleration)
+
+# 1.1 .env File
+There are several secrets you will need to put into a .env file at the root of the python project (the same folder this readme is in). The .env file should include the following entries:
+- OPENAI_API_KEY --> OpenAI API Key for the extraction
+- AZURE_REGION --> azure region that should be used
+- AZURE_SPEECH_RESOURCE_KEY --> Azure resource key if azure should be used
+- WHISPER_MODEL --> The whisper model size you want to use. The possible  options are (first is the smallest, last is the largest): tiny, small, base, medium, large-v2
+
+## 1.2 Whisper (with GPU acceleration)
 Whisper needs some special dependencies to run on a GPU with CUDA support. These
 instructions will help you install it on a Windows machine. If you only want Whisper to run on the CPU you can skip this chapter. 
 
@@ -19,7 +27,7 @@ If these instructions did not work, try one of these guides:
 - https://medium.com/analytics-vidhya/installing-cuda-and-cudnn-on-windows-d44b8e9876b5
 - https://medium.com/geekculture/install-cuda-and-cudnn-on-windows-linux-52d1501a8805
 
-## Python setup
+## 1.3 Python setup
 1) Install python 3.11 on your system. Older versions might work but we tested it with 3.11 and can confirm it works on that version of python.
 2) For the following commands you may need either the `python` or `python3` and 
 `pip` or `pip3` prefix. Test out what is installed on your system by typing `python --version` or `python3 --version` and see which one works
