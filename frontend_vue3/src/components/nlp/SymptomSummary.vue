@@ -17,7 +17,12 @@
       <p><b>ICD10-Code:</b> {{ symptom.icd10 }}</p>
       <p><b>Kontext:</b> {{ symptom.context }}</p>
 
-      <SelectButton v-model="symptom.status" :options="statusOptions" optionLabel="name" aria-labelledby="basic" />
+      <SelectButton
+        v-model="symptom.status"
+        :options="statusOptions"
+        optionLabel="name"
+        aria-labelledby="basic"
+      />
     </section>
   </div>
   <Button @click="sendToKIS">Daten an KIS senden</Button>
@@ -57,9 +62,9 @@ watch(
   { immediate: true }
 );
 const statusOptions = ref([
-  {name: 'Unbestätigt', value: 'unconfirmed'},
-  {name: 'Bestätigt', value: 'confirmed'},
-  {name: 'Falsch', value: 'Irrtümlich eingegeben'}
+  { name: 'Unbestätigt', value: 'unconfirmed' },
+  { name: 'Bestätigt', value: 'confirmed' },
+  { name: 'Falsch', value: 'Irrtümlich eingegeben' }
 ]);
 
 //Start watching the NLPData and update if it is in the transcript

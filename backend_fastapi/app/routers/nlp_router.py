@@ -91,7 +91,10 @@ async def analyze(body: AnalyzeBody) -> Union[AnalyzeEndpointOutput, str]:
     # init output object
     output = AnalyzeEndpointOutput()
     # run both request in parallel
-    results = await asyncio.gather(get_extraction(body.text, body.use_embeddings), get_anamnesis(body.text, body.do_anamnesis))
+    results = await asyncio.gather(
+        get_extraction(body.text, body.use_embeddings),
+        get_anamnesis(body.text, body.do_anamnesis),
+    )
     # get the symptom extraction
     extraction = results[0]
     if extraction is not None:
@@ -153,7 +156,10 @@ async def get_extraction(text: str, use_embeddings: bool = True):
     Either uses embeddings or the direct approach with prompting"""
     # get the prompt for the symptom extraction
     prompt = await get_prompt(
-        text, PromptIdentifier.SYMPTOM_EXTRACT_JSON if use_embeddings else PromptIdentifier.SYMPTOM_EXTRACT_JSON_ICD10
+        text,
+        PromptIdentifier.SYMPTOM_EXTRACT_JSON
+        if use_embeddings
+        else PromptIdentifier.SYMPTOM_EXTRACT_JSON_ICD10,
     )
     if prompt is None:
         logger.error("No prompt found for symptom extraction")
@@ -181,9 +187,7 @@ async def get_extraction(text: str, use_embeddings: bool = True):
             validated = ExtractionICD10.model_validate(parsed)
             return validated
     except ValidationError:
-        logger.error(
-            f"GPT Output could not be validated/parsed successfully: {output}"
-        )
+        logger.error(f"GPT Output could not be validated/parsed successfully: {output}")
         return None
 
 
@@ -196,9 +200,9 @@ async def add_icd10_codes(symptoms: List[Symptom]) -> List[SymptomICD10]:
                 embedUtil.icd10_symptoms, f"{symptom.symptom}. {symptom.context}", 1
             )
             icd10_string = (
-                    res["schlüsselnummer_mit_punkt"].iloc[0]
-                    + " - "
-                    + res["klassentitel"].iloc[0]
+                res["schlüsselnummer_mit_punkt"].iloc[0]
+                + " - "
+                + res["klassentitel"].iloc[0]
             )
             logger.debug("Embedding Input: " + f"{symptom.symptom}. {symptom.context}")
             logger.debug("Embedding Output: " + f"{icd10_string}")
@@ -215,7 +219,7 @@ async def add_icd10_codes(symptoms: List[Symptom]) -> List[SymptomICD10]:
 
 
 async def get_prompt(
-        text: str, identifier: PromptIdentifier
+    text: str, identifier: PromptIdentifier
 ) -> MedicalDataPrompt | None:
     """Returns a prompt for the given identifier. The placeholder for the userinput will be replaced with the text"""
     async with lock:

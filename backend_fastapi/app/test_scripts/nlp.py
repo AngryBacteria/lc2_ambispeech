@@ -9,7 +9,7 @@ def main():
     # prepare the audio examples to test
     possible_examples_names = [
         "APPENDIZITIS_1_0.wav",
-        "STROKE_1_0_sprecher_4363D135_BgndNoise.wav"
+        "STROKE_1_0_sprecher_4363D135_BgndNoise.wav",
     ]
     examples_to_test = []
     for file in audio_file_data:
@@ -32,28 +32,42 @@ def main():
         print(f"{10 * '-'} Hypothesis (embeddings) {10 * '-'}")
         output = output + f"{10 * '-'} Hypothesis (embeddings) {10 * '-'} \n"
         data = analyze_request(file.transcript, True, False)
-        for symptom in data['symptoms']:
-            print(f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]")
-            output = output + f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]" + "\n"
+        for symptom in data["symptoms"]:
+            print(
+                f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]"
+            )
+            output = (
+                output
+                + f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]"
+                + "\n"
+            )
 
         # printing hypothesis (direct-gpt)
         print(f"{10 * '-'} Hypothesis (direct-gpt) {10 * '-'}")
         output = output + f"{10 * '-'} Hypothesis (direct-gpt) {10 * '-'} \n"
         data = analyze_request(file.transcript, False, True)
-        for symptom in data['symptoms']:
-            print(f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]")
-            output = output + f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]" + "\n"
+        for symptom in data["symptoms"]:
+            print(
+                f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]"
+            )
+            output = (
+                output
+                + f"{symptom['icd10']}   symptom = [{symptom['symptom']}] context = [{symptom['context']}]"
+                + "\n"
+            )
 
         # printing hypothesis (anamnesis)
         print(f"{10 * '-'} Hypothesis (anamnesis) {10 * '-'}")
         output = output + f"{10 * '-'} Hypothesis (anamnesis) {10 * '-'} \n"
-        print(data['anamnesis'])
-        output = output + data['anamnesis'] + "\n"
+        print(data["anamnesis"])
+        output = output + data["anamnesis"] + "\n"
         print("\n\n")
         output = output + "\n\n"
 
         now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        safe_file_name = f"output.txt [{file.name}] [{now}]".replace(" ", "_").replace(".", "-")
+        safe_file_name = f"output.txt [{file.name}] [{now}]".replace(" ", "_").replace(
+            ".", "-"
+        )
         with open(safe_file_name, "w") as f:
             f.write(output)
 
