@@ -36,12 +36,7 @@
           </section>
         </template>
         <Textarea
-          :disabled="
-            !store.isDebug &&
-            (store.transcriptionIsLoading ||
-              store.transcriptionText.length < 1 ||
-              transcriptionError.length > 0)
-          "
+          :disabled="store.transcriptionIsLoading || transcriptionError.length > 0"
           v-model="store.transcriptionText"
           style="max-width: 100%; width: 100%"
           rows="6"

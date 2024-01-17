@@ -100,7 +100,6 @@ class OpenAIUtil:
         return embedding_response.data[0].embedding
 
 
-# todo: replace by GenericMessage Interface
 class OpenaiCompletionBody(BaseModel):
     """Body to pass in FastAPI router when handling openai requests"""
 
