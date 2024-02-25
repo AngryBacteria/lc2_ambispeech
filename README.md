@@ -6,7 +6,7 @@ Speech recognition systems are already being used as a more efficient method of 
 In light of the continuous development in the field of artificial intelligence (AI), there is growing interest in using AI-based technologies to improve the efficiency of medical documentation. The fundamental goal is to transcribe, analyze, and extract the most relevant information from conversations between doctors and patients for documentation purposes.
 
 # Project
-This is a student project at the Bern University of Applied Sciences ([BFH](https://www.bfh.ch/en/)). The official project partner is the [Universitätsklinik für Notfallmedizin - Inselspital](http://www.notfallmedizin.insel.ch/de/) in Bern. It was developed to support mainly german for the audio and transcript language. The transcription should support most other major languages without any issues. The extraction of clinical data is finetuned to work with german
+This is a student project at the Bern University of Applied Sciences ([BFH](https://www.bfh.ch/en/)). It was developed to support mainly german for the audio and transcript language. The transcription should support most other major languages without any issues. The extraction of clinical data is finetuned to work with german
 
 The software was designed, planned and programmed by:
 - Nicolas Gujer ([nicolas.gujer@protonmail.com](mailto:nicolas.gujer@protonmail.com.de))
